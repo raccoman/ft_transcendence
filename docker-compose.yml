@@ -11,7 +11,7 @@ services:
       - "backend"
 
   hasura:
-    image: hasura/graphql-engine:v2.8.0.cli-migrations-v3
+    image: hasura/graphql-engine:v2.8.0
     container_name: hasura
     ports:
       - "8080:8080"
@@ -20,15 +20,23 @@ services:
     restart: always
     environment:
       ## postgres database to store Hasura metadata
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      ##HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
-      PG_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      ##PG_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+
+      ## JWT specific
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${JWT_SECRET}", "header": {"type": "Cookie", "name": "${JWT_COOKIE_NAME}" }}'
+
     volumes:
-      - "hasura_metadata:/hasura-metadata"
-      - "hasura_migrations:/hasura-migrations"
+      - "./hasura/metadata:/hasura-metadata"
+      - "./hasura/migrations:/hasura-migrations"
     networks:
       - "backend"
 
@@ -59,18 +67,6 @@ services:
       - "80:80"
     networks:
       - "frontend"
-
-volumes:
-  hasura_metadata:
-    driver_opts:
-      type: none
-      device: ${PWD}/hasura/metadata
-      o: bind
-  hasura_migrations:
-    driver_opts:
-      type: none
-      device: ${PWD}/hasura/migrations
-      o: bind
 
 networks:
   frontend:
