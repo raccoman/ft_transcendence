@@ -9,4 +9,6 @@ body {
     padding: 0;
     margin: 0;
     font-family: 'Poppins', sans-serif;
+    background-color: theme('colors.primary.600');
+    color: theme('colors.secondary');
 }

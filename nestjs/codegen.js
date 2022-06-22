@@ -8,13 +8,27 @@ const {
 const codeGenConfig = {
   generates: {
     'types/hasura.ts': {
+      documents: ['src/**/*.service.ts'],
       schema: [{
         [endpoint]: {
           headers: {
             'x-hasura-admin-secret': secret,
           },
         },
-      }], plugins: ['typescript'],
+      }],
+      plugins: [
+        'typescript',
+        'typescript-operations',
+        'typescript-graphql-request',
+      ],
+      config: {
+        gqlImport: 'graphql-request#gql',
+        avoidOptionals: {
+          object: true,
+          field: true,
+          inputValue: false,
+        },
+      },
     },
   },
 };

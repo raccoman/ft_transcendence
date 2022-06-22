@@ -1,3 +1,6 @@
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
+import { gql } from 'graphql-request';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -67,17 +70,17 @@ export type String_Comparison_Exp = {
 export type Mutation_Root = {
   __typename?: 'mutation_root';
   /** delete data from the table: "profiles" */
-  delete_profiles?: Maybe<Profiles_Mutation_Response>;
+  delete_profiles: Maybe<Profiles_Mutation_Response>;
   /** delete single row from the table: "profiles" */
-  delete_profiles_by_pk?: Maybe<Profiles>;
+  delete_profiles_by_pk: Maybe<Profiles>;
   /** insert data into the table: "profiles" */
-  insert_profiles?: Maybe<Profiles_Mutation_Response>;
+  insert_profiles: Maybe<Profiles_Mutation_Response>;
   /** insert a single row into the table: "profiles" */
-  insert_profiles_one?: Maybe<Profiles>;
+  insert_profiles_one: Maybe<Profiles>;
   /** update data of the table: "profiles" */
-  update_profiles?: Maybe<Profiles_Mutation_Response>;
+  update_profiles: Maybe<Profiles_Mutation_Response>;
   /** update single row of the table: "profiles" */
-  update_profiles_by_pk?: Maybe<Profiles>;
+  update_profiles_by_pk: Maybe<Profiles>;
 };
 
 
@@ -96,29 +99,29 @@ export type Mutation_RootDelete_Profiles_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootInsert_ProfilesArgs = {
   objects: Array<Profiles_Insert_Input>;
-  on_conflict?: InputMaybe<Profiles_On_Conflict>;
+  on_conflict: InputMaybe<Profiles_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootInsert_Profiles_OneArgs = {
   object: Profiles_Insert_Input;
-  on_conflict?: InputMaybe<Profiles_On_Conflict>;
+  on_conflict: InputMaybe<Profiles_On_Conflict>;
 };
 
 
 /** mutation root */
 export type Mutation_RootUpdate_ProfilesArgs = {
-  _inc?: InputMaybe<Profiles_Inc_Input>;
-  _set?: InputMaybe<Profiles_Set_Input>;
+  _inc: InputMaybe<Profiles_Inc_Input>;
+  _set: InputMaybe<Profiles_Set_Input>;
   where: Profiles_Bool_Exp;
 };
 
 
 /** mutation root */
 export type Mutation_RootUpdate_Profiles_By_PkArgs = {
-  _inc?: InputMaybe<Profiles_Inc_Input>;
-  _set?: InputMaybe<Profiles_Set_Input>;
+  _inc: InputMaybe<Profiles_Inc_Input>;
+  _set: InputMaybe<Profiles_Set_Input>;
   pk_columns: Profiles_Pk_Columns_Input;
 };
 
@@ -150,37 +153,37 @@ export type Profiles = {
 /** aggregated selection of "profiles" */
 export type Profiles_Aggregate = {
   __typename?: 'profiles_aggregate';
-  aggregate?: Maybe<Profiles_Aggregate_Fields>;
+  aggregate: Maybe<Profiles_Aggregate_Fields>;
   nodes: Array<Profiles>;
 };
 
 /** aggregate fields of "profiles" */
 export type Profiles_Aggregate_Fields = {
   __typename?: 'profiles_aggregate_fields';
-  avg?: Maybe<Profiles_Avg_Fields>;
+  avg: Maybe<Profiles_Avg_Fields>;
   count: Scalars['Int'];
-  max?: Maybe<Profiles_Max_Fields>;
-  min?: Maybe<Profiles_Min_Fields>;
-  stddev?: Maybe<Profiles_Stddev_Fields>;
-  stddev_pop?: Maybe<Profiles_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Profiles_Stddev_Samp_Fields>;
-  sum?: Maybe<Profiles_Sum_Fields>;
-  var_pop?: Maybe<Profiles_Var_Pop_Fields>;
-  var_samp?: Maybe<Profiles_Var_Samp_Fields>;
-  variance?: Maybe<Profiles_Variance_Fields>;
+  max: Maybe<Profiles_Max_Fields>;
+  min: Maybe<Profiles_Min_Fields>;
+  stddev: Maybe<Profiles_Stddev_Fields>;
+  stddev_pop: Maybe<Profiles_Stddev_Pop_Fields>;
+  stddev_samp: Maybe<Profiles_Stddev_Samp_Fields>;
+  sum: Maybe<Profiles_Sum_Fields>;
+  var_pop: Maybe<Profiles_Var_Pop_Fields>;
+  var_samp: Maybe<Profiles_Var_Samp_Fields>;
+  variance: Maybe<Profiles_Variance_Fields>;
 };
 
 
 /** aggregate fields of "profiles" */
 export type Profiles_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Profiles_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
+  columns: InputMaybe<Array<Profiles_Select_Column>>;
+  distinct: InputMaybe<Scalars['Boolean']>;
 };
 
 /** aggregate avg on columns */
 export type Profiles_Avg_Fields = {
   __typename?: 'profiles_avg_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** Boolean expression to filter rows from the table "profiles". All fields are combined with a logical 'AND'. */
@@ -216,19 +219,19 @@ export type Profiles_Insert_Input = {
 /** aggregate max on columns */
 export type Profiles_Max_Fields = {
   __typename?: 'profiles_max_fields';
-  avatar?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-  username?: Maybe<Scalars['String']>;
+  avatar: Maybe<Scalars['String']>;
+  email: Maybe<Scalars['String']>;
+  id: Maybe<Scalars['Int']>;
+  username: Maybe<Scalars['String']>;
 };
 
 /** aggregate min on columns */
 export type Profiles_Min_Fields = {
   __typename?: 'profiles_min_fields';
-  avatar?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-  username?: Maybe<Scalars['String']>;
+  avatar: Maybe<Scalars['String']>;
+  email: Maybe<Scalars['String']>;
+  id: Maybe<Scalars['Int']>;
+  username: Maybe<Scalars['String']>;
 };
 
 /** response of any mutation on the table "profiles" */
@@ -283,25 +286,25 @@ export type Profiles_Set_Input = {
 /** aggregate stddev on columns */
 export type Profiles_Stddev_Fields = {
   __typename?: 'profiles_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Profiles_Stddev_Pop_Fields = {
   __typename?: 'profiles_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Profiles_Stddev_Samp_Fields = {
   __typename?: 'profiles_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate sum on columns */
 export type Profiles_Sum_Fields = {
   __typename?: 'profiles_sum_fields';
-  id?: Maybe<Scalars['Int']>;
+  id: Maybe<Scalars['Int']>;
 };
 
 /** update columns of table "profiles" */
@@ -319,19 +322,19 @@ export enum Profiles_Update_Column {
 /** aggregate var_pop on columns */
 export type Profiles_Var_Pop_Fields = {
   __typename?: 'profiles_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate var_samp on columns */
 export type Profiles_Var_Samp_Fields = {
   __typename?: 'profiles_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate variance on columns */
 export type Profiles_Variance_Fields = {
   __typename?: 'profiles_variance_fields';
-  id?: Maybe<Scalars['Float']>;
+  id: Maybe<Scalars['Float']>;
 };
 
 export type Query_Root = {
@@ -341,25 +344,25 @@ export type Query_Root = {
   /** fetch aggregated fields from the table: "profiles" */
   profiles_aggregate: Profiles_Aggregate;
   /** fetch data from the table: "profiles" using primary key columns */
-  profiles_by_pk?: Maybe<Profiles>;
+  profiles_by_pk: Maybe<Profiles>;
 };
 
 
 export type Query_RootProfilesArgs = {
-  distinct_on?: InputMaybe<Array<Profiles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Profiles_Order_By>>;
-  where?: InputMaybe<Profiles_Bool_Exp>;
+  distinct_on: InputMaybe<Array<Profiles_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Profiles_Order_By>>;
+  where: InputMaybe<Profiles_Bool_Exp>;
 };
 
 
 export type Query_RootProfiles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Profiles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Profiles_Order_By>>;
-  where?: InputMaybe<Profiles_Bool_Exp>;
+  distinct_on: InputMaybe<Array<Profiles_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Profiles_Order_By>>;
+  where: InputMaybe<Profiles_Bool_Exp>;
 };
 
 
@@ -374,28 +377,86 @@ export type Subscription_Root = {
   /** fetch aggregated fields from the table: "profiles" */
   profiles_aggregate: Profiles_Aggregate;
   /** fetch data from the table: "profiles" using primary key columns */
-  profiles_by_pk?: Maybe<Profiles>;
+  profiles_by_pk: Maybe<Profiles>;
 };
 
 
 export type Subscription_RootProfilesArgs = {
-  distinct_on?: InputMaybe<Array<Profiles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Profiles_Order_By>>;
-  where?: InputMaybe<Profiles_Bool_Exp>;
+  distinct_on: InputMaybe<Array<Profiles_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Profiles_Order_By>>;
+  where: InputMaybe<Profiles_Bool_Exp>;
 };
 
 
 export type Subscription_RootProfiles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Profiles_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Profiles_Order_By>>;
-  where?: InputMaybe<Profiles_Bool_Exp>;
+  distinct_on: InputMaybe<Array<Profiles_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Profiles_Order_By>>;
+  where: InputMaybe<Profiles_Bool_Exp>;
 };
 
 
 export type Subscription_RootProfiles_By_PkArgs = {
   id: Scalars['Int'];
 };
+
+export type Profiles_By_PkQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type Profiles_By_PkQuery = { __typename?: 'query_root', profiles_by_pk: { __typename?: 'profiles', avatar: string, email: string, id: number, username: string } | null };
+
+export type Insert_Profiles_OneMutationVariables = Exact<{
+  id: Scalars['Int'];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  avatar: Scalars['String'];
+}>;
+
+
+export type Insert_Profiles_OneMutation = { __typename?: 'mutation_root', insert_profiles_one: { __typename?: 'profiles', avatar: string, email: string, username: string, id: number } | null };
+
+
+export const Profiles_By_PkDocument = gql`
+    query profiles_by_pk($id: Int!) {
+  profiles_by_pk(id: $id) {
+    avatar
+    email
+    id
+    username
+  }
+}
+    `;
+export const Insert_Profiles_OneDocument = gql`
+    mutation insert_profiles_one($id: Int!, $username: String!, $email: String!, $avatar: String!) {
+  insert_profiles_one(
+    object: {id: $id, username: $username, email: $email, avatar: $avatar}
+  ) {
+    avatar
+    email
+    username
+    id
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    profiles_by_pk(variables: Profiles_By_PkQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<Profiles_By_PkQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Profiles_By_PkQuery>(Profiles_By_PkDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'profiles_by_pk', 'query');
+    },
+    insert_profiles_one(variables: Insert_Profiles_OneMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<Insert_Profiles_OneMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Insert_Profiles_OneMutation>(Insert_Profiles_OneDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insert_profiles_one', 'mutation');
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;

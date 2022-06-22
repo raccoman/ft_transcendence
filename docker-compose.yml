@@ -11,7 +11,7 @@ services:
       - "backend"
 
   hasura:
-    image: hasura/graphql-engine:v2.8.0
+    image: hasura/graphql-engine:v2.8.0.cli-migrations-v3
     container_name: hasura
     ports:
       - "8080:8080"
@@ -19,52 +19,25 @@ services:
       - "postgres"
     restart: always
     environment:
-      ## postgres database to store Hasura metadata
-      ##HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
-      ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
-      ##PG_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
-
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
-
-      ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-
-      ## JWT specific
-      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${JWT_SECRET}", "header": {"type": "Cookie", "name": "${JWT_COOKIE_NAME}" }}'
-
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, query-log
+      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "${JWT_SECRET}", "header": {"type": "Cookie", "name": "${JWT_COOKIE_NAME}" }}'
     volumes:
-      - "./hasura/metadata:/hasura-metadata"
       - "./hasura/migrations:/hasura-migrations"
+      - "./hasura/metadata:/hasura-metadata"
     networks:
       - "backend"
-
-  # backend:
-  #   ports:
-  #      - "${BACKEND_PORT}:${BACKEND_PORT}"
-  #   restart: always
-  #   build: ./backend
-  #   container_name: backend
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     - DB_USER=${DB_USER}
-  #     - DB_PASSWORD=${DB_PASSWORD}
-  #     - DB_NAME=${DB_NAME}
-  #     - DB_HOST=postgres
-  #   volumes:
-  #     - "./backend:/usr/src/backend"
-  #   networks:
-  #     - trans-net
 
   nextjs:
     build: nextjs/
     container_name: nextjs
     restart: always
     ports:
-      - "3000:3000"
-      - "80:80"
+      - ${NEXTJS_PORT}:${NEXTJS_PORT}
+    environment:
+      PORT: ${NEXTJS_PORT}
     networks:
       - "frontend"
 

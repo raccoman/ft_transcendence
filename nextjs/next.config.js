@@ -2,8 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    outputStandalone: true,
+    outputStandalone: true
   },
-}
+  images: {
+    domains: ['cdn.intra.42.fr']
+  }
 
-module.exports = nextConfig
+};
+
+module.exports = nextConfig;
