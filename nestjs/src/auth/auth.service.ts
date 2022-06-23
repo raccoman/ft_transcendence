@@ -4,23 +4,39 @@ import { lastValueFrom } from 'rxjs';
 import { gql } from 'graphql-request';
 import { InjectHasura } from '../hasura/hasura.module';
 import { Profiles, Sdk } from 'types/hasura';
+import { utcToZonedTime } from 'date-fns-tz';
 
 gql`
     query profiles_by_pk($id: Int!) {
         profiles_by_pk(id: $id) {
-            avatar
-            email
             id
             username
+            email
+            avatar
+            gems
+            last_activity
         }
     }
 
     mutation insert_profiles_one($id: Int!, $username: String!, $email: String!, $avatar: String!) {
         insert_profiles_one(object: {id: $id, username: $username, email: $email, avatar: $avatar}) {
-            avatar
-            email
-            username
             id
+            username
+            email
+            avatar
+            gems
+            last_activity
+        }
+    }
+
+    mutation update_profiles_by_pk($id: Int!, $last_activity: timestamptz!) {
+        update_profiles_by_pk(pk_columns: {id: $id}, _set: {last_activity: $last_activity}) {
+            id
+            username
+            email
+            avatar
+            gems
+            last_activity
         }
     }
 `;
@@ -84,6 +100,14 @@ export class AuthService {
       return { profile: null, status: -1, error: exception.message };
     }
 
+  }
+
+  public async me(id: number): Promise<{ profile: Profiles }> {
+    const { update_profiles_by_pk } = await this.hasura.update_profiles_by_pk({
+      id,
+      last_activity: new Date().toISOString(),
+    });
+    return { profile: update_profiles_by_pk };
   }
 
 }

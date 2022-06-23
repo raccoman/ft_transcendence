@@ -13,6 +13,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  json: any;
+  timestamptz: any;
+  uuid: any;
 };
 
 export type Int_Cast_Exp = {
@@ -66,21 +69,217 @@ export type String_Comparison_Exp = {
   _similar?: InputMaybe<Scalars['String']>;
 };
 
+/** columns and relationships of "channels" */
+export type Channels = {
+  __typename?: 'channels';
+  id: Scalars['uuid'];
+  members: Scalars['json'];
+  messsages: Scalars['json'];
+  mode: Scalars['String'];
+  name: Scalars['String'];
+};
+
+
+/** columns and relationships of "channels" */
+export type ChannelsMembersArgs = {
+  path: InputMaybe<Scalars['String']>;
+};
+
+
+/** columns and relationships of "channels" */
+export type ChannelsMesssagesArgs = {
+  path: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "channels" */
+export type Channels_Aggregate = {
+  __typename?: 'channels_aggregate';
+  aggregate: Maybe<Channels_Aggregate_Fields>;
+  nodes: Array<Channels>;
+};
+
+/** aggregate fields of "channels" */
+export type Channels_Aggregate_Fields = {
+  __typename?: 'channels_aggregate_fields';
+  count: Scalars['Int'];
+  max: Maybe<Channels_Max_Fields>;
+  min: Maybe<Channels_Min_Fields>;
+};
+
+
+/** aggregate fields of "channels" */
+export type Channels_Aggregate_FieldsCountArgs = {
+  columns: InputMaybe<Array<Channels_Select_Column>>;
+  distinct: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Boolean expression to filter rows from the table "channels". All fields are combined with a logical 'AND'. */
+export type Channels_Bool_Exp = {
+  _and?: InputMaybe<Array<Channels_Bool_Exp>>;
+  _not?: InputMaybe<Channels_Bool_Exp>;
+  _or?: InputMaybe<Array<Channels_Bool_Exp>>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  members?: InputMaybe<Json_Comparison_Exp>;
+  messsages?: InputMaybe<Json_Comparison_Exp>;
+  mode?: InputMaybe<String_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "channels" */
+export enum Channels_Constraint {
+  /** unique or primary key constraint on columns "id" */
+  ChannelsPkey = 'channels_pkey'
+}
+
+/** input type for inserting data into table "channels" */
+export type Channels_Insert_Input = {
+  id?: InputMaybe<Scalars['uuid']>;
+  members?: InputMaybe<Scalars['json']>;
+  messsages?: InputMaybe<Scalars['json']>;
+  mode?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Channels_Max_Fields = {
+  __typename?: 'channels_max_fields';
+  id: Maybe<Scalars['uuid']>;
+  mode: Maybe<Scalars['String']>;
+  name: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Channels_Min_Fields = {
+  __typename?: 'channels_min_fields';
+  id: Maybe<Scalars['uuid']>;
+  mode: Maybe<Scalars['String']>;
+  name: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "channels" */
+export type Channels_Mutation_Response = {
+  __typename?: 'channels_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Channels>;
+};
+
+/** on_conflict condition type for table "channels" */
+export type Channels_On_Conflict = {
+  constraint: Channels_Constraint;
+  update_columns?: Array<Channels_Update_Column>;
+  where?: InputMaybe<Channels_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "channels". */
+export type Channels_Order_By = {
+  id?: InputMaybe<Order_By>;
+  members?: InputMaybe<Order_By>;
+  messsages?: InputMaybe<Order_By>;
+  mode?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: channels */
+export type Channels_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
+/** select columns of table "channels" */
+export enum Channels_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Members = 'members',
+  /** column name */
+  Messsages = 'messsages',
+  /** column name */
+  Mode = 'mode',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "channels" */
+export type Channels_Set_Input = {
+  id?: InputMaybe<Scalars['uuid']>;
+  members?: InputMaybe<Scalars['json']>;
+  messsages?: InputMaybe<Scalars['json']>;
+  mode?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** update columns of table "channels" */
+export enum Channels_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Members = 'members',
+  /** column name */
+  Messsages = 'messsages',
+  /** column name */
+  Mode = 'mode',
+  /** column name */
+  Name = 'name'
+}
+
+export type Json_Cast_Exp = {
+  String?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Boolean expression to compare columns of type "json". All fields are combined with logical 'AND'. */
+export type Json_Comparison_Exp = {
+  _cast?: InputMaybe<Json_Cast_Exp>;
+  _eq?: InputMaybe<Scalars['json']>;
+  _gt?: InputMaybe<Scalars['json']>;
+  _gte?: InputMaybe<Scalars['json']>;
+  _in?: InputMaybe<Array<Scalars['json']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['json']>;
+  _lte?: InputMaybe<Scalars['json']>;
+  _neq?: InputMaybe<Scalars['json']>;
+  _nin?: InputMaybe<Array<Scalars['json']>>;
+};
+
 /** mutation root */
 export type Mutation_Root = {
   __typename?: 'mutation_root';
+  /** delete data from the table: "channels" */
+  delete_channels: Maybe<Channels_Mutation_Response>;
+  /** delete single row from the table: "channels" */
+  delete_channels_by_pk: Maybe<Channels>;
   /** delete data from the table: "profiles" */
   delete_profiles: Maybe<Profiles_Mutation_Response>;
   /** delete single row from the table: "profiles" */
   delete_profiles_by_pk: Maybe<Profiles>;
+  /** insert data into the table: "channels" */
+  insert_channels: Maybe<Channels_Mutation_Response>;
+  /** insert a single row into the table: "channels" */
+  insert_channels_one: Maybe<Channels>;
   /** insert data into the table: "profiles" */
   insert_profiles: Maybe<Profiles_Mutation_Response>;
   /** insert a single row into the table: "profiles" */
   insert_profiles_one: Maybe<Profiles>;
+  /** update data of the table: "channels" */
+  update_channels: Maybe<Channels_Mutation_Response>;
+  /** update single row of the table: "channels" */
+  update_channels_by_pk: Maybe<Channels>;
   /** update data of the table: "profiles" */
   update_profiles: Maybe<Profiles_Mutation_Response>;
   /** update single row of the table: "profiles" */
   update_profiles_by_pk: Maybe<Profiles>;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_ChannelsArgs = {
+  where: Channels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Channels_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -97,6 +296,20 @@ export type Mutation_RootDelete_Profiles_By_PkArgs = {
 
 
 /** mutation root */
+export type Mutation_RootInsert_ChannelsArgs = {
+  objects: Array<Channels_Insert_Input>;
+  on_conflict: InputMaybe<Channels_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Channels_OneArgs = {
+  object: Channels_Insert_Input;
+  on_conflict: InputMaybe<Channels_On_Conflict>;
+};
+
+
+/** mutation root */
 export type Mutation_RootInsert_ProfilesArgs = {
   objects: Array<Profiles_Insert_Input>;
   on_conflict: InputMaybe<Profiles_On_Conflict>;
@@ -107,6 +320,20 @@ export type Mutation_RootInsert_ProfilesArgs = {
 export type Mutation_RootInsert_Profiles_OneArgs = {
   object: Profiles_Insert_Input;
   on_conflict: InputMaybe<Profiles_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_ChannelsArgs = {
+  _set: InputMaybe<Channels_Set_Input>;
+  where: Channels_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Channels_By_PkArgs = {
+  _set: InputMaybe<Channels_Set_Input>;
+  pk_columns: Channels_Pk_Columns_Input;
 };
 
 
@@ -146,7 +373,9 @@ export type Profiles = {
   __typename?: 'profiles';
   avatar: Scalars['String'];
   email: Scalars['String'];
+  gems: Scalars['Int'];
   id: Scalars['Int'];
+  last_activity: Scalars['timestamptz'];
   username: Scalars['String'];
 };
 
@@ -183,6 +412,7 @@ export type Profiles_Aggregate_FieldsCountArgs = {
 /** aggregate avg on columns */
 export type Profiles_Avg_Fields = {
   __typename?: 'profiles_avg_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
@@ -193,7 +423,9 @@ export type Profiles_Bool_Exp = {
   _or?: InputMaybe<Array<Profiles_Bool_Exp>>;
   avatar?: InputMaybe<String_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
+  gems?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
+  last_activity?: InputMaybe<Timestamptz_Comparison_Exp>;
   username?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -205,6 +437,7 @@ export enum Profiles_Constraint {
 
 /** input type for incrementing numeric columns in table "profiles" */
 export type Profiles_Inc_Input = {
+  gems?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['Int']>;
 };
 
@@ -212,7 +445,9 @@ export type Profiles_Inc_Input = {
 export type Profiles_Insert_Input = {
   avatar?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
+  gems?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['Int']>;
+  last_activity?: InputMaybe<Scalars['timestamptz']>;
   username?: InputMaybe<Scalars['String']>;
 };
 
@@ -221,7 +456,9 @@ export type Profiles_Max_Fields = {
   __typename?: 'profiles_max_fields';
   avatar: Maybe<Scalars['String']>;
   email: Maybe<Scalars['String']>;
+  gems: Maybe<Scalars['Int']>;
   id: Maybe<Scalars['Int']>;
+  last_activity: Maybe<Scalars['timestamptz']>;
   username: Maybe<Scalars['String']>;
 };
 
@@ -230,7 +467,9 @@ export type Profiles_Min_Fields = {
   __typename?: 'profiles_min_fields';
   avatar: Maybe<Scalars['String']>;
   email: Maybe<Scalars['String']>;
+  gems: Maybe<Scalars['Int']>;
   id: Maybe<Scalars['Int']>;
+  last_activity: Maybe<Scalars['timestamptz']>;
   username: Maybe<Scalars['String']>;
 };
 
@@ -254,7 +493,9 @@ export type Profiles_On_Conflict = {
 export type Profiles_Order_By = {
   avatar?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
+  gems?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  last_activity?: InputMaybe<Order_By>;
   username?: InputMaybe<Order_By>;
 };
 
@@ -270,7 +511,11 @@ export enum Profiles_Select_Column {
   /** column name */
   Email = 'email',
   /** column name */
+  Gems = 'gems',
+  /** column name */
   Id = 'id',
+  /** column name */
+  LastActivity = 'last_activity',
   /** column name */
   Username = 'username'
 }
@@ -279,31 +524,37 @@ export enum Profiles_Select_Column {
 export type Profiles_Set_Input = {
   avatar?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
+  gems?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['Int']>;
+  last_activity?: InputMaybe<Scalars['timestamptz']>;
   username?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate stddev on columns */
 export type Profiles_Stddev_Fields = {
   __typename?: 'profiles_stddev_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Profiles_Stddev_Pop_Fields = {
   __typename?: 'profiles_stddev_pop_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Profiles_Stddev_Samp_Fields = {
   __typename?: 'profiles_stddev_samp_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate sum on columns */
 export type Profiles_Sum_Fields = {
   __typename?: 'profiles_sum_fields';
+  gems: Maybe<Scalars['Int']>;
   id: Maybe<Scalars['Int']>;
 };
 
@@ -314,7 +565,11 @@ export enum Profiles_Update_Column {
   /** column name */
   Email = 'email',
   /** column name */
+  Gems = 'gems',
+  /** column name */
   Id = 'id',
+  /** column name */
+  LastActivity = 'last_activity',
   /** column name */
   Username = 'username'
 }
@@ -322,29 +577,61 @@ export enum Profiles_Update_Column {
 /** aggregate var_pop on columns */
 export type Profiles_Var_Pop_Fields = {
   __typename?: 'profiles_var_pop_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate var_samp on columns */
 export type Profiles_Var_Samp_Fields = {
   __typename?: 'profiles_var_samp_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 /** aggregate variance on columns */
 export type Profiles_Variance_Fields = {
   __typename?: 'profiles_variance_fields';
+  gems: Maybe<Scalars['Float']>;
   id: Maybe<Scalars['Float']>;
 };
 
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "channels" */
+  channels: Array<Channels>;
+  /** fetch aggregated fields from the table: "channels" */
+  channels_aggregate: Channels_Aggregate;
+  /** fetch data from the table: "channels" using primary key columns */
+  channels_by_pk: Maybe<Channels>;
   /** fetch data from the table: "profiles" */
   profiles: Array<Profiles>;
   /** fetch aggregated fields from the table: "profiles" */
   profiles_aggregate: Profiles_Aggregate;
   /** fetch data from the table: "profiles" using primary key columns */
   profiles_by_pk: Maybe<Profiles>;
+};
+
+
+export type Query_RootChannelsArgs = {
+  distinct_on: InputMaybe<Array<Channels_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Channels_Order_By>>;
+  where: InputMaybe<Channels_Bool_Exp>;
+};
+
+
+export type Query_RootChannels_AggregateArgs = {
+  distinct_on: InputMaybe<Array<Channels_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Channels_Order_By>>;
+  where: InputMaybe<Channels_Bool_Exp>;
+};
+
+
+export type Query_RootChannels_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -372,12 +659,41 @@ export type Query_RootProfiles_By_PkArgs = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "channels" */
+  channels: Array<Channels>;
+  /** fetch aggregated fields from the table: "channels" */
+  channels_aggregate: Channels_Aggregate;
+  /** fetch data from the table: "channels" using primary key columns */
+  channels_by_pk: Maybe<Channels>;
   /** fetch data from the table: "profiles" */
   profiles: Array<Profiles>;
   /** fetch aggregated fields from the table: "profiles" */
   profiles_aggregate: Profiles_Aggregate;
   /** fetch data from the table: "profiles" using primary key columns */
   profiles_by_pk: Maybe<Profiles>;
+};
+
+
+export type Subscription_RootChannelsArgs = {
+  distinct_on: InputMaybe<Array<Channels_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Channels_Order_By>>;
+  where: InputMaybe<Channels_Bool_Exp>;
+};
+
+
+export type Subscription_RootChannels_AggregateArgs = {
+  distinct_on: InputMaybe<Array<Channels_Select_Column>>;
+  limit: InputMaybe<Scalars['Int']>;
+  offset: InputMaybe<Scalars['Int']>;
+  order_by: InputMaybe<Array<Channels_Order_By>>;
+  where: InputMaybe<Channels_Bool_Exp>;
+};
+
+
+export type Subscription_RootChannels_By_PkArgs = {
+  id: Scalars['uuid'];
 };
 
 
@@ -403,12 +719,48 @@ export type Subscription_RootProfiles_By_PkArgs = {
   id: Scalars['Int'];
 };
 
+export type Timestamptz_Cast_Exp = {
+  String?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
+export type Timestamptz_Comparison_Exp = {
+  _cast?: InputMaybe<Timestamptz_Cast_Exp>;
+  _eq?: InputMaybe<Scalars['timestamptz']>;
+  _gt?: InputMaybe<Scalars['timestamptz']>;
+  _gte?: InputMaybe<Scalars['timestamptz']>;
+  _in?: InputMaybe<Array<Scalars['timestamptz']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['timestamptz']>;
+  _lte?: InputMaybe<Scalars['timestamptz']>;
+  _neq?: InputMaybe<Scalars['timestamptz']>;
+  _nin?: InputMaybe<Array<Scalars['timestamptz']>>;
+};
+
+export type Uuid_Cast_Exp = {
+  String?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'. */
+export type Uuid_Comparison_Exp = {
+  _cast?: InputMaybe<Uuid_Cast_Exp>;
+  _eq?: InputMaybe<Scalars['uuid']>;
+  _gt?: InputMaybe<Scalars['uuid']>;
+  _gte?: InputMaybe<Scalars['uuid']>;
+  _in?: InputMaybe<Array<Scalars['uuid']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['uuid']>;
+  _lte?: InputMaybe<Scalars['uuid']>;
+  _neq?: InputMaybe<Scalars['uuid']>;
+  _nin?: InputMaybe<Array<Scalars['uuid']>>;
+};
+
 export type Profiles_By_PkQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type Profiles_By_PkQuery = { __typename?: 'query_root', profiles_by_pk: { __typename?: 'profiles', avatar: string, email: string, id: number, username: string } | null };
+export type Profiles_By_PkQuery = { __typename?: 'query_root', profiles_by_pk: { __typename?: 'profiles', id: number, username: string, email: string, avatar: string, gems: number, last_activity: any } | null };
 
 export type Insert_Profiles_OneMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -418,16 +770,26 @@ export type Insert_Profiles_OneMutationVariables = Exact<{
 }>;
 
 
-export type Insert_Profiles_OneMutation = { __typename?: 'mutation_root', insert_profiles_one: { __typename?: 'profiles', avatar: string, email: string, username: string, id: number } | null };
+export type Insert_Profiles_OneMutation = { __typename?: 'mutation_root', insert_profiles_one: { __typename?: 'profiles', id: number, username: string, email: string, avatar: string, gems: number, last_activity: any } | null };
+
+export type Update_Profiles_By_PkMutationVariables = Exact<{
+  id: Scalars['Int'];
+  last_activity: Scalars['timestamptz'];
+}>;
+
+
+export type Update_Profiles_By_PkMutation = { __typename?: 'mutation_root', update_profiles_by_pk: { __typename?: 'profiles', id: number, username: string, email: string, avatar: string, gems: number, last_activity: any } | null };
 
 
 export const Profiles_By_PkDocument = gql`
     query profiles_by_pk($id: Int!) {
   profiles_by_pk(id: $id) {
-    avatar
-    email
     id
     username
+    email
+    avatar
+    gems
+    last_activity
   }
 }
     `;
@@ -436,10 +798,27 @@ export const Insert_Profiles_OneDocument = gql`
   insert_profiles_one(
     object: {id: $id, username: $username, email: $email, avatar: $avatar}
   ) {
-    avatar
-    email
-    username
     id
+    username
+    email
+    avatar
+    gems
+    last_activity
+  }
+}
+    `;
+export const Update_Profiles_By_PkDocument = gql`
+    mutation update_profiles_by_pk($id: Int!, $last_activity: timestamptz!) {
+  update_profiles_by_pk(
+    pk_columns: {id: $id}
+    _set: {last_activity: $last_activity}
+  ) {
+    id
+    username
+    email
+    avatar
+    gems
+    last_activity
   }
 }
     `;
@@ -456,6 +835,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     insert_profiles_one(variables: Insert_Profiles_OneMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<Insert_Profiles_OneMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<Insert_Profiles_OneMutation>(Insert_Profiles_OneDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insert_profiles_one', 'mutation');
+    },
+    update_profiles_by_pk(variables: Update_Profiles_By_PkMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<Update_Profiles_By_PkMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<Update_Profiles_By_PkMutation>(Update_Profiles_By_PkDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'update_profiles_by_pk', 'mutation');
     }
   };
 }

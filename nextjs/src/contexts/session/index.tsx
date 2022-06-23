@@ -3,9 +3,6 @@ import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { Profiles } from 'types/hasura';
 import axios from 'axios';
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { profiles_by_pk } from 'src/graphql/queries';
-import { update_last_activity_profiles_by_pk } from 'src/graphql/mutations';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,
@@ -17,9 +14,6 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
   const [isLoading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profiles | undefined>(undefined);
-
-  const [fetchProfile] = useLazyQuery(profiles_by_pk);
-  const [updateLastActivity] = useMutation(update_last_activity_profiles_by_pk);
 
   const signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
@@ -36,16 +30,9 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
     try {
       setLoading(true);
 
-      const {
-        data: {
-          'https://hasura.io/jwt/claims': {
-            'x-hasura-user-id': id,
-          },
-        },
-      } = await axios.get(process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/auth/me', { withCredentials: true });
+      const { data: { profile } } = await axios.get(process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/auth/me', { withCredentials: true });
 
-      const { data: { profiles_by_pk } } = await fetchProfile({ variables: { id } });
-      setProfile(profiles_by_pk);
+      setProfile(profile);
 
     } catch (exception) {
       console.error(exception);
@@ -58,24 +45,17 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
   useEffect(() => {
 
-    const last_activity = setInterval(() => {
-      updateLastActivity({
-        variables: {
-          id: profile,
-          last_activity: new Date().valueOf(),
-        },
-      });
+    getSession();
+
+    const session = setInterval(() => {
+
+      getSession();
+
     }, 300000);
 
     return () => {
-      clearInterval(last_activity);
+      clearInterval(session);
     };
-
-  }, [profile]);
-
-  useEffect(() => {
-
-    getSession();
 
   }, []);
 

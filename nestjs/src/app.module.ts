@@ -7,7 +7,11 @@ import { HasuraModule } from './hasura/hasura.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: '../.env' }),
+    ConfigModule.forRoot({
+      envFilePath: '../.env',
+      isGlobal: true,
+      cache: true,
+    }),
     AuthModule,
     HasuraModule,
   ],
