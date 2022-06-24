@@ -12,10 +12,9 @@ export class ProfileResolver {
   ) {
   }
 
-  @Query((returns) => Profile, { nullable: true })
   @UseGuards(JwtAuthGuard)
+  @Query((returns) => Profile, { nullable: true })
   async me(@Context() context) {
-
     const { req } = context;
     return await this.profile.findUnique(req.user.id);
   }

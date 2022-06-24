@@ -7,7 +7,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    const { req, connection } = ctx.getContext();
+
+
+    console.log(JSON.stringify(connection));
+
+    return connection?.context?.headers ? connection.context : req;
   }
 
 }

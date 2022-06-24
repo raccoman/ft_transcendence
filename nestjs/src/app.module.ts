@@ -6,6 +6,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ProfileModule } from './profile/profile.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { ChatModule } from 'src/chat/chat.module';
+import { Context } from 'graphql-ws';
 
 @Module({
   imports: [
@@ -17,6 +19,14 @@ import { PrismaModule } from 'src/prisma/prisma.module';
         credentials: true,
       },
       driver: ApolloDriver,
+      context: ({ req, res, payload, connection }: any) => ({ req, res, payload, connection }),
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context: Context<any>) => {
+          },
+        },
+      },
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       // buildSchemaOptions: { dateScalarMode: 'timestamp' },
@@ -26,6 +36,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     }),
     AuthModule,
     ProfileModule,
+    ChatModule,
   ],
 })
 export class AppModule {

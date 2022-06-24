@@ -16,5 +16,24 @@ model Profile {
   email			String
   avatar		String
   gems			Int			@default(0)
+  messages		Message[]
+  updated_at	DateTime	@default(now())
+}
+
+model Channel {
+  id			String		@id @default(cuid())
+  name			String
+  type			String		@default("PUBLIC")
+  password		String
+  messages		Message[]
+}
+
+model Message {
+  id			String		@id @default(cuid())
+  channel		Channel		@relation(fields: [channel_id], references: [id])
+  channel_id	String
+  sender		Profile		@relation(fields: [sender_id], references: [id])
+  sender_id		Int
+  text			String
   updated_at	DateTime	@default(now())
 }
