@@ -1,22 +1,32 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { HasuraModule } from './hasura/hasura.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
+import { ProfileModule } from './profile/profile.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '../.env',
-      isGlobal: true,
-      cache: true,
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      cors: {
+        origin: [process.env.NEXTJS_BASE_URL],
+        credentials: true,
+      },
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      // buildSchemaOptions: { dateScalarMode: 'timestamp' },
+      definitions: {
+        path: join(process.cwd(), 'types/graphql.ts'),
+      },
     }),
     AuthModule,
-    HasuraModule,
+    ProfileModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {
 }

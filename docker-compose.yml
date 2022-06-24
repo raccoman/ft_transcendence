@@ -10,23 +10,15 @@ services:
     networks:
       - "backend"
 
-  hasura:
-    image: hasura/graphql-engine:v2.8.0.cli-migrations-v3
-    container_name: hasura
-    ports:
-      - "8080:8080"
-    depends_on:
-      - "postgres"
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
     restart: always
+    ports:
+      - "8080:80"
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
-      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, query-log
-      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "${JWT_SECRET}", "header": {"type": "Cookie", "name": "${JWT_COOKIE_NAME}" }}'
-    volumes:
-      - "./hasura/migrations:/hasura-migrations"
-      - "./hasura/metadata:/hasura-metadata"
+      PGADMIN_DEFAULT_EMAIL: "raccoman@student.42roma.it"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
     networks:
       - "backend"
 
@@ -44,4 +36,3 @@ services:
 networks:
   frontend:
   backend:
-  

@@ -1,8 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ChatContextProps, FCWithChildren } from 'types';
-import { useSubscription } from '@apollo/client';
-import { subscription_channels } from 'src/graphql/subscriptions';
-import { Channels } from 'types/hasura';
 
 const ChatContext = createContext<ChatContextProps>({
   channels: [],
@@ -10,17 +7,17 @@ const ChatContext = createContext<ChatContextProps>({
 
 export const ChatContextProvider: FCWithChildren = ({ children }) => {
 
-  const { data } = useSubscription(subscription_channels);
+  //const { data } = useSubscription(subscription_channels);
 
-  const [channels, setChannels] = useState<Channels[]>([]);
+  const [channels, setChannels] = useState<any[]>([]);
 
-  useEffect(() => {
-
-    if (!data || !data.channels)
-      return;
-
-    setChannels([...data.channels]);
-  }, [data]);
+  // useEffect(() => {
+  //
+  //   if (!data || !data.channels)
+  //     return;
+  //
+  //   setChannels([...data.channels]);
+  // }, [data]);
 
   return (
     <ChatContext.Provider value={{ channels }}>

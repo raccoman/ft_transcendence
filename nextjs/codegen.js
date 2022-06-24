@@ -1,18 +1,14 @@
 require('dotenv').config({ path: '../.env' });
 
 const {
-  HASURA_GRAPHQL_ENDPOINT: endpoint, HASURA_GRAPHQL_ADMIN_SECRET: secret,
+  NESTJS_BASE_URL: endpoint,
 } = process.env;
 
 const codeGenConfig = {
   generates: {
-    'types/hasura.ts': {
+    'types/graphql.ts': {
       schema: [{
-        [endpoint]: {
-          headers: {
-            'x-hasura-admin-secret': secret,
-          },
-        },
+        [endpoint + '/graphql']: {},
       }],
       plugins: [
         'typescript',

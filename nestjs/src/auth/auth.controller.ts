@@ -1,8 +1,7 @@
-import { Controller, Get, HttpStatus, Query, Req, Request, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res} from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -27,11 +26,7 @@ export class AuthController {
     }
 
     const access_token = await this.jwt.signAsync({
-      'https://hasura.io/jwt/claims': {
-        'x-hasura-allowed-roles': ['user'],
-        'x-hasura-default-role': 'user',
-        'x-hasura-user-id': String(profile.id),
-      },
+      'id': profile.id,
     });
 
     return response
@@ -44,23 +39,4 @@ export class AuthController {
           process.env.NEXTJS_BASE_URL + '/',
       );
   }
-
-
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  async me(@Req() request, @Res() response: Response): Promise<any> {
-
-    try {
-      const profile = await this.service.me(request.user['https://hasura.io/jwt/claims']['x-hasura-user-id']);
-
-      return response
-        .status(200)
-        .send(profile);
-
-    } catch (exception) {
-      console.error(exception);
-      return response.status(404).send('An error occurred while retrieving your session.');
-    }
-  }
-
 }

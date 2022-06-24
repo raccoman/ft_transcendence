@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
-import { Profiles } from 'types/hasura';
-import axios from 'axios';
+import { useQuery } from '@apollo/client';
+import { ME } from 'src/graphql/queries';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,
@@ -12,8 +12,9 @@ const SessionContext = createContext<SessionContextProps>({
 
 export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
-  const [isLoading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<Profiles | undefined>(undefined);
+  const { loading, data } = useQuery(ME, {
+    pollInterval: 300000,
+  });
 
   const signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
@@ -25,42 +26,12 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
     window.location.replace(INTRA_AUTHORIZATION);
   };
 
-  const getSession = async () => {
-
-    try {
-      setLoading(true);
-
-      const { data: { profile } } = await axios.get(process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/auth/me', { withCredentials: true });
-
-      setProfile(profile);
-
-    } catch (exception) {
-      console.error(exception);
-      setProfile(undefined);
-    } finally {
-      setLoading(false);
-    }
-
-  };
-
-  useEffect(() => {
-
-    getSession();
-
-    const session = setInterval(() => {
-
-      getSession();
-
-    }, 300000);
-
-    return () => {
-      clearInterval(session);
-    };
-
-  }, []);
-
   return (
-    <SessionContext.Provider value={{ signIn, isLoading, profile }}>
+    <SessionContext.Provider value={{
+      signIn,
+      isLoading: loading && !data,
+      profile: data && data.me,
+    }}>
       {children}
     </SessionContext.Provider>
   );

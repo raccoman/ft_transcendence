@@ -1,56 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
-import { gql } from 'graphql-request';
-import { InjectHasura } from '../hasura/hasura.module';
-import { Profiles, Sdk } from 'types/hasura';
-import { utcToZonedTime } from 'date-fns-tz';
-
-gql`
-    query profiles_by_pk($id: Int!) {
-        profiles_by_pk(id: $id) {
-            id
-            username
-            email
-            avatar
-            gems
-            last_activity
-        }
-    }
-
-    mutation insert_profiles_one($id: Int!, $username: String!, $email: String!, $avatar: String!) {
-        insert_profiles_one(object: {id: $id, username: $username, email: $email, avatar: $avatar}) {
-            id
-            username
-            email
-            avatar
-            gems
-            last_activity
-        }
-    }
-
-    mutation update_profiles_by_pk($id: Int!, $last_activity: timestamptz!) {
-        update_profiles_by_pk(pk_columns: {id: $id}, _set: {last_activity: $last_activity}) {
-            id
-            username
-            email
-            avatar
-            gems
-            last_activity
-        }
-    }
-`;
+import { ProfileService } from 'src/profile/profile.service';
 
 @Injectable()
 export class AuthService {
 
   constructor(
     private readonly axios: HttpService,
-    @InjectHasura() private readonly hasura: Sdk,
+    private readonly profile: ProfileService,
   ) {
   }
 
-  public async signin(code: string, state: string): Promise<{ profile: Profiles, status: number, error?: string }> {
+  public async signin(code: string, state: string): Promise<any> {
 
     try {
 
@@ -77,37 +39,28 @@ export class AuthService {
       if (me_status != 200)
         throw new Error('Error while fetching: https://api.intra.42.fr/v2/me');
 
-      const { profiles_by_pk } = await this.hasura.profiles_by_pk({
-        id: data.id,
-      });
+      let profile = await this.profile.findUnique(data.id);
+      if (profile != null) {
+        return { profile, status: 0 };
+      }
 
-      if (profiles_by_pk != null)
-        return { profile: profiles_by_pk, status: 0 };
-
-      const { insert_profiles_one } = await this.hasura.insert_profiles_one({
+      profile = await this.profile.create({
         id: data.id,
         username: data.login,
         email: data.email,
         avatar: data.image_url,
       });
+      if (profile == null)
+        throw new Error('An error occurred while creating your profile.');
 
-      if (insert_profiles_one == null)
-        throw new Error('Error while fetching: hasura - insert_profiles_one');
-
-      return { profile: insert_profiles_one, status: 1 };
+      return { profile, status: 1 };
 
     } catch (exception: any) {
+      console.error(exception);
       return { profile: null, status: -1, error: exception.message };
     }
 
   }
 
-  public async me(id: number): Promise<{ profile: Profiles }> {
-    const { update_profiles_by_pk } = await this.hasura.update_profiles_by_pk({
-      id,
-      last_activity: new Date().toISOString(),
-    });
-    return { profile: update_profiles_by_pk };
-  }
 
 }

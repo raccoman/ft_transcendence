@@ -3,9 +3,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
-import { HasuraModule } from 'src/hasura/hasura.module';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { ConfigService } from '@nestjs/config';
+import { ProfileService } from 'src/profile/profile.service';
 
 @Module({
   imports: [
@@ -17,9 +17,8 @@ import { ConfigService } from '@nestjs/config';
         signOptions: { expiresIn: '6h' },
       }),
     }),
-    HasuraModule,
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [JwtStrategy, ProfileService, AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {
