@@ -4,9 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 const extractJWTFromCookie = (request: Request) => {
-  if (request && request.cookies)
-    return request.cookies[process.env.JWT_COOKIE_NAME];
-  return null;
+  if (!request || !request.headers || !request.headers.cookie)
+    return null;
+
+  const cookies = request.headers.cookie;
+  const matches = cookies.match(process.env.JWT_COOKIE_NAME + '=([^;]+)');
+  return matches.length >= 1 ? matches[1] : null;
 };
 
 @Injectable()

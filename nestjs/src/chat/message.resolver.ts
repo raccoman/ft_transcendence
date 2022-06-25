@@ -36,6 +36,9 @@ export class MessageResolver {
   @Subscription((returns) => Message)
   async onMessage(@Context() context): Promise<any> {
     const { req } = context;
+
+    console.log(JSON.stringify(req.user));
+
     return withFilter(
       () => this.chatService.subscribe('MESSAGE-SYNC'),
       (payload, variables) => {

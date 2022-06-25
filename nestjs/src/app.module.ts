@@ -14,24 +14,36 @@ import { Context } from 'graphql-ws';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      cors: {
-        origin: [process.env.NEXTJS_BASE_URL],
-        credentials: true,
-      },
       driver: ApolloDriver,
-      context: ({ req, res, payload, connection }: any) => ({ req, res, payload, connection }),
-      installSubscriptionHandlers: true,
-      subscriptions: {
-        'graphql-ws': {
-          onConnect: (context: Context<any>) => {
-          },
-        },
-      },
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       // buildSchemaOptions: { dateScalarMode: 'timestamp' },
       definitions: {
         path: join(process.cwd(), 'types/graphql.ts'),
+      },
+      cors: {
+        origin: [process.env.NEXTJS_BASE_URL],
+        credentials: true,
+      },
+      subscriptions: {
+        'graphql-ws': true,
+      },
+      context: (context) => {
+
+        if (context?.extra?.request) {
+
+          return {
+            req: {
+              ...context?.extra?.request,
+              headers: {
+                ...context?.extra?.request?.headers,
+                ...context?.connectionParams,
+              },
+            },
+          };
+        }
+
+        return { req: context?.req };
       },
     }),
     AuthModule,
