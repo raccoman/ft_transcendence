@@ -5,6 +5,7 @@ export const ON_CHANNEL_UPDATE = gql`
         channel {
             id
             messages {
+                id
                 profile {
                     id
                     username

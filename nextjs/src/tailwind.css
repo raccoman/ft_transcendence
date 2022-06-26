@@ -9,6 +9,19 @@ body {
     padding: 0;
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background-color: theme('colors.primary.600');
-    color: theme('colors.secondary');
+    @apply bg-primary-600;
+    @apply text-secondary;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-primary-400;
+    @apply rounded-full;
 }

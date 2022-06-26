@@ -12,3 +12,30 @@ export const ME = gql`
         }
     }
 `;
+
+export const CHANNELS = gql`
+    query {
+        channels {
+            id
+            name
+            type
+            password
+            messages {
+                id
+                profile {
+                    id
+                    username
+                }
+                text
+                updated_at
+            }
+            partecipants {
+                profile {
+                    id
+                    username
+                }
+                role
+            }
+        }
+    }
+`;

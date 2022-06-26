@@ -8,7 +8,7 @@ import {
   Lock,
   CaretCircleUp,
 } from 'phosphor-react';
-import { Channels } from 'types/hasura';
+import { Channel } from 'types/graphql';
 
 const Component: FC = () => {
 
@@ -16,15 +16,16 @@ const Component: FC = () => {
   const { channels } = useChat();
 
   const [isExpandend, setExpandend] = useState(false);
-  const [currentChannel, setCurrentChannel] = useState<Channels | null>(null);
+  const [currentChannel, setCurrentChannel] = useState<Channel | null>(null);
 
   return (
-    <div className='absolute bottom-0 ml-5 flex space-x-10'>
+    <div className='fixed bottom-0 ml-5 flex space-x-5'>
 
       <div
-        className='flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>
+        className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>
 
         <div className='flex space-x-10 justify-between'>
+
           <div className='flex items-center space-x-2.5'>
 
             <div className='relative'>
@@ -37,10 +38,10 @@ const Component: FC = () => {
                 className='absolute right-0 bottom-0 inline-flex rounded-full h-3 w-3 bg-green-500/75 animate-ping'></span>
             </div>
 
-            <p className='font-medium align-middle'>Direct Messages</p>
+            <p className='font-medium align-middle'>Conversations</p>
 
           </div>
-          <div className='flex'>
+          <div className='flex items-center'>
 
             <button className='rounded-full p-2 hover:bg-secondary/10'>
               <PencilSimpleLine size={18} />
@@ -51,10 +52,11 @@ const Component: FC = () => {
             </button>
 
           </div>
+
         </div>
 
         {isExpandend && (
-          <div className='grid grid-cols-1 divide-y divide-primary-400 items-start py-5 px-2'>
+          <div className='grid grid-cols-1 divide-y divide-primary-400 items-start pt-2 px-2'>
 
             {channels.length <= 0 && (
               <div className='h-full flex justify-center items-center min-h-[150px]'>
@@ -64,13 +66,15 @@ const Component: FC = () => {
 
             {channels.map((channel, index) => {
               return (
-                <div key={index} className='flex justify-between items-center py-2'
-                     onClick={() => setCurrentChannel(currentChannel == channel ? null : channel)}>
+                <div key={index} className='flex justify-between items-center py-2'>
                   <label className='flex items-center space-x-2'>
                     <p>{channel.name}</p>
-                    {channel.mode != 'PUBLIC' && (<Lock size={12} weight='duotone' />)}
+                    {channel.type != 'PUBLIC' && (<Lock size={12} weight='duotone' />)}
                   </label>
-                  <a className='text-accent underline'>Join</a>
+                  <button onClick={() => setCurrentChannel(currentChannel == channel ? null : channel)}
+                          className='text-accent underline'>
+                    Join
+                  </button>
                 </div>
               );
             })}
@@ -94,34 +98,43 @@ const Component: FC = () => {
 
             </div>
 
-            <div className='grid grid-cols-1 py-5 px-2'>
-              {currentChannel.messsages.map((message: any, index: number) => {
+            <div className='grid grid-cols-1 gap-2 pt-2 px-2 overflow-y-scroll h-80 scrollbar-thin scrollbar-thumb-primary-400 scrollbar-thumb-rounded-md'>
+              {currentChannel.messages.map((message: any, index: number) => {
 
-                if (message.sender.id == profile?.id) {
+                if (message.profile.id == profile?.id) {
                   return (
-                    <div key={index} className='flex flex-col items-end text-sm'>
-                      <div className='flex space-x-1.5'>
-                        <p>{message.text}</p>
+                    <div key={index} className='flex w-full'>
+                      <div className='flex-[1_3_0%]'>
                       </div>
-                      <p className='text-secondary/50 text-xs'>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                      <div key={message.id} className='flex-[2_3_0%] flex flex-col items-end text-sm bg-accent/25 rounded-lg rounded-br-none px-2 py-1'>
+                        <p>{message.text}</p>
+                        <p className='text-secondary/50 text-xs'>
+                          {new Date(message.updated_at).toLocaleTimeString()}
+                        </p>
+                      </div>
                     </div>
                   );
                 }
 
                 return (
-                  <div key={index} className='flex flex-col text-sm'>
-                    <div className='flex space-x-1.5'>
-                      <label className='flex'>
-                        <p className='underline text-accent'>{message.sender.username}</p>
-                        <p>:</p>
-                      </label>
-                      <p>{message.text}</p>
+                  <div key={index} className='flex w-full'>
+                    <div className='flex-2 flex flex-col text-sm'>
+                      <div className='flex space-x-1.5'>
+                        <label className='flex'>
+                          <p className='underline text-accent'>{message.profile.username}</p>
+                          <p>:</p>
+                        </label>
+                        <p>{message.text}</p>
+                      </div>
+                      <p className='text-secondary/50 text-xs'>{new Date(message.updated_at).toLocaleTimeString()}</p>
                     </div>
-                    <p className='text-secondary/50 text-xs'>{new Date(message.timestamp).toLocaleTimeString()}</p>
+                    <div className='flex-1'>
+                    </div>
                   </div>
                 );
               })}
             </div>
+
           </div>
 
           <div className='bg-primary-500 p-2.5 flex space-x-2.5 items-center'>
