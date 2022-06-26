@@ -1,4 +1,4 @@
-import { Context, Query, Resolver } from '@nestjs/graphql';
+import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Profile } from 'src/profile/models/profile.model';
 import { ProfileService } from 'src/profile/profile.service';
 import { UseGuards } from '@nestjs/common';

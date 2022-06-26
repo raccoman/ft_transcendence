@@ -5,22 +5,22 @@ services:
     image: postgres:latest
     container_name: postgres
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - "backend"
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
+  adminer:
+    image: adminer
     restart: always
     ports:
-      - "8080:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "raccoman@student.42roma.it"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
+      - "8080:8080"
+    depends_on:
+      - postgres
     networks:
-      - "backend"
+      - backend
 
   nextjs:
     build: nextjs/
@@ -31,7 +31,7 @@ services:
     environment:
       PORT: ${NEXTJS_PORT}
     networks:
-      - "frontend"
+      - frontend
 
 networks:
   frontend:

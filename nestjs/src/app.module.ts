@@ -7,12 +7,13 @@ import { join } from 'path';
 import { ProfileModule } from './profile/profile.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ChatModule } from 'src/chat/chat.module';
-import { Context } from 'graphql-ws';
+import { PubsubModule } from 'src/pubsub/pubsub.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    PubsubModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),

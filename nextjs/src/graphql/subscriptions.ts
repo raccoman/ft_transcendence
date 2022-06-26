@@ -1,13 +1,27 @@
 import { gql } from '@apollo/client';
 
-export const subscription_channels = gql`
-    subscription channels {
-        channels {
+export const ON_CHANNEL_UPDATE = gql`
+    subscription {
+        channel {
             id
-            members
-            messsages
-            mode
+            messages {
+                profile {
+                    id
+                    username
+                }
+                text
+                updated_at
+            }
             name
+            partecipants {
+                profile {
+                    id
+                    username
+                }
+                role
+            }
+            password
+            type
         }
     }
 `;

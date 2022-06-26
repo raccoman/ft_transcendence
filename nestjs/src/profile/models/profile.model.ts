@@ -19,5 +19,5 @@ export class Profile {
   gems: number;
 
   @Field((type) => Date)
-  updated_at: Date
+  updated_at: Date;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class MessageService {
+export class PartecipantService {
 
   constructor(
     private readonly prisma: PrismaService,
@@ -10,22 +10,11 @@ export class MessageService {
   }
 
   public findAllByChannel(channel_id: string) {
-    return this.prisma.message.findMany({
+    return this.prisma.partecipant.findMany({
       where: {
         channel_id,
       },
     });
   }
 
-  public create({ channel_id, sender_id, text }: any) {
-    return this.prisma.message.create({
-      data: {
-        channel_id,
-        sender_id,
-        text,
-      },
-    });
-  }
 }
-
-

@@ -1,28 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Message } from './message.model';
-
-@InputType()
-export class SendMessageInput {
-
-  @Field()
-  channel_id: string;
-
-  @Field()
-  text: string;
-}
-
-@InputType()
-export class CreateChannelInput {
-
-  @Field()
-  name: string;
-
-  @Field({nullable: true})
-  type?: string;
-
-  @Field({nullable: true})
-  password?: string;
-}
+import { Partecipant } from './partecipant.model';
+import { Punishment } from './punishment.model';
 
 @ObjectType()
 export class Channel {
@@ -36,9 +15,16 @@ export class Channel {
   @Field()
   type: string;
 
-  @Field()
-  password: string;
+  @Field({ nullable: true })
+  password?: string;
 
   @Field(type => [Message])
   messages: Message[];
+
+  @Field(type => [Partecipant])
+  partecipants: Partecipant[];
+
+  @Field(type => [Punishment])
+  punishments: Punishment[];
+
 }

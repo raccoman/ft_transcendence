@@ -9,7 +9,7 @@ const extractJWTFromCookie = (request: Request) => {
 
   const cookies = request.headers.cookie;
   const matches = cookies.match(process.env.JWT_COOKIE_NAME + '=([^;]+)');
-  return matches.length >= 1 ? matches[1] : null;
+  return matches && matches.length >= 1 ? matches[1] : null;
 };
 
 @Injectable()

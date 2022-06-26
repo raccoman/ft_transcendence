@@ -9,7 +9,7 @@ const HTTP_LINK = new HttpLink({
 });
 
 const WS_LINK = process.browser ? new GraphQLWsLink(createClient({
-  url: process.env.NEXT_PUBLIC_HASURA_GRAPHQL_WS_ENDPOINT || 'undefined',
+  url: process.env.NEXT_PUBLIC_NESTJS_WS_BASE_URL + '/graphql' || 'undefined',
 })) : null;
 
 const ONDEMAND_LINK = process.browser ? split(({ query }) => {
@@ -22,7 +22,7 @@ const ONDEMAND_LINK = process.browser ? split(({ query }) => {
 ) : null;
 
 export const APOLLO_CLIENT = new ApolloClient({
-  // @ts-ignore
+  //@ts-ignore
   link: ONDEMAND_LINK,
   cache: new InMemoryCache(),
 });

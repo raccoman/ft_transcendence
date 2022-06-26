@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -11,29 +12,53 @@ datasource db {
 }
 
 model Profile {
-  id			Int			@id
+  id			Int				@id
   username		String
   email			String
   avatar		String
-  gems			Int			@default(0)
+  gems			Int				@default(0)
   messages		Message[]
-  updated_at	DateTime	@default(now())
+  belongs		Partecipant[]
+  punishments	Punishment[]
+  updated_at	DateTime		@default(now())
 }
 
 model Channel {
-  id			String		@id @default(cuid())
+  id			String			@id @default(cuid())
   name			String
-  type			String		@default("PUBLIC")
-  password		String
+  type			String			@default("PUBLIC")
+  password		String?
   messages		Message[]
+  partecipants	Partecipant[]
+  punishments	Punishment[]
+}
+
+model Punishment {
+  id			String		@id @default(cuid())
+  channel		Channel		@relation(fields: [channel_id], references: [id])
+  channel_id	String
+  profile		Profile		@relation(fields: [profile_id], references: [id])
+  profile_id	Int
+  type			String
+  duration		BigInt		@default(-1)
+  issued_at		DateTime	@default(now())
+}
+
+model Partecipant {
+  id			String		@id @default(cuid())
+  profile		Profile		@relation(fields: [profile_id], references: [id])
+  profile_id	Int
+  channel		Channel		@relation(fields: [channel_id], references: [id])
+  channel_id	String
+  role			String		@default("MEMBER")
 }
 
 model Message {
   id			String		@id @default(cuid())
   channel		Channel		@relation(fields: [channel_id], references: [id])
   channel_id	String
-  sender		Profile		@relation(fields: [sender_id], references: [id])
-  sender_id		Int
+  profile		Profile		@relation(fields: [profile_id], references: [id])
+  profile_id	Int
   text			String
   updated_at	DateTime	@default(now())
 }

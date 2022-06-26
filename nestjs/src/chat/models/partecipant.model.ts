@@ -3,16 +3,10 @@ import { Channel } from './channel.model';
 import { Profile } from 'src/profile/models/profile.model';
 
 @ObjectType()
-export class Message {
+export class Partecipant {
 
   @Field()
   id: string;
-
-  @Field(type => Channel)
-  channel: Channel;
-
-  @Field()
-  channel_id: string;
 
   @Field(type => Profile)
   profile: Profile;
@@ -20,10 +14,13 @@ export class Message {
   @Field(type => Int)
   profile_id: number;
 
-  @Field()
-  text: string;
+  @Field(type => Channel)
+  channel: Channel;
 
-  @Field(type => Date)
-  updated_at: string;
+  @Field()
+  channel_id: string;
+
+  @Field()
+  role: string;
 
 }

@@ -3,7 +3,7 @@ import { Channel } from './channel.model';
 import { Profile } from 'src/profile/models/profile.model';
 
 @ObjectType()
-export class Message {
+export class Punishment {
 
   @Field()
   id: string;
@@ -21,9 +21,12 @@ export class Message {
   profile_id: number;
 
   @Field()
-  text: string;
+  type: string;
 
-  @Field(type => Date)
-  updated_at: string;
+  @Field(type => GraphQLTimestamp)
+  duration: number;
+
+  @Field(type => GraphQLTimestamp)
+  issued_at: number;
 
 }

@@ -1,5 +1,7 @@
+import { useSubscription } from '@apollo/client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ChatContextProps, FCWithChildren } from 'types';
+import { ON_CHANNEL_UPDATE } from 'src/graphql/subscriptions';
 
 const ChatContext = createContext<ChatContextProps>({
   channels: [],
@@ -7,17 +9,13 @@ const ChatContext = createContext<ChatContextProps>({
 
 export const ChatContextProvider: FCWithChildren = ({ children }) => {
 
-  //const { data } = useSubscription(subscription_channels);
+  const { data } = useSubscription(ON_CHANNEL_UPDATE);
 
   const [channels, setChannels] = useState<any[]>([]);
 
-  // useEffect(() => {
-  //
-  //   if (!data || !data.channels)
-  //     return;
-  //
-  //   setChannels([...data.channels]);
-  // }, [data]);
+  useEffect(() => {
+    console.log(JSON.stringify(data));
+  }, [data]);
 
   return (
     <ChatContext.Provider value={{ channels }}>

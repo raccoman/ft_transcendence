@@ -6,14 +6,10 @@ type Channel {
   id: String!
   messages: [Message!]!
   name: String!
-  password: String!
-  type: String!
-}
-
-input CreateChannelInput {
-  name: String!
+  partecipants: [Partecipant!]!
   password: String
-  type: String
+  punishments: [Punishment!]!
+  type: String!
 }
 
 """
@@ -21,19 +17,34 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input JoinChannelInput {
+  id: String!
+  password: String
+}
+
 type Message {
   channel: Channel!
   channel_id: String!
   id: String!
-  sender: Profile!
-  sender_id: Int!
+  profile: Profile!
+  profile_id: Int!
   text: String!
   updated_at: DateTime!
 }
 
 type Mutation {
-  createChannel(input: CreateChannelInput!): Channel!
-  sendMessage(input: SendMessageInput!): Message!
+  create_channel(name: String!): Channel!
+  join_channel(input: JoinChannelInput!): Channel!
+  send_message(input: SendMessageInput!): Channel!
+}
+
+type Partecipant {
+  channel: Channel!
+  channel_id: String!
+  id: String!
+  profile: Profile!
+  profile_id: Int!
+  role: String!
 }
 
 type Profile {
@@ -45,15 +56,32 @@ type Profile {
   username: String!
 }
 
+type Punishment {
+  channel: Channel!
+  channel_id: String!
+  duration: Timestamp!
+  id: String!
+  issued_at: Timestamp!
+  profile: Profile!
+  profile_id: Int!
+  type: String!
+}
+
 type Query {
+  channels: [Channel!]!
   me: Profile
 }
 
 input SendMessageInput {
-  channel_id: String!
+  id: String!
   text: String!
 }
 
 type Subscription {
-  onMessage: Message!
+  channel: Channel!
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp

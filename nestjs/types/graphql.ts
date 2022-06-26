@@ -7,14 +7,13 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface CreateChannelInput {
-    name: string;
+export interface JoinChannelInput {
+    id: string;
     password?: Nullable<string>;
-    type?: Nullable<string>;
 }
 
 export interface SendMessageInput {
-    channel_id: string;
+    id: string;
     text: string;
 }
 
@@ -22,7 +21,9 @@ export interface Channel {
     id: string;
     messages: Message[];
     name: string;
-    password: string;
+    partecipants: Partecipant[];
+    password?: Nullable<string>;
+    punishments: Punishment[];
     type: string;
 }
 
@@ -30,15 +31,25 @@ export interface Message {
     channel: Channel;
     channel_id: string;
     id: string;
-    sender: Profile;
-    sender_id: number;
+    profile: Profile;
+    profile_id: number;
     text: string;
     updated_at: DateTime;
 }
 
 export interface IMutation {
-    createChannel(input: CreateChannelInput): Channel | Promise<Channel>;
-    sendMessage(input: SendMessageInput): Message | Promise<Message>;
+    create_channel(name: string): Channel | Promise<Channel>;
+    join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
+    send_message(input: SendMessageInput): Channel | Promise<Channel>;
+}
+
+export interface Partecipant {
+    channel: Channel;
+    channel_id: string;
+    id: string;
+    profile: Profile;
+    profile_id: number;
+    role: string;
 }
 
 export interface Profile {
@@ -50,13 +61,26 @@ export interface Profile {
     username: string;
 }
 
+export interface Punishment {
+    channel: Channel;
+    channel_id: string;
+    duration: Timestamp;
+    id: string;
+    issued_at: Timestamp;
+    profile: Profile;
+    profile_id: number;
+    type: string;
+}
+
 export interface IQuery {
+    channels(): Channel[] | Promise<Channel[]>;
     me(): Nullable<Profile> | Promise<Nullable<Profile>>;
 }
 
 export interface ISubscription {
-    onMessage(): Message | Promise<Message>;
+    channel(): Channel | Promise<Channel>;
 }
 
 export type DateTime = any;
+export type Timestamp = any;
 type Nullable<T> = T | null;
