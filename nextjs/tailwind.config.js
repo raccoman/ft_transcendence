@@ -15,6 +15,9 @@ module.exports = {
         },
         'secondary': '#ededed',
       },
+      fontSize: {
+        xxs: '.6rem',
+      },
     },
   },
   plugins: [],
