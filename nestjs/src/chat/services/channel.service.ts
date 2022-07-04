@@ -40,6 +40,10 @@ export class ChannelService {
     });
   }
 
+  public findAll() {
+    return this.prisma.channel.findMany();
+  }
+
   public create(profile_id: number, name: string) {
     return this.prisma.$transaction(async (prisma: any) => {
 

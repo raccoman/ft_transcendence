@@ -41,7 +41,8 @@ export class ChatResolver {
   @UseGuards(JwtAuthGuard)
   @Query(returns => [Channel])
   async channels(@Context() context) {
-    return await this.channelService.findAllByProfile(context.req.user.id);
+    return await this.channelService.findAll();
+    // return await this.channelService.findAllByProfile(context.req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

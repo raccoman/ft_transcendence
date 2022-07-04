@@ -22,4 +22,6 @@ export interface SessionContextProps {
 
 export interface ChatContextProps {
   channels: Channel[];
+  joinChannel: any;
+  sendMessage: any;
 }

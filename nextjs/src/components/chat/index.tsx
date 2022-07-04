@@ -6,7 +6,8 @@ import {
   PencilSimpleLine,
   Lock,
 } from 'phosphor-react';
-import { Chat, JoinableChat } from './chat';
+import { Chat } from './chat';
+import { JoinableChat } from './joinable';
 import { Channel } from 'types/graphql';
 import { useMutation } from '@apollo/client';
 import { SEND_MESSAGE } from 'src/graphql/mutations';
@@ -14,15 +15,13 @@ import { SEND_MESSAGE } from 'src/graphql/mutations';
 const Component: FC = () => {
 
   const { profile } = useSession();
-  const { channels } = useChat();
+  const { channels, joinChannel, sendMessage } = useChat();
 
   const [isExpandend, setExpandend] = useState(false);
 
   const [ID, setID] = useState<string | undefined>(undefined);
   const [channel, setChannel] = useState<Channel | undefined>(undefined);
   const [hasJoined, setHasJoined] = useState(false);
-
-  const [sendMessage] = useMutation(SEND_MESSAGE);
 
   useEffect(() => {
 
@@ -58,7 +57,8 @@ const Component: FC = () => {
     await sendMessage({ variables: { id: ID, text: message } });
   };
 
-  const onJoinChannel = (password: string | undefined) => {
+  const onJoinChannel = async (password: string | undefined) => {
+    await joinChannel({ variables: { id: ID, password } });
   };
 
   return (
@@ -74,7 +74,7 @@ const Component: FC = () => {
             <div className='relative'>
               <div className='border border-primary-400 rounded-full overflow-hidden'>
                 <img src={profile?.avatar || '/assets/default-avatar.png'} className='w-[32px] h-[32px] object-cover'
-                     alt='avatar' />
+                  alt='avatar' />
               </div>
               <span className='absolute right-0 bottom-0 inline-flex rounded-full h-3 w-3 bg-green-500'></span>
               <span
@@ -115,7 +115,7 @@ const Component: FC = () => {
                     {channel.type != 'PUBLIC' && (<Lock size={12} weight='duotone' />)}
                   </label>
                   <button onClick={() => setID(ID == channel.id ? undefined : channel.id)}
-                          className='text-accent underline'>
+                    className='text-accent underline'>
                     Open
                   </button>
                 </div>
