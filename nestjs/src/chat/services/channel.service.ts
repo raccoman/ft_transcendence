@@ -72,6 +72,7 @@ export class ChannelService {
 
   public join(profile_id: number, input: JoinChannelInput) {
     return this.prisma.$transaction(async (prisma: any) => {
+
       const channel = await prisma.channel.findUnique({
         include: {
           messages: true,
@@ -84,32 +85,6 @@ export class ChannelService {
 
       if (channel.type === 'PROTECTED' && input.password !== channel.password) {
         throw new Error('Invalid password!');
-      }
-
-      const joined = await prisma.partecipant.findFirst({
-        where: {
-          profile_id,
-          channel_id: input.id,
-        },
-      });
-      if (joined)
-        throw new Error('You already joined this channel.');
-
-      const punishment = await prisma.punishment.findFirst({
-        where: {
-          profile_id,
-          channel_id: input.id,
-        },
-      });
-      if (punishment && punishment.type === 'BAN') {
-
-        if (punishment.duration == -1)
-          throw new Error('You are permanently banned from this channel');
-
-        const current = new Date().valueOf();
-        const issued_at = new Date(punishment.issued_at).valueOf();
-        if (current < issued_at + punishment.duration)
-          throw new Error('You are banned from this channel for ' + msToTime(current) + '.');
       }
 
       const partecipant = await prisma.partecipant.create({
