@@ -38,7 +38,7 @@ const Component: FC<{ isOpen: boolean, onClose: any, id: string | undefined }> =
 
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
-        <div className='relative border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
+        <div className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
 
           <div className='flex flex-col text-center items-center py-8 px-4 space-y-4'>
 

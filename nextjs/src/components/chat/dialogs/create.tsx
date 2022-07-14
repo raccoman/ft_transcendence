@@ -43,7 +43,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
         <form onSubmit={onCreateChannel}
-              className='relative border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
+              className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
 
           <div className='flex flex-col text-center items-center py-8 px-4 space-y-4'>
 
