@@ -17,6 +17,15 @@ import { Channel } from './models/channel.model';
 import { PubsubService } from 'src/pubsub/pubsub.service';
 
 @InputType()
+export class CreateChannelInput {
+  @Field()
+  name: string;
+
+  @Field({ nullable: true })
+  password?: string;
+}
+
+@InputType()
 export class JoinChannelInput {
   @Field()
   id: string;
@@ -71,8 +80,8 @@ export class ChatResolver {
 
   @UseGuards(JwtAuthGuard)
   @Mutation(returns => Channel, { name: 'create_channel' })
-  async createChannel(@Context() context, @Args('name') name: string) {
-    const channel = await this.channelService.create(context.req.user.id, name);
+  async createChannel(@Context() context, @Args('input') input: CreateChannelInput) {
+    const channel = await this.channelService.create(context.req.user.id, input);
     if (channel) {
       await this.pubSubService.publish('CHANNEL', { channel });
     }

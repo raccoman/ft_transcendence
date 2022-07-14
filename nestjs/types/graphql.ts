@@ -7,6 +7,11 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface CreateChannelInput {
+    name: string;
+    password?: Nullable<string>;
+}
+
 export interface JoinChannelInput {
     id: string;
     password?: Nullable<string>;
@@ -44,7 +49,7 @@ export interface Message {
 }
 
 export interface IMutation {
-    create_channel(name: string): Channel | Promise<Channel>;
+    create_channel(input: CreateChannelInput): Channel | Promise<Channel>;
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;

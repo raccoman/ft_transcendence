@@ -1,18 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JoinChannelInput, SendMessageInput } from 'src/chat/chat.resolver';
-
-
-const msToTime = (s) => {
-  const ms = s % 1000;
-  s = (s - ms) / 1000;
-  const secs = s % 60;
-  s = (s - secs) / 60;
-  const mins = s % 60;
-  const hrs = (s - mins) / 60;
-
-  return hrs + ':' + mins + ':' + secs + '.' + ms;
-};
+import { CreateChannelInput, JoinChannelInput, SendMessageInput } from 'src/chat/chat.resolver';
 
 @Injectable()
 export class ChannelService {
@@ -44,8 +32,19 @@ export class ChannelService {
     return this.prisma.channel.findMany();
   }
 
-  public create(profile_id: number, name: string) {
+  public create(profile_id: number, input: CreateChannelInput) {
     return this.prisma.$transaction(async (prisma: any) => {
+
+      const exists = await prisma.channel.findFirst({
+        where: {
+          name: {
+            equals: input.name,
+            mode: 'insensitive',
+          },
+        },
+      });
+      if (exists)
+        throw new Error('A channel with this name already exists.');
 
       const channel = await prisma.channel.create({
         include: {
@@ -53,7 +52,9 @@ export class ChannelService {
           partecipants: true,
         },
         data: {
-          name,
+          name: input.name,
+          type: input.password ? 'PROTECTED' : 'PUBLIC',
+          password: input.password,
           partecipants: {
             create: [
               {
@@ -64,8 +65,10 @@ export class ChannelService {
           },
         },
       });
+
       if (!channel)
         throw new Error('Could not create channel.');
+
       return channel;
     });
   }
