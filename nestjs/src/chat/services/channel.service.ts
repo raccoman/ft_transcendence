@@ -51,7 +51,6 @@ export class ChannelService {
         include: {
           messages: true,
           partecipants: true,
-          punishments: true,
         },
         data: {
           name,
@@ -77,7 +76,6 @@ export class ChannelService {
         include: {
           messages: true,
           partecipants: true,
-          punishments: true,
         },
         where: { id: input.id },
       });
@@ -136,38 +134,26 @@ export class ChannelService {
         include: {
           messages: true,
           partecipants: true,
-          punishments: true,
         },
         where: { id: input.id },
       });
       if (!channel)
         throw new Error('This channel does not exists.');
 
-      const joined = await prisma.partecipant.findFirst({
+      const partecipant = await prisma.partecipant.findFirst({
         where: {
           profile_id,
           channel_id: input.id,
         },
       });
-      if (!joined)
+      if (!partecipant)
         throw new Error('You are not in this channel.');
 
-      const punishment = await prisma.punishment.findFirst({
-        where: {
-          profile_id,
-          channel_id: input.id,
-        },
-      });
-      if (punishment && punishment.type === 'MUTE') {
+      if (partecipant.muted)
+        throw new Error('You are permanently muted in this channel');
 
-        if (punishment.duration == -1)
-          throw new Error('You are permanently muted in this channel');
-
-        const current = new Date().valueOf();
-        const issued_at = new Date(punishment.issued_at).valueOf();
-        if (current < issued_at + punishment.duration)
-          throw new Error('You are muted in this channel for ' + msToTime(current) + '.');
-      }
+      if (partecipant.banned)
+        throw new Error('You are permanently banned from this channel');
 
       const message = await prisma.message.create({
         data: {

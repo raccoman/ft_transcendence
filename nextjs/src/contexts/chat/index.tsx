@@ -3,13 +3,14 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { ChatContextProps, FCWithChildren } from 'types';
 import { ON_CHANNEL_UPDATE } from 'src/graphql/subscriptions';
 import { CHANNELS } from 'src/graphql/queries';
-import { Channel } from 'types/graphql';
-import { JOIN_CHANNEL, SEND_MESSAGE } from 'src/graphql/mutations';
+import { Channel, UpsertPunishmentInput } from 'types/graphql';
+import { UPSERT_PUNISHMENT, JOIN_CHANNEL, SEND_MESSAGE } from 'src/graphql/mutations';
 
 const ChatContext = createContext<ChatContextProps>({
   channels: [],
   joinChannel: undefined,
-  sendMessage: undefined
+  sendMessage: undefined,
+  upsertPunishment: undefined,
 });
 
 export const ChatContextProvider: FCWithChildren = ({ children }) => {
@@ -18,6 +19,7 @@ export const ChatContextProvider: FCWithChildren = ({ children }) => {
   const subscription = useSubscription(ON_CHANNEL_UPDATE);
   const [joinChannel] = useMutation(JOIN_CHANNEL);
   const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [upsertPunishment] = useMutation(UPSERT_PUNISHMENT);
 
   const [channels, setChannels] = useState<Channel[]>([]);
 
@@ -41,7 +43,7 @@ export const ChatContextProvider: FCWithChildren = ({ children }) => {
   }, [query, subscription]);
 
   return (
-    <ChatContext.Provider value={{ channels, joinChannel, sendMessage }}>
+    <ChatContext.Provider value={{ channels, joinChannel, sendMessage, upsertPunishment }}>
       {children}
     </ChatContext.Provider>
   );

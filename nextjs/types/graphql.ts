@@ -12,8 +12,6 @@ export type Scalars = {
   Float: number;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: any;
-  /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: any;
 };
 
 export type Channel = {
@@ -23,7 +21,6 @@ export type Channel = {
   name: Scalars['String'];
   partecipants: Array<Partecipant>;
   password?: Maybe<Scalars['String']>;
-  punishments: Array<Punishment>;
   type: Scalars['String'];
 };
 
@@ -48,6 +45,7 @@ export type Mutation = {
   create_channel: Channel;
   join_channel: Channel;
   send_message: Channel;
+  upsert_punishment: Channel;
 };
 
 
@@ -65,11 +63,18 @@ export type MutationSend_MessageArgs = {
   input: SendMessageInput;
 };
 
+
+export type MutationUpsert_PunishmentArgs = {
+  input: UpsertPunishmentInput;
+};
+
 export type Partecipant = {
   __typename?: 'Partecipant';
+  banned: Scalars['Boolean'];
   channel: Channel;
   channel_id: Scalars['String'];
   id: Scalars['String'];
+  muted: Scalars['Boolean'];
   profile: Profile;
   profile_id: Scalars['Int'];
   role: Scalars['String'];
@@ -83,18 +88,6 @@ export type Profile = {
   id: Scalars['Int'];
   updated_at: Scalars['DateTime'];
   username: Scalars['String'];
-};
-
-export type Punishment = {
-  __typename?: 'Punishment';
-  channel: Channel;
-  channel_id: Scalars['String'];
-  duration: Scalars['Timestamp'];
-  id: Scalars['String'];
-  issued_at: Scalars['Timestamp'];
-  profile: Profile;
-  profile_id: Scalars['Int'];
-  type: Scalars['String'];
 };
 
 export type Query = {
@@ -111,4 +104,11 @@ export type SendMessageInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   channel: Channel;
+};
+
+export type UpsertPunishmentInput = {
+  channel_id: Scalars['String'];
+  profile_id: Scalars['Int'];
+  removed?: InputMaybe<Scalars['Boolean']>;
+  type: Scalars['String'];
 };

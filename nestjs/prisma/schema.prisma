@@ -19,7 +19,6 @@ model Profile {
   gems			Int				@default(0)
   messages		Message[]
   belongs		Partecipant[]
-  punishments	Punishment[]
   updated_at	DateTime		@default(now())
 }
 
@@ -30,18 +29,6 @@ model Channel {
   password		String?
   messages		Message[]
   partecipants	Partecipant[]
-  punishments	Punishment[]
-}
-
-model Punishment {
-  id			String		@id @default(cuid())
-  channel		Channel		@relation(fields: [channel_id], references: [id])
-  channel_id	String
-  profile		Profile		@relation(fields: [profile_id], references: [id])
-  profile_id	Int
-  type			String
-  duration		BigInt		@default(-1)
-  issued_at		DateTime	@default(now())
 }
 
 model Partecipant {
@@ -51,6 +38,8 @@ model Partecipant {
   channel		Channel		@relation(fields: [channel_id], references: [id])
   channel_id	String
   role			String		@default("MEMBER")
+  muted			Boolean		@default(false)
+  banned		Boolean		@default(false)
 }
 
 model Message {

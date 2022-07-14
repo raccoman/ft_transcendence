@@ -24,4 +24,5 @@ export interface ChatContextProps {
   channels: Channel[];
   joinChannel: any;
   sendMessage: any;
+  upsertPunishment: any;
 }

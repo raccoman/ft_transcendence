@@ -8,7 +8,6 @@ type Channel {
   name: String!
   partecipants: [Partecipant!]!
   password: String
-  punishments: [Punishment!]!
   type: String!
 }
 
@@ -36,12 +35,15 @@ type Mutation {
   create_channel(name: String!): Channel!
   join_channel(input: JoinChannelInput!): Channel!
   send_message(input: SendMessageInput!): Channel!
+  upsert_punishment(input: UpsertPunishmentInput!): Channel!
 }
 
 type Partecipant {
+  banned: Boolean!
   channel: Channel!
   channel_id: String!
   id: String!
+  muted: Boolean!
   profile: Profile!
   profile_id: Int!
   role: String!
@@ -54,17 +56,6 @@ type Profile {
   id: Int!
   updated_at: DateTime!
   username: String!
-}
-
-type Punishment {
-  channel: Channel!
-  channel_id: String!
-  duration: Timestamp!
-  id: String!
-  issued_at: Timestamp!
-  profile: Profile!
-  profile_id: Int!
-  type: String!
 }
 
 type Query {
@@ -81,7 +72,9 @@ type Subscription {
   channel: Channel!
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
+input UpsertPunishmentInput {
+  channel_id: String!
+  profile_id: Int!
+  removed: Boolean
+  type: String!
+}

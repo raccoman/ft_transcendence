@@ -17,13 +17,19 @@ export interface SendMessageInput {
     text: string;
 }
 
+export interface UpsertPunishmentInput {
+    channel_id: string;
+    profile_id: number;
+    removed?: Nullable<boolean>;
+    type: string;
+}
+
 export interface Channel {
     id: string;
     messages: Message[];
     name: string;
     partecipants: Partecipant[];
     password?: Nullable<string>;
-    punishments: Punishment[];
     type: string;
 }
 
@@ -41,12 +47,15 @@ export interface IMutation {
     create_channel(name: string): Channel | Promise<Channel>;
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
+    upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
 }
 
 export interface Partecipant {
+    banned: boolean;
     channel: Channel;
     channel_id: string;
     id: string;
+    muted: boolean;
     profile: Profile;
     profile_id: number;
     role: string;
@@ -61,17 +70,6 @@ export interface Profile {
     username: string;
 }
 
-export interface Punishment {
-    channel: Channel;
-    channel_id: string;
-    duration: Timestamp;
-    id: string;
-    issued_at: Timestamp;
-    profile: Profile;
-    profile_id: number;
-    type: string;
-}
-
 export interface IQuery {
     channels(): Channel[] | Promise<Channel[]>;
     me(): Nullable<Profile> | Promise<Nullable<Profile>>;
@@ -82,5 +80,4 @@ export interface ISubscription {
 }
 
 export type DateTime = any;
-export type Timestamp = any;
 type Nullable<T> = T | null;

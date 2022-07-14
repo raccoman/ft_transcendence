@@ -8,10 +8,13 @@ export const SEND_MESSAGE = gql`
             password
             type
             messages {
+                id
                 profile {
+                    id
                     username
                 }
                 text
+                updated_at
             }
         }
     }
@@ -21,6 +24,26 @@ export const JOIN_CHANNEL = gql`
     mutation join_channel($id: String!, $password: String) {
         join_channel(input: { id: $id, password: $password }) {
             id
+        }
+    }
+`;
+
+export const UPSERT_PUNISHMENT = gql`
+    mutation upsert_punishment($channel_id: String!, $profile_id: Int!, $type: String!, $removed: Boolean) {
+        upsert_punishment(input: { channel_id: $channel_id, profile_id: $profile_id, type: $type, removed: $removed}) {
+            id
+            name
+            password
+            type
+            messages {
+                id
+                profile {
+                    id
+                    username
+                }
+                text
+                updated_at
+            }
         }
     }
 `;

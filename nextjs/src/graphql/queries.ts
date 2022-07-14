@@ -35,6 +35,8 @@ export const CHANNELS = gql`
                     username
                 }
                 role
+                muted
+                banned
             }
         }
     }

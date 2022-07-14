@@ -23,4 +23,9 @@ export class Partecipant {
   @Field()
   role: string;
 
+  @Field()
+  muted: boolean;
+
+  @Field()
+  banned: boolean;
 }

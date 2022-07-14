@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Message } from './message.model';
 import { Partecipant } from './partecipant.model';
-import { Punishment } from './punishment.model';
 
 @ObjectType()
 export class Channel {
@@ -23,8 +22,5 @@ export class Channel {
 
   @Field(type => [Partecipant])
   partecipants: Partecipant[];
-
-  @Field(type => [Punishment])
-  punishments: Punishment[];
 
 }

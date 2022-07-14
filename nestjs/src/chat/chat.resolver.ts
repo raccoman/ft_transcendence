@@ -1,7 +1,15 @@
-import { Args, Context, Field, InputType, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Field,
+  InputType, Int,
+  Mutation,
+  Query,
+  Resolver,
+  Subscription,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { PunishmentService } from 'src/chat/services/punishment.service';
 import { PartecipantService } from 'src/chat/services/partecipant.service';
 import { MessageService } from 'src/chat/services/message.service';
 import { ChannelService } from 'src/chat/services/channel.service';
@@ -26,11 +34,27 @@ export class SendMessageInput {
   text: string;
 }
 
+@InputType()
+export class UpsertPunishmentInput {
+
+  @Field()
+  channel_id: string;
+
+  @Field(type => Int)
+  profile_id: number;
+
+  @Field()
+  type: string;
+
+  @Field({ nullable: true })
+  removed?: boolean;
+}
+
+
 @Resolver()
 export class ChatResolver {
 
   constructor(
-    private punishmentService: PunishmentService,
     private partecipantService: PartecipantService,
     private messageService: MessageService,
     private channelService: ChannelService,
@@ -69,6 +93,16 @@ export class ChatResolver {
   @Mutation(returns => Channel, { name: 'send_message' })
   async sendMessage(@Context() context, @Args('input') input: SendMessageInput) {
     const channel = await this.channelService.sendMessage(context.req.user.id, input);
+    if (channel) {
+      await this.pubSubService.publish('CHANNEL', { channel });
+    }
+    return channel;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(returns => Channel, { name: 'upsert_punishment' })
+  async upsertPunishment(@Context() context, @Args('input') input: UpsertPunishmentInput) {
+    const channel = await this.partecipantService.upsertPunishment(context.req.user.id, input);
     if (channel) {
       await this.pubSubService.publish('CHANNEL', { channel });
     }
