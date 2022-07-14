@@ -50,6 +50,7 @@ export interface Message {
 
 export interface IMutation {
     create_channel(input: CreateChannelInput): Channel | Promise<Channel>;
+    delete_channel(id: string): Channel | Promise<Channel>;
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;

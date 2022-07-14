@@ -73,6 +73,44 @@ export class ChannelService {
     });
   }
 
+  public delete(profile_id: number, id: string) {
+    return this.prisma.$transaction(async (prisma: any) => {
+
+      const exists = await prisma.channel.findFirst({
+        where: {
+          id,
+        },
+      });
+      if (!exists)
+        throw new Error('This channel does not exists.');
+
+      const partecipant = await prisma.partecipant.findFirst({
+        where: {
+          profile_id,
+          channel_id: id,
+        },
+      });
+
+      if (partecipant.role !== 'OWNER')
+        throw new Error('You don\'t have enough permissions.');
+
+      const channel = await prisma.channel.delete({
+        include: {
+          messages: true,
+          partecipants: true,
+        },
+        where: {
+          id,
+        },
+      });
+
+      if (!channel)
+        throw new Error('Could not create channel.');
+
+      return channel;
+    });
+  }
+
   public join(profile_id: number, input: JoinChannelInput) {
     return this.prisma.$transaction(async (prisma: any) => {
 

@@ -24,6 +24,11 @@ export type Channel = {
   type: Scalars['String'];
 };
 
+export type CreateChannelInput = {
+  name: Scalars['String'];
+  password?: InputMaybe<Scalars['String']>;
+};
+
 export type JoinChannelInput = {
   id: Scalars['String'];
   password?: InputMaybe<Scalars['String']>;
@@ -43,6 +48,7 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   create_channel: Channel;
+  delete_channel: Channel;
   join_channel: Channel;
   send_message: Channel;
   upsert_punishment: Channel;
@@ -50,7 +56,12 @@ export type Mutation = {
 
 
 export type MutationCreate_ChannelArgs = {
-  name: Scalars['String'];
+  input: CreateChannelInput;
+};
+
+
+export type MutationDelete_ChannelArgs = {
+  id: Scalars['String'];
 };
 
 

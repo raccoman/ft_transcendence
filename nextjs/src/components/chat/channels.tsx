@@ -1,9 +1,8 @@
-import { Dispatch, FC, SetStateAction } from 'react';
-import { CaretDown, CaretUp, CirclesThreePlus, Lock, PencilSimpleLine } from 'phosphor-react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { CaretDown, CaretUp, CirclesThreePlus } from 'phosphor-react';
 import { useChat, useSession } from 'src/contexts';
 import { Channel } from 'src/components/chat/channel';
-import { CustomDialog } from 'src/components/index';
-import { Dialog } from '@headlessui/react';
+import { CreateChannelDialog } from 'src/components/chat/dialogs';
 
 export const Channels: FC<{
   isExpanded: boolean,
@@ -15,39 +14,15 @@ export const Channels: FC<{
   const { profile } = useSession();
   const { channels, joinChannel, sendMessage } = useChat();
 
+  const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
+
   return (
     <>
 
-      <CustomDialog isOpen={false} onClose={() => undefined}>
+      <CreateChannelDialog isOpen={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
 
-        <div className='flex flex-col text-center items-center py-8 px-4 space-y-4'>
-
-          <Dialog.Title as='h3' className='text-xl text-secondary-01 font-semibold'>
-            Create channel
-          </Dialog.Title>
-
-          <Dialog.Description as='p' className='text-sm text-gray-500'>
-            Please provider a name for the channel
-          </Dialog.Description>
-
-        </div>
-
-        <div className='bg-gray-100 p-4 flex flex-col space-y-4'>
-          <button
-            className='text-white font-semibold bg-primary-01 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-01'
-            /*onClick={onConfirm}*/>
-            Crea
-          </button>
-          <button
-            className='text-secondary-01 font-semibold border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-01'
-            /*onClick={onClose}*/>
-            Annulla
-          </button>
-        </div>
-
-      </CustomDialog>
-
-      <div className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>
+      <div
+        className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>
 
         <div className='flex space-x-10 justify-between'>
 
@@ -69,7 +44,7 @@ export const Channels: FC<{
 
           <div className='flex items-center'>
 
-            <button className='rounded-full p-2 hover:bg-secondary/10'>
+            <button className='rounded-full p-2 hover:bg-secondary/10' onClick={() => setCreateDialogOpen(true)}>
               <CirclesThreePlus size={18} />
             </button>
 

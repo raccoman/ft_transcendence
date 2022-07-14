@@ -38,6 +38,7 @@ type Message {
 
 type Mutation {
   create_channel(input: CreateChannelInput!): Channel!
+  delete_channel(id: String!): Channel!
   join_channel(input: JoinChannelInput!): Channel!
   send_message(input: SendMessageInput!): Channel!
   upsert_punishment(input: UpsertPunishmentInput!): Channel!

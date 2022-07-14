@@ -1,5 +1,29 @@
 import { gql } from '@apollo/client';
 
+export const CREATE_CHANNEL = gql`
+    mutation create_channel($name: String!, $password: String) {
+        create_channel(input: { name: $name, password: $password }) {
+            id
+        }
+    }
+`;
+
+export const JOIN_CHANNEL = gql`
+    mutation join_channel($id: String!, $password: String) {
+        join_channel(input: { id: $id, password: $password }) {
+            id
+        }
+    }
+`;
+
+export const DELETE_CHANNEL = gql`
+    mutation delete_channel($id: String!) {
+        delete_channel(id: $id) {
+            id
+        }
+    }
+`;
+
 export const SEND_MESSAGE = gql`
     mutation send_message($id: String!, $text: String!) {
         send_message(input: { id: $id, text: $text }) {
@@ -16,14 +40,6 @@ export const SEND_MESSAGE = gql`
                 text
                 updated_at
             }
-        }
-    }
-`;
-
-export const JOIN_CHANNEL = gql`
-    mutation join_channel($id: String!, $password: String) {
-        join_channel(input: { id: $id, password: $password }) {
-            id
         }
     }
 `;

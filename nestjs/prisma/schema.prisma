@@ -33,9 +33,9 @@ model Channel {
 
 model Partecipant {
   id			String		@id @default(cuid())
-  profile		Profile		@relation(fields: [profile_id], references: [id])
+  profile		Profile		@relation(fields: [profile_id], references: [id], onDelete: Cascade)
   profile_id	Int
-  channel		Channel		@relation(fields: [channel_id], references: [id])
+  channel		Channel		@relation(fields: [channel_id], references: [id], onDelete: Cascade)
   channel_id	String
   role			String		@default("MEMBER")
   muted			Boolean		@default(false)
@@ -44,9 +44,9 @@ model Partecipant {
 
 model Message {
   id			String		@id @default(cuid())
-  channel		Channel		@relation(fields: [channel_id], references: [id])
+  channel		Channel		@relation(fields: [channel_id], references: [id], onDelete: Cascade)
   channel_id	String
-  profile		Profile		@relation(fields: [profile_id], references: [id])
+  profile		Profile		@relation(fields: [profile_id], references: [id], onDelete: Cascade)
   profile_id	Int
   text			String
   updated_at	DateTime	@default(now())
