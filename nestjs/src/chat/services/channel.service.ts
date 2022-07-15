@@ -73,41 +73,43 @@ export class ChannelService {
     });
   }
 
-  public delete(profile_id: number, id: string) {
+  public leave(profile_id: number, id: string) {
     return this.prisma.$transaction(async (prisma: any) => {
-
-      const exists = await prisma.channel.findFirst({
-        where: {
-          id,
-        },
-      });
-      if (!exists)
-        throw new Error('This channel does not exists.');
 
       const partecipant = await prisma.partecipant.findFirst({
         where: {
           profile_id,
           channel_id: id,
+          muted: false,
+          banned: false,
         },
       });
 
-      if (partecipant.role !== 'OWNER')
-        throw new Error('You don\'t have enough permissions.');
+      if (!partecipant)
+        throw new Error('Could not leave channel.');
 
-      const channel = await prisma.channel.delete({
-        include: {
-          messages: true,
-          partecipants: true,
-        },
+      if (partecipant.role == 'OWNER') {
+        const channel = await prisma.channel.delete({
+          include: {
+            messages: true,
+            partecipants: true,
+          },
+          where: {
+            id,
+          },
+        });
+
+        if (!channel)
+          throw new Error('Could not create channel.');
+
+        return channel;
+      }
+
+      return await prisma.channel.delete({
         where: {
-          id,
+          id: partecipant.id,
         },
       });
-
-      if (!channel)
-        throw new Error('Could not create channel.');
-
-      return channel;
     });
   }
 

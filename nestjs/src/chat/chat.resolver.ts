@@ -89,9 +89,9 @@ export class ChatResolver {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(returns => Channel, { name: 'delete_channel' })
-  async deleteChannel(@Context() context, @Args('id') id: string) {
-    const channel = await this.channelService.delete(context.req.user.id, id);
+  @Mutation(returns => Channel, { name: 'leave_channel' })
+  async leaveChannel(@Context() context, @Args('id') id: string) {
+    const channel = await this.channelService.leave(context.req.user.id, id);
     if (channel) {
       await this.pubSubService.publish('CHANNEL', { channel });
     }

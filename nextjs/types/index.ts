@@ -23,7 +23,7 @@ export interface SessionContextProps {
 export interface ChatContextProps {
   channels: Channel[];
   createChannel: any;
-  deleteChannel: any;
+  leaveChannel: any;
   joinChannel: any;
   sendMessage: any;
   upsertPunishment: any;

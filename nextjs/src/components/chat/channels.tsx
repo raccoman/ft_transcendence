@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { CaretDown, CaretUp, CirclesThreePlus } from 'phosphor-react';
 import { useChat, useSession } from 'src/contexts';
 import { Channel } from 'src/components/chat/channel';
-import { CreateChannelDialog } from 'src/components/chat/dialogs';
+import { ChannelCreateDialog } from 'src/components/chat/dialogs';
 
 export const Channels: FC<{
   isExpanded: boolean,
@@ -19,7 +19,7 @@ export const Channels: FC<{
   return (
     <>
 
-      <CreateChannelDialog isOpen={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
+      <ChannelCreateDialog isOpen={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
 
       <div
         className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>

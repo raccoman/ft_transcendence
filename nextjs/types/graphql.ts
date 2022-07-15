@@ -48,8 +48,8 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   create_channel: Channel;
-  delete_channel: Channel;
   join_channel: Channel;
+  leave_channel: Channel;
   send_message: Channel;
   upsert_punishment: Channel;
 };
@@ -60,13 +60,13 @@ export type MutationCreate_ChannelArgs = {
 };
 
 
-export type MutationDelete_ChannelArgs = {
-  id: Scalars['String'];
+export type MutationJoin_ChannelArgs = {
+  input: JoinChannelInput;
 };
 
 
-export type MutationJoin_ChannelArgs = {
-  input: JoinChannelInput;
+export type MutationLeave_ChannelArgs = {
+  id: Scalars['String'];
 };
 
 

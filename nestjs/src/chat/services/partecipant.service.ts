@@ -55,10 +55,18 @@ export class PartecipantService {
       if (target.role !== 'MEMBER' && admin.role !== 'OWNER')
         throw new Error('You don\'t have enough permissions.');
 
-      target.muted = input.type === 'MUTE' ? !input.removed : target.muted;
-      target.banned = input.type === 'BAN' ? !input.removed : target.banned;
+      const snapshot = await prisma.partecipant.update({
+        where: {
+          id: target.id,
+        },
+        data: {
+          muted: input.type === 'MUTE' ? !input.removed : target.muted,
+          banned: input.type === 'BAN' ? !input.removed : target.banned,
+        },
+      });
+      if (!snapshot)
+        throw new Error('An error occurred while updating.');
 
-      channel.partecipants = [...channel.partecipants, target];
       return channel;
     });
   }

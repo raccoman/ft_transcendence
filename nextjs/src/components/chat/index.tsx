@@ -2,15 +2,15 @@ import { FC, useEffect, useState } from 'react';
 import { useChat, useSession } from 'src/contexts';
 import { Channel, Partecipant } from 'types/graphql';
 import { Channels } from 'src/components/chat/channels';
-import { Trash, X } from 'phosphor-react';
+import { DotsThreeVertical, Trash, X } from 'phosphor-react';
 import { MessagesContent, ObfuscatedContent } from 'src/components/chat/contents';
 import { BannedAction, MutedAction, ProtectedAction, PublicAction, SpeakAction } from 'src/components/chat/actions';
-import { DeleteChannelDialog } from 'src/components/chat/dialogs';
+import { ChannelInfoDialog } from 'src/components/chat/dialogs';
 
 const Component: FC = () => {
 
   const { profile } = useSession();
-  const { channels, deleteChannel } = useChat();
+  const { channels } = useChat();
 
   const [isExpandend, setExpandend] = useState(false);
 
@@ -18,7 +18,7 @@ const Component: FC = () => {
   const [channel, setChannel] = useState<Channel | undefined>(undefined);
   const [partecipant, setPartecipant] = useState<Partecipant | undefined>(undefined);
 
-  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isInfoDialogOpen, setInfoDialogOpen] = useState(false);
 
   useEffect(() => {
 
@@ -48,7 +48,8 @@ const Component: FC = () => {
   return (
     <>
 
-      <DeleteChannelDialog isOpen={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} id={id} />
+      <ChannelInfoDialog isOpen={isInfoDialogOpen} onClose={() => setInfoDialogOpen(false)} channel={channel}
+                         partecipant={partecipant} />
 
       <div className='fixed bottom-0 ml-5 flex space-x-5'>
 
@@ -63,12 +64,9 @@ const Component: FC = () => {
                 <p className='font-medium'>{channel.name}</p>
 
                 <div>
-                  {partecipant && partecipant.role === 'OWNER' && (
-                    <button className='rounded-full p-1.5 hover:bg-secondary/10 text-red-600'
-                            onClick={() => setDeleteDialogOpen(true)}>
-                      <Trash size={18} />
-                    </button>
-                  )}
+                  <button className='rounded-full p-1.5 hover:bg-secondary/10' onClick={() => setInfoDialogOpen(true)}>
+                    <DotsThreeVertical size={18} />
+                  </button>
                   <button className='rounded-full p-1.5 hover:bg-secondary/10' onClick={() => setId(undefined)}>
                     <X size={18} />
                   </button>

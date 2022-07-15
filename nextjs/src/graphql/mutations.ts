@@ -16,9 +16,9 @@ export const JOIN_CHANNEL = gql`
     }
 `;
 
-export const DELETE_CHANNEL = gql`
-    mutation delete_channel($id: String!) {
-        delete_channel(id: $id) {
+export const LEAVE_CHANNEL = gql`
+    mutation leave_channel($id: String!) {
+        leave_channel(id: $id) {
             id
         }
     }
