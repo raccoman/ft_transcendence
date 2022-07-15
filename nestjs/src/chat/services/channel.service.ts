@@ -73,19 +73,17 @@ export class ChannelService {
     return this.prisma.$transaction(async (prisma: any) => {
 
       const partecipant = await prisma.partecipant.findFirst({
-        include: {
-          channel: true,
-        },
         where: {
           profile_id,
           channel_id: id,
-          muted: false,
-          banned: false,
         },
       });
 
       if (!partecipant)
         throw new Error('You are not a member of this channel.');
+
+      if (partecipant.muted || partecipant.banned)
+        throw new Error('You have active punishments in this channel.');
 
       if (partecipant.role == 'OWNER') {
         const channel = await prisma.channel.delete({
@@ -97,7 +95,7 @@ export class ChannelService {
         if (!channel)
           throw new Error('Could not create channel.');
 
-        return 0;
+        return channel;
       }
 
       const operation = await prisma.partecipant.delete({

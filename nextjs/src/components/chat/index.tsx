@@ -3,7 +3,7 @@ import { useChat, useSession } from 'src/contexts';
 import { Channel, Partecipant } from 'types/graphql';
 import { Channels } from 'src/components/chat/channels';
 import { DotsThreeVertical, Trash, X } from 'phosphor-react';
-import { MessagesContent, ObfuscatedContent } from 'src/components/chat/contents';
+import { MessagesContent, EmptyContent, ObfuscatedContent } from 'src/components/chat/contents';
 import { BannedAction, MutedAction, ProtectedAction, PublicAction, SpeakAction } from 'src/components/chat/actions';
 import { ChannelInfoDialog } from 'src/components/chat/dialogs';
 
@@ -56,8 +56,7 @@ const Component: FC = () => {
         <Channels isExpanded={isExpandend} setExpanded={setExpandend} ID={id} setID={setId} />
 
         {channel && (
-          <div
-            className='flex flex-col justify-between border border-primary-400 rounded-tr-md rounded-tl-md w-[300px]'>
+          <div className='flex flex-col justify-between border border-primary-400 rounded-tr-md rounded-tl-md w-[300px]'>
             <div className='flex flex-col space-y-1 px-5 py-2'>
 
               <div className='flex justify-between items-center'>
@@ -79,7 +78,11 @@ const Component: FC = () => {
                 <ObfuscatedContent />
               )}
 
-              {partecipant && !partecipant.banned && (
+              {partecipant && !partecipant.banned && channel.messages.length <= 0 && (
+                <EmptyContent channel={channel} />
+              )}
+
+              {partecipant && !partecipant.banned && channel.messages.length > 0 && (
                 <MessagesContent channel={channel} />
               )}
 
