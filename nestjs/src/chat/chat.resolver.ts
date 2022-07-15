@@ -82,9 +82,7 @@ export class ChatResolver {
   @Mutation(returns => Channel, { name: 'create_channel' })
   async createChannel(@Context() context, @Args('input') input: CreateChannelInput) {
     const channel = await this.channelService.create(context.req.user.id, input);
-    if (channel) {
-      await this.pubSubService.publish('CHANNEL', { channel });
-    }
+    await this.pubSubService.publish('CHANNEL', { channel });
     return channel;
   }
 
@@ -92,9 +90,7 @@ export class ChatResolver {
   @Mutation(returns => Channel, { name: 'leave_channel' })
   async leaveChannel(@Context() context, @Args('id') id: string) {
     const channel = await this.channelService.leave(context.req.user.id, id);
-    if (channel) {
-      await this.pubSubService.publish('CHANNEL', { channel });
-    }
+    await this.pubSubService.publish('CHANNEL', { channel });
     return channel;
   }
 
@@ -102,9 +98,7 @@ export class ChatResolver {
   @Mutation(returns => Channel, { name: 'join_channel' })
   async joinChannel(@Context() context, @Args('input') input: JoinChannelInput) {
     const channel = await this.channelService.join(context.req.user.id, input);
-    if (channel) {
-      await this.pubSubService.publish('CHANNEL', { channel });
-    }
+    await this.pubSubService.publish('CHANNEL', { channel });
     return channel;
   }
 
@@ -112,9 +106,7 @@ export class ChatResolver {
   @Mutation(returns => Channel, { name: 'send_message' })
   async sendMessage(@Context() context, @Args('input') input: SendMessageInput) {
     const channel = await this.channelService.sendMessage(context.req.user.id, input);
-    if (channel) {
-      await this.pubSubService.publish('CHANNEL', { channel });
-    }
+    await this.pubSubService.publish('CHANNEL', { channel });
     return channel;
   }
 
@@ -131,9 +123,9 @@ export class ChatResolver {
   @UseGuards(JwtAuthGuard)
   @Subscription(returns => Channel, {
     name: 'channel',
-    filter: ({ channel }, variables, { req }) => {
-      return channel.partecipants.filter(partecipant => partecipant.profile_id === req.user.id);
-    },
+    // filter: ({ channel }, variables, { req }) => {
+    //   return channel.partecipants.filter(partecipant => partecipant.profile_id === req.user.id);
+    // },
   })
   async onChannelUpdate(@Context() context) {
     return await this.pubSubService.subscribe('CHANNEL');

@@ -47,10 +47,6 @@ export class ChannelService {
         throw new Error('A channel with this name already exists.');
 
       const channel = await prisma.channel.create({
-        include: {
-          messages: true,
-          partecipants: true,
-        },
         data: {
           name: input.name,
           type: input.password ? 'PROTECTED' : 'PUBLIC',
@@ -77,6 +73,9 @@ export class ChannelService {
     return this.prisma.$transaction(async (prisma: any) => {
 
       const partecipant = await prisma.partecipant.findFirst({
+        include: {
+          channel: true,
+        },
         where: {
           profile_id,
           channel_id: id,
@@ -86,14 +85,10 @@ export class ChannelService {
       });
 
       if (!partecipant)
-        throw new Error('Could not leave channel.');
+        throw new Error('You are not a member of this channel.');
 
       if (partecipant.role == 'OWNER') {
         const channel = await prisma.channel.delete({
-          include: {
-            messages: true,
-            partecipants: true,
-          },
           where: {
             id,
           },
@@ -102,14 +97,19 @@ export class ChannelService {
         if (!channel)
           throw new Error('Could not create channel.');
 
-        return channel;
+        return 0;
       }
 
-      return await prisma.channel.delete({
+      const operation = await prisma.partecipant.delete({
         where: {
           id: partecipant.id,
         },
       });
+
+      if (!operation)
+        throw new Error('Could not delete channel.');
+
+      return partecipant.channel;
     });
   }
 
@@ -117,18 +117,13 @@ export class ChannelService {
     return this.prisma.$transaction(async (prisma: any) => {
 
       const channel = await prisma.channel.findUnique({
-        include: {
-          messages: true,
-          partecipants: true,
-        },
         where: { id: input.id },
       });
       if (!channel)
         throw new Error('This channel does not exists.');
 
-      if (channel.type === 'PROTECTED' && input.password !== channel.password) {
+      if (channel.type === 'PROTECTED' && input.password !== channel.password)
         throw new Error('Invalid password!');
-      }
 
       const partecipant = await prisma.partecipant.create({
         data: {
@@ -140,7 +135,6 @@ export class ChannelService {
       if (!partecipant)
         throw new Error('Could not create partecipant for channel');
 
-      channel.partecipants = [...channel.partecipants, partecipant];
       return channel;
     });
   }
@@ -149,10 +143,6 @@ export class ChannelService {
     return this.prisma.$transaction(async (prisma: any) => {
 
       const channel = await prisma.channel.findUnique({
-        include: {
-          messages: true,
-          partecipants: true,
-        },
         where: { id: input.id },
       });
       if (!channel)
@@ -183,10 +173,8 @@ export class ChannelService {
       if (!message)
         throw new Error('Could not create message.');
 
-      channel.messages = [...channel.messages, message];
       return channel;
     });
   }
-
 
 }
