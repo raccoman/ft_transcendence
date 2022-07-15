@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { useQuery } from '@apollo/client';
-import { ME } from 'src/graphql/queries';
+import { ME } from 'graphql/queries';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,

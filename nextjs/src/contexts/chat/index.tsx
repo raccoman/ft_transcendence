@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ChatContextProps, FCWithChildren } from 'types';
-import { ON_CHANNEL_UPDATE } from 'src/graphql/subscriptions';
-import { CHANNELS } from 'src/graphql/queries';
 import { Channel } from 'types/graphql';
-import { UPSERT_PUNISHMENT, JOIN_CHANNEL, SEND_MESSAGE, CREATE_CHANNEL, LEAVE_CHANNEL } from 'src/graphql/mutations';
+import { UPSERT_PUNISHMENT, JOIN_CHANNEL, SEND_MESSAGE, CREATE_CHANNEL, LEAVE_CHANNEL } from 'graphql/mutations';
+import { ON_CHANNEL_UPDATE } from 'graphql/subscriptions';
+import { CHANNELS } from 'graphql/queries';
 
 const ChatContext = createContext<ChatContextProps>({
   channels: [],
