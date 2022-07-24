@@ -72,6 +72,7 @@ export interface Profile {
     email: string;
     gems: number;
     id: number;
+    rp: number;
     updated_at: DateTime;
     username: string;
 }

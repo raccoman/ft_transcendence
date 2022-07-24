@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  url      = env("POSTGRES_URI")
 }
 
 model Profile {
@@ -17,6 +17,7 @@ model Profile {
   email			String
   avatar		String
   gems			Int				@default(0)
+  rp			Int				@default(150)
   messages		Message[]
   belongs		Partecipant[]
   updated_at	DateTime		@default(now())

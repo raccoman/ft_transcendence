@@ -8,6 +8,7 @@ export const ME = gql`
             email
             avatar
             gems
+            rp
             updated_at
         }
     }

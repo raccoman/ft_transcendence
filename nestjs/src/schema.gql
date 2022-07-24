@@ -60,6 +60,7 @@ type Profile {
   email: String!
   gems: Int!
   id: Int!
+  rp: Int!
   updated_at: DateTime!
   username: String!
 }

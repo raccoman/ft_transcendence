@@ -18,6 +18,9 @@ export class Profile {
   @Field(type => Int)
   gems: number;
 
+  @Field(type => Int)
+  rp: number;
+
   @Field((type) => Date)
   updated_at: Date;
 }
