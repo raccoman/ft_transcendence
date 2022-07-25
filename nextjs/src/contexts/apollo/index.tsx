@@ -3,16 +3,18 @@ import { createClient } from 'graphql-ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 
+const PROCESS_BROWSER = () => typeof window !== 'undefined';
+
 const HTTP_LINK = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/graphql' || 'undefined',
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
   credentials: 'include',
 });
 
-const WS_LINK = process.browser ? new GraphQLWsLink(createClient({
-  url: process.env.NEXT_PUBLIC_NESTJS_WS_BASE_URL + '/graphql' || 'undefined',
+const WS_LINK = PROCESS_BROWSER() ? new GraphQLWsLink(createClient({
+  url: process.env.NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT!!,
 })) : null;
 
-const ONDEMAND_LINK = process.browser ? split(({ query }) => {
+const ONDEMAND_LINK = PROCESS_BROWSER() ? split(({ query }) => {
     const definition = getMainDefinition(query);
     return (definition.kind === 'OperationDefinition' && definition.operation === 'subscription');
   },

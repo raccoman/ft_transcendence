@@ -17,6 +17,7 @@ import { PubsubModule } from 'src/pubsub/pubsub.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      path: 'v1/graphql',
       sortSchema: true,
       // buildSchemaOptions: { dateScalarMode: 'timestamp' },
       definitions: {

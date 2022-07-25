@@ -56,7 +56,7 @@ const Component: FC = () => {
         <Channels isExpanded={isExpandend} setExpanded={setExpandend} ID={id} setID={setId} />
 
         {channel && (
-          <div className='flex flex-col justify-between border border-primary-400 rounded-tr-md rounded-tl-md w-[300px]'>
+          <div className='flex flex-col justify-between border border-primary-400 rounded-tr-md rounded-tl-md w-[300px] bg-primary-600'>
             <div className='flex flex-col space-y-1 px-5 py-2'>
 
               <div className='flex justify-between items-center'>

@@ -28,3 +28,7 @@ export interface ChatContextProps {
   sendMessage: any;
   upsertPunishment: any;
 }
+
+export interface GameContextProps {
+  inQueue: boolean;
+}

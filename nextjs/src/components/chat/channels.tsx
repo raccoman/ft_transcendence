@@ -21,8 +21,7 @@ export const Channels: FC<{
 
       <ChannelCreateDialog isOpen={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
 
-      <div
-        className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2'>
+      <div className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2 bg-primary-600'>
 
         <div className='flex space-x-10 justify-between'>
 

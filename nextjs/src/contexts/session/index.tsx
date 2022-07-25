@@ -19,7 +19,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
   const signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
       'client_id=' + process.env.NEXT_PUBLIC_INTRA_CLIENT_ID + '&' +
-      'redirect_uri=' + process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/auth/sign-in' + '&' +
+      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '&' +
       'state=' + customAlphabet(urlAlphabet)() + '&' +
       'response_type=code';
 

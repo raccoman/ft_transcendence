@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 
             <div className='flex flex-col space-y-10 items-center'>
 
-              <Image src='/assets/ranks/0.svg' width={256} height={256} alt='unranked-match' />
+              <Image src='/assets/ranks/0.svg' width={128} height={128} alt='unranked-match' />
 
               <p className='font-light text-xs text-center'>
                 It features all the rules, gameplay changes<br />
@@ -51,29 +51,29 @@ const Home: NextPage = () => {
             <div className='flex flex-col items-center justify-center space-y-5'>
 
               <div className='w-full flex items-end space-x-2'>
-                <Image src={`/assets/ranks/${getPrevRank(profile!!.rp)}.svg`} width={128} height={128}
+                <Image src={`/assets/ranks/${getPrevRank(profile!!.rp)}.svg`} width={64} height={64}
                        alt='prev-rank' />
-                <Image src={`/assets/ranks/${getCurrentRank(profile!!.rp)}.svg`} width={256} height={256}
+                <Image src={`/assets/ranks/${getCurrentRank(profile!!.rp)}.svg`} width={128} height={128}
                        alt='current-rank' />
-                <Image src={`/assets/ranks/${getNextRank(profile!!.rp)}.svg`} width={128} height={128}
+                <Image src={`/assets/ranks/${getNextRank(profile!!.rp)}.svg`} width={64} height={64}
                        alt='next-rank' />
               </div>
 
               <div className='w-full grid grid-cols-4 gap-2 items-center'>
                 <div className='w-full flex items-center space-x-2'>
-                  <div className='w-full h-[4px] w-full rounded-l-full' style={{
+                  <div className='w-full h-[2px] w-full rounded-l-full' style={{
                     background: 'repeating-linear-gradient(to right, #4cc38a 0, #4cc38a 3px, transparent 3px, transparent 7px)',
                   }} />
-                  <p>{getRankRP(getCurrentRank(profile!!.rp))}</p>
+                  <p className='text-xs'>{getRankRP(getCurrentRank(profile!!.rp))}</p>
                 </div>
 
-                <div className='col-span-2 bg-primary-400 h-[4px] w-full'>
+                <div className='col-span-2 bg-primary-400 h-[2px] w-full'>
                   <div className='bg-accent h-full' style={{ width: getRankProgress(profile!!.rp) + '%' }} />
                 </div>
 
                 <div className='w-full flex items-center space-x-2'>
-                  <p>{getRankRP(getNextRank(profile!!.rp))}</p>
-                  <div className='w-full h-[4px] w-full rounded-r-full' style={{
+                  <p className='text-xs'>{getRankRP(getNextRank(profile!!.rp))}</p>
+                  <div className='w-full h-[2px] w-full rounded-r-full' style={{
                     background: 'repeating-linear-gradient(to right, #282828 0, #282828 3px, transparent 3px, transparent 7px)',
                   }} />
                 </div>
