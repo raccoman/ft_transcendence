@@ -31,4 +31,5 @@ export interface ChatContextProps {
 
 export interface GameContextProps {
   inQueue: boolean;
+  joinQueue: any;
 }

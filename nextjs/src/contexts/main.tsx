@@ -1,5 +1,5 @@
 import { FCWithChildren } from 'types';
-import { ChatContextProvider } from 'src/contexts';
+import { ChatContextProvider, GameContextProvider } from 'src/contexts';
 
 const combineContexts = (...components: any[]) => {
   return components.reduce((AccumulatedComponents, CurrentComponent) => {
@@ -18,7 +18,8 @@ const combineContexts = (...components: any[]) => {
 };
 
 const Contextes = combineContexts(...[
-  ChatContextProvider
+  ChatContextProvider,
+  GameContextProvider,
 ]);
 
 export const AppContextProvider: FCWithChildren = ({ children }) => (

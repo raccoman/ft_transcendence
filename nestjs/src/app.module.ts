@@ -8,6 +8,7 @@ import { ProfileModule } from './profile/profile.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ChatModule } from 'src/chat/chat.module';
 import { PubsubModule } from 'src/pubsub/pubsub.module';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { PubsubModule } from 'src/pubsub/pubsub.module';
     AuthModule,
     ProfileModule,
     ChatModule,
+    GameModule,
   ],
 })
 export class AppModule {

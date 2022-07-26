@@ -1,11 +1,12 @@
 import type { NextPage } from 'next';
 import Image from 'next/image';
-import { useSession } from 'src/contexts';
+import { useGame, useSession } from 'src/contexts';
 import { getCurrentRank, getNextRank, getPrevRank, getRankProgress, getRankRP } from 'src/utils/ranks';
 
 const Home: NextPage = () => {
 
   const { profile } = useSession();
+  const { joinQueue } = useGame();
 
   return (
     <div className='px-5 py-20 flex justify-center'>
@@ -32,7 +33,8 @@ const Home: NextPage = () => {
 
             </div>
 
-            <button className='w-full py-1.5 bg-accent rounded-md font-medium text-sm'>
+            <button className='w-full py-1.5 bg-accent rounded-md font-medium text-sm'
+                    onClick={() => joinQueue('UNRANKED')}>
               Join queue
             </button>
 

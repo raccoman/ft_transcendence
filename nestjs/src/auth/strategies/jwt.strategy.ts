@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 const extractJWTFromCookie = (request: Request) => {
+
   if (!request || !request.headers || !request.headers.cookie)
     return null;
 
@@ -17,7 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken(), extractJWTFromCookie]),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        extractJWTFromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
