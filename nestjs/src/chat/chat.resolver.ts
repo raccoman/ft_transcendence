@@ -128,7 +128,7 @@ export class ChatResolver {
     // },
   })
   async onChannelUpdate(@Context() context) {
-    return await this.pubSubService.subscribe('CHANNEL');
+    return this.pubSubService.subscribe('CHANNEL');
   }
 
 }
