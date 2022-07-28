@@ -14,14 +14,17 @@ export interface MatchProfile {
     down: boolean,
     up: boolean,
   };
-  position: number;
+  paddle: {
+    posY: number;
+    posX: number;
+    speedX: number;
+    speedY: number;
+  };
 }
 
 export enum MatchType {
-  DRAFT_2vs2,
-  DRAFT_4vs4,
-  RANKED_2vs2,
-  RANKED_4vs4,
+  DRAFT_1vs1,
+  RANKED_1vs1,
 }
 
 export enum MatchState {

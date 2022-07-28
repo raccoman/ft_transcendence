@@ -19,7 +19,7 @@ const Component: FCWithChildren<{ isPublic: boolean }> = ({ children, isPublic }
       return;
     }
 
-  }, [isLoading, isPublic, profile]);
+  }, [isLoading, isPublic, profile, router]);
 
   if (isLoading || (!isPublic && !profile)) {
 

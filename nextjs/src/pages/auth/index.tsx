@@ -17,7 +17,7 @@ const Index: NextPageWithLayout = () => {
       return;
     }
 
-  }, [profile]);
+  }, [profile, router]);
 
   if (profile) {
     return (

@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Match, MatchState, MatchType, QueuedProfile } from 'types';
+import { Match, MatchProfile, MatchState, MatchType, QueuedProfile } from 'types';
 import { Server, Socket } from 'socket.io';
 import * as cuid from 'cuid';
 
 @Injectable()
 export class GameService {
+
+  private static CANVAS_WIDTH = 1024;
+  private static CANVAS_HEIGHT = 576;
+  private static CANVAS_PADDING_X = 20;
+
+  private static PADDLE_HEIGHT = 192;
+  private static PADDLE_WIDTH = 20;
+  private static PADDLE_SPEED_Y = 10;
 
   private queues = new Map<MatchType, QueuedProfile[]>();
   private matches = new Map<string, Match>();
@@ -21,26 +29,23 @@ export class GameService {
       const timestamp = Date.now();
       match.timings.elapsed = timestamp - match.timings.started_at;
 
-      match.players[0].position += 3;
+      for (const player of match.players) {
+        const direction = +player.input.down - +player.input.up;
+        player.paddle.posY += player.paddle.speedY * direction;
+
+        player.paddle.posY = Math.min(GameService.CANVAS_HEIGHT - GameService.PADDLE_HEIGHT, player.paddle.posY);
+        player.paddle.posY = Math.max(0, player.paddle.posY);
+      }
 
       server.in(match.id).emit('MATCH-UPDATE', match);
     }
   }
 
-  private getRequiredPlayers(type: MatchType) {
-    if (type.toString().endsWith('4vs4'))
-      return 4;
-
-    return 2;
-  }
-
   private tickQueue(server: Server, type: MatchType) {
-
     const queue = this.queues.get(type);
-    const required = this.getRequiredPlayers(type);
 
-    console.debug('Ticking queue... (' + queue.length + '/' + required + ')');
-    if (queue.length < required)
+    console.debug('Ticking queue... (' + queue.length + '/' + 2 + ')');
+    if (queue.length < 2)
       return;
 
     this.startGame(server, type, queue);
@@ -57,7 +62,10 @@ export class GameService {
       timings: { started_at: Date.now(), elapsed: 0 },
     };
 
-    for (const queued of queue) {
+    for (let i = 0; i < queue.length; i++) {
+
+      const queued = queue.at(i);
+
       match.players.push({
         profile: queued.profile,
         background: 'https://static.vecteezy.com/system/resources/previews/001/907/544/original/flat-design-background-with-abstract-pattern-free-vector.jpg',
@@ -66,7 +74,12 @@ export class GameService {
           up: false,
           down: false,
         },
-        position: 10,
+        paddle: {
+          posY: GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2,
+          posX: i % 2 == 0 ? GameService.CANVAS_PADDING_X : GameService.CANVAS_WIDTH - GameService.PADDLE_WIDTH - GameService.CANVAS_PADDING_X,
+          speedY: GameService.PADDLE_SPEED_Y,
+          speedX: 0,
+        },
       });
 
       queued.socket.join(match.id);
@@ -75,6 +88,16 @@ export class GameService {
     this.matches.set(match.id, match);
     server.in(match.id).emit('MATCH-FOUND', match);
     console.debug('Match (' + match.id + ') has been created.');
+  }
+
+  public async playerInput(id: number, match_id: string, input: MatchProfile['input']) {
+    const match = this.matches.get(match_id);
+
+    const index = match.players.findIndex(x => x.profile.id === id);
+    if (index < 0)
+      throw new Error('Cannot find player in this specific match.');
+
+    match.players[index].input = input;
   }
 
   public async enqueue(server: Server, client: Socket, id: number, type: MatchType) {
@@ -106,11 +129,29 @@ export class GameService {
       throw new Error('Profile was not found!');
 
     queue.push({ profile, socket: client });
-    queue.push({ profile, socket: client }); //TODO: Remove after test
+    // queue.push({ profile, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
 
     this.tickQueue(server, type);
+  }
+
+  public async dequeue(server: Server, client: Socket, id: number) {
+
+    for (const [type, queue] of this.queues.entries()) {
+
+      for (let index = 0; index < queue.length; index++) {
+
+        if (queue.at(index).profile.id != id)
+          continue;
+
+        queue.splice(index, 1);
+        console.debug('ID: ' + id + ' removed from queue.');
+        return;
+      }
+    }
+
+    console.debug('ID: ' + id + ' wasn\'t in the queue.');
   }
 
 }
