@@ -22,7 +22,7 @@ const Home: NextPage = () => {
           <div className='border border-primary-400 rounded-lg flex flex-col items-center overflow-hidden shadow-lg'>
 
             <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
-              Draft 2vs2
+              Draft 1vs1
             </p>
 
             <div className='flex flex-col justify-between w-full h-full space-y-10 p-5'>
@@ -51,7 +51,7 @@ const Home: NextPage = () => {
           <div className='border border-primary-400 rounded-lg flex flex-col items-center overflow-hidden shadow-lg'>
 
             <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
-              Ranked 2vs2
+              Ranked 1vs1
             </p>
 
             <div className='flex flex-col justify-between w-full h-full space-y-10 p-5'>

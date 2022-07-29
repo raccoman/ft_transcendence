@@ -10,10 +10,7 @@ export interface MatchProfile {
   profile: Profile;
   background: string; //TODO: move in profile
   lives: number;
-  input: {
-    down: boolean,
-    up: boolean,
-  };
+  input: { [key: string]: boolean };
   paddle: {
     posY: number;
     posX: number;
@@ -37,6 +34,14 @@ export interface Match {
   id: string;
   players: MatchProfile[];
   spectators: Profile[];
+  ball: {
+    radius: number;
+    posY: number;
+    posX: number;
+    speedX: number;
+    speedY: number;
+    acceleration: number;
+  }
   settings: {
     type: MatchType;
     lives: number;

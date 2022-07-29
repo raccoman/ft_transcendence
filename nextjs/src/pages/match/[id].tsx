@@ -17,12 +17,12 @@ const Game: NextPage = () => {
   const previousTimeRef = useRef<number | undefined>();
 
   const { profile } = useSession();
-  const { match, onKeyUp, onKeyDown, runTick } = useGame();
+  const { match, onKeyUp, onKeyDown, runTick, frameRate } = useGame();
 
   const render = (ms: number) => {
 
     if (previousTimeRef.current != undefined) {
-      const delta = (ms - previousTimeRef.current) / 100;
+      const delta = (ms - previousTimeRef.current) / 1000;
       runTick(delta);
     }
 
@@ -98,7 +98,7 @@ const Game: NextPage = () => {
         </div>
 
         <div className='border border-primary-400 rounded-lg overflow-hidden'>
-          <PongCanvas match={match} />
+          <PongCanvas match={match} frameRate={frameRate} />
         </div>
 
       </div>

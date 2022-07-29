@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Match, MatchProfile, MatchState, MatchType, QueuedProfile } from 'types';
+import { Match, MatchState, MatchType, QueuedProfile } from 'types';
 import { Server, Socket } from 'socket.io';
 import * as cuid from 'cuid';
 
@@ -13,7 +13,10 @@ export class GameService {
 
   private static PADDLE_HEIGHT = 192;
   private static PADDLE_WIDTH = 20;
-  private static PADDLE_SPEED_Y = 10;
+  private static PADDLE_SPEED_Y = 300;
+
+  private static BALL_RADIUS = 10;
+  private static BALL_ACCELERATION = 100;
 
   private queues = new Map<MatchType, QueuedProfile[]>();
   private matches = new Map<string, Match>();
@@ -24,18 +27,36 @@ export class GameService {
   }
 
   public tickMatches(server: Server) {
+
     for (const match of this.matches.values()) {
 
       const timestamp = Date.now();
       match.timings.elapsed = timestamp - match.timings.started_at;
 
       for (const player of match.players) {
-        const direction = +player.input.down - +player.input.up;
-        player.paddle.posY += player.paddle.speedY * direction;
 
+        const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
+        player.paddle.posY += player.paddle.speedY * dirY;
         player.paddle.posY = Math.min(GameService.CANVAS_HEIGHT - GameService.PADDLE_HEIGHT, player.paddle.posY);
         player.paddle.posY = Math.max(0, player.paddle.posY);
       }
+
+      match.ball.posX += match.ball.speedX;
+      match.ball.posY += match.ball.speedY;
+
+      if (match.ball.posY + match.ball.radius > GameService.CANVAS_HEIGHT ||
+        match.ball.posY - match.ball.radius < 0) {
+        match.ball.speedY += match.ball.acceleration;
+        match.ball.speedY *= -1;
+      }
+
+      if (match.ball.posX + match.ball.radius > GameService.CANVAS_WIDTH ||
+        match.ball.posX - match.ball.radius < 0) {
+        match.ball.speedX += match.ball.acceleration;
+        match.ball.speedX *= -1;
+      }
+
+      // const nearest = match.players[match.ball.posX < GameService.CANVAS_WIDTH / 2 ? 0 : 1];
 
       server.in(match.id).emit('MATCH-UPDATE', match);
     }
@@ -57,6 +78,14 @@ export class GameService {
       id: cuid(),
       players: [],
       spectators: [],
+      ball: {
+        radius: GameService.BALL_RADIUS,
+        posY: GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS,
+        posX: GameService.CANVAS_WIDTH / 2 - GameService.BALL_RADIUS,
+        speedX: 20,
+        speedY: 6,
+        acceleration: GameService.BALL_ACCELERATION,
+      },
       settings: { lives: 5, type },
       state: MatchState.STARTING,
       timings: { started_at: Date.now(), elapsed: 0 },
@@ -71,8 +100,8 @@ export class GameService {
         background: 'https://static.vecteezy.com/system/resources/previews/001/907/544/original/flat-design-background-with-abstract-pattern-free-vector.jpg',
         lives: match.settings.lives,
         input: {
-          up: false,
-          down: false,
+          'ArrowDown': false,
+          'ArrowUp': false,
         },
         paddle: {
           posY: GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2,
@@ -90,14 +119,14 @@ export class GameService {
     console.debug('Match (' + match.id + ') has been created.');
   }
 
-  public async playerInput(id: number, match_id: string, input: MatchProfile['input']) {
+  public async playerInput(id: number, match_id: string, key: string, pressed: boolean) {
     const match = this.matches.get(match_id);
 
     const index = match.players.findIndex(x => x.profile.id === id);
     if (index < 0)
       throw new Error('Cannot find player in this specific match.');
 
-    match.players[index].input = input;
+    match.players[index].input[key] = pressed;
   }
 
   public async enqueue(server: Server, client: Socket, id: number, type: MatchType) {
@@ -129,7 +158,7 @@ export class GameService {
       throw new Error('Profile was not found!');
 
     queue.push({ profile, socket: client });
-    // queue.push({ profile, socket: client }); //TODO: Remove after test
+    queue.push({ profile, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
 

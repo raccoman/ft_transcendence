@@ -4,7 +4,7 @@ import useImage from 'use-image';
 import { Match } from 'types';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, PADDLE_HEIGHT, PADDLE_WIDTH } from 'src/contexts/game';
 
-const Component: FC<{ match: Match }> = ({ match }) => {
+const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate }) => {
 
   const [imageP1] = useImage(match.players[0].background);
   const [imageP2] = useImage(match.players[1].background);
@@ -25,8 +25,12 @@ const Component: FC<{ match: Match }> = ({ match }) => {
 
       <Layer>
 
-        <Rect x={match.players[0].paddle.posX} y={match.players[0].paddle.posY}  width={PADDLE_WIDTH} height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
-        <Rect x={match.players[1].paddle.posX} y={match.players[1].paddle.posY}  width={PADDLE_WIDTH} height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
+        <Circle x={match.ball.posX} y={match.ball.posY} radius={match.ball.radius} fill='#4cc38a' />
+
+        <Rect x={match.players[0].paddle.posX} y={match.players[0].paddle.posY} width={PADDLE_WIDTH}
+              height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
+        <Rect x={match.players[1].paddle.posX} y={match.players[1].paddle.posY} width={PADDLE_WIDTH}
+              height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
 
       </Layer>
 

@@ -5,12 +5,14 @@ import {
   SubscribeMessage,
   WebSocketGateway, WebSocketServer,
 } from '@nestjs/websockets';
-import { Req, UseGuards } from '@nestjs/common';
+import { Req, UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Server, Socket } from 'socket.io';
 import { GameService } from 'src/game/game.service';
 import { MatchProfile, MatchType } from 'types';
 import { Interval } from '@nestjs/schedule';
+import { JoinQueueSchema, PlayerInputSchema } from 'src/game/schema';
+import { JoiValidationPipe } from 'src/pipes/joi';
 
 
 @WebSocketGateway(80, {
@@ -36,17 +38,23 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
   handleConnection(client: any, ...args): any {
   }
 
-  @Interval(50)
+  /**
+   * 1000ms / 60fps ≈ 16 milliseconds per frame
+   * 1000ms / 30fps ≈ 33 milliseconds per frame
+   *
+   */
+  @Interval(1000)
   private tickMatches() {
     this.gameService.tickMatches(this.server);
   }
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage('JOIN-QUEUE')
-  async joinQueue(@Req() request, @MessageBody('type') type: MatchType, @ConnectedSocket() client: Socket): Promise<number> {
+  async joinQueue(@MessageBody(new JoiValidationPipe(JoinQueueSchema)) data, @Req() request, @ConnectedSocket() client: Socket): Promise<number> {
     try {
 
       const { user } = request;
+      const { type } = data;
       await this.gameService.enqueue(this.server, client, user.id, type);
       return 0;
 
@@ -73,12 +81,12 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
 
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage('PLAYER-INPUT')
-  async playerInput(@Req() request, @MessageBody() body, @ConnectedSocket() client: Socket): Promise<number> {
+  async playerInput(@MessageBody(new JoiValidationPipe(PlayerInputSchema)) data, @Req() request, @ConnectedSocket() client: Socket): Promise<number> {
     try {
 
       const { user } = request;
-      const { id, input } = body;
-      await this.gameService.playerInput(user.id, id, input);
+      const { match, key, pressed } = data;
+      await this.gameService.playerInput(user.id, match, key, pressed);
       return 0;
 
     } catch (ex) {

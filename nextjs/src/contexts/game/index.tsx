@@ -4,14 +4,13 @@ import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
 import { of } from 'rxjs';
 import { set } from 'js-cookie';
+import { useSession } from 'src/contexts/session';
 
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 576;
-export const CANVAS_PADDING_X = 20;
 
 export const PADDLE_HEIGHT = 192;
 export const PADDLE_WIDTH = 20;
-export const PADDLE_SPEED_Y = 10;
 
 const GameContext = createContext<GameContextProps>({
   queued: false,
@@ -21,6 +20,7 @@ const GameContext = createContext<GameContextProps>({
   onKeyDown: undefined,
   onKeyUp: undefined,
   runTick: undefined,
+  frameRate: 0,
 });
 
 const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true });
@@ -31,7 +31,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const [queued, setQueued] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
-  const [input, setInput] = useState<MatchProfile['input']>({ up: false, down: false });
+  const [frameRate, setFrameRate] = useState(0);
 
   const joinQueue = (type: MatchType) => {
     socket.emit('JOIN-QUEUE', { type }, (error: string) => setQueued(!error));
@@ -44,44 +44,24 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     if (!match || e.repeat)
       return;
 
-    if (e.key == 'ArrowDown') {
-      setInput(input => {
-        input.down = false;
-        socket.emit('PLAYER-INPUT', { id: match.id, input });
-        return input;
-      });
-    }
+    if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
+      return;
 
-    if (e.key == 'ArrowUp') {
-      setInput(input => {
-        input.up = false;
-        socket.emit('PLAYER-INPUT', { id: match.id, input });
-        return input;
-      });
-    }
+    socket.emit('PLAYER-INPUT', { match: match.id, key: e.key, pressed: false });
   };
   const onKeyDown = (e: KeyboardEvent) => {
     if (!match || e.repeat)
       return;
 
-    if (e.key === 'ArrowDown') {
-      setInput(input => {
-        input.down = true;
-        socket.emit('PLAYER-INPUT', { id: match.id, input });
-        return input;
-      });
-    }
+    if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
+      return;
 
-    if (e.key === 'ArrowUp') {
-      setInput(input => {
-        input.up = true;
-        socket.emit('PLAYER-INPUT', { id: match.id, input });
-        return input;
-      });
-    }
+    socket.emit('PLAYER-INPUT', { match: match.id, key: e.key, pressed: true });
   };
 
   const runTick = (delta: number) => {
+
+    setFrameRate(delta);
 
     setMatch((match: Match | undefined) => {
 
@@ -89,11 +69,27 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
         return match;
 
       for (const player of match.players) {
-        const direction = +player.input.down - +player.input.up;
 
-        player.paddle.posY = Math.floor(player.paddle.posY + (player.paddle.speedY * direction * delta));
+        const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
+
+        player.paddle.posY += player.paddle.speedY * dirY * delta;
         player.paddle.posY = Math.min(CANVAS_HEIGHT - PADDLE_HEIGHT, player.paddle.posY);
         player.paddle.posY = Math.max(0, player.paddle.posY);
+      }
+
+      match.ball.posX += match.ball.speedX * delta;
+      match.ball.posY += match.ball.speedY * delta;
+
+      if (match.ball.posY + match.ball.radius > CANVAS_HEIGHT ||
+        match.ball.posY - match.ball.radius < 0) {
+        match.ball.speedY += match.ball.acceleration * delta;
+        match.ball.speedY *= -1;
+      }
+
+      if (match.ball.posX + match.ball.radius > CANVAS_WIDTH ||
+        match.ball.posX - match.ball.radius < 0) {
+        match.ball.speedX += match.ball.acceleration * delta;
+        match.ball.speedX *= -1;
       }
 
       return match;
@@ -140,7 +136,8 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   }, []);
 
   return (
-    <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick }}>
+    <GameContext.Provider
+      value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, frameRate }}>
       {children}
     </GameContext.Provider>
   );
