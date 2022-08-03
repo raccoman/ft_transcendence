@@ -38,12 +38,11 @@ export interface GameContextProps {
   onKeyDown: any;
   onKeyUp: any;
   runTick: any;
-  frameRate: number;
+  fps: number;
 }
 
 export interface MatchProfile {
   profile: Profile;
-  background: string; //TODO: move in profile
   lives: number;
   input: { [key: string]: boolean };
   paddle: {
@@ -51,6 +50,8 @@ export interface MatchProfile {
     posX: number;
     speedX: number;
     speedY: number;
+    renderPosX: number;
+    renderPosY: number;
   };
 }
 
@@ -76,6 +77,8 @@ export interface Match {
     speedX: number;
     speedY: number;
     acceleration: number;
+    renderPosX: number;
+    renderPosY: number;
   }
   settings: {
     type: MatchType;
@@ -85,5 +88,6 @@ export interface Match {
   timings: {
     started_at: number;
     elapsed: number;
+    countdown: number;
   };
 }

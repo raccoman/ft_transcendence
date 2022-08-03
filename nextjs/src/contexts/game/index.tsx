@@ -2,9 +2,6 @@ import { FCWithChildren, GameContextProps, Match, MatchProfile, MatchType } from
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
-import { of } from 'rxjs';
-import { set } from 'js-cookie';
-import { useSession } from 'src/contexts/session';
 
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 576;
@@ -20,7 +17,7 @@ const GameContext = createContext<GameContextProps>({
   onKeyDown: undefined,
   onKeyUp: undefined,
   runTick: undefined,
-  frameRate: 0,
+  fps: 0,
 });
 
 const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true });
@@ -31,7 +28,11 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const [queued, setQueued] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
-  const [frameRate, setFrameRate] = useState(0);
+
+  const [fps, setFps] = useState(0);
+
+  // const BALL_HIT_WALL_SOUND = new Audio('public/assets/sounds/ball-hit-wall.mp3');
+  // const BALL_HIT_PADDLE_SOUND = new Audio('public/assets/sounds/ball-hit-paddle.mp3');
 
   const joinQueue = (type: MatchType) => {
     socket.emit('JOIN-QUEUE', { type }, (error: string) => setQueued(!error));
@@ -59,9 +60,11 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     socket.emit('PLAYER-INPUT', { match: match.id, key: e.key, pressed: true });
   };
 
-  const runTick = (delta: number) => {
+  const runTick = (elapsed: number) => {
 
-    setFrameRate(delta);
+    const partialTicks = elapsed / 50;
+    setFps(prevState => (prevState + 1));
+    setTimeout(() => setFps(prevState => prevState - 1), 1000);
 
     setMatch((match: Match | undefined) => {
 
@@ -71,26 +74,14 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
       for (const player of match.players) {
 
         const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
+        const dirX = +player.input['ArrowRight'] - +player.input['ArrowLeft'];
 
-        player.paddle.posY += player.paddle.speedY * dirY * delta;
-        player.paddle.posY = Math.min(CANVAS_HEIGHT - PADDLE_HEIGHT, player.paddle.posY);
-        player.paddle.posY = Math.max(0, player.paddle.posY);
+        player.paddle.renderPosX = player.paddle.posX * player.paddle.speedX * dirX * partialTicks;
+        player.paddle.renderPosY = player.paddle.posY * player.paddle.speedY * dirY * partialTicks;
       }
 
-      match.ball.posX += match.ball.speedX * delta;
-      match.ball.posY += match.ball.speedY * delta;
-
-      if (match.ball.posY + match.ball.radius > CANVAS_HEIGHT ||
-        match.ball.posY - match.ball.radius < 0) {
-        match.ball.speedY += match.ball.acceleration * delta;
-        match.ball.speedY *= -1;
-      }
-
-      if (match.ball.posX + match.ball.radius > CANVAS_WIDTH ||
-        match.ball.posX - match.ball.radius < 0) {
-        match.ball.speedX += match.ball.acceleration * delta;
-        match.ball.speedX *= -1;
-      }
+      match.ball.renderPosX = match.ball.posX + match.ball.speedX * partialTicks;
+      match.ball.renderPosY = match.ball.posY + match.ball.speedY * partialTicks;
 
       return match;
     });
@@ -114,12 +105,25 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
     socket.on('MATCH-FOUND', async (data) => {
       setQueued(false);
-      setMatch(data);
+      await setMatch(() => data);
       await router.push('/match/' + data.id);
     });
 
-    socket.on('MATCH-UPDATE', (data) => {
-      setMatch(data);
+    socket.on('MATCH-UPDATE', (match) => {
+      setMatch(prevState => {
+
+        if (!prevState)
+          return match;
+
+        for (let i = 0; i < prevState.players.length; i++) {
+          match.players[i].paddle.renderPosX = prevState.players[i].paddle.renderPosX;
+          match.players[i].paddle.renderPosY = prevState.players[i].paddle.renderPosY;
+        }
+
+        match.ball.renderPosX = prevState.ball.renderPosX;
+        match.ball.renderPosY = prevState.ball.renderPosY;
+        return match;
+      });
     });
 
     console.log('Connecting websocket...');
@@ -137,7 +141,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   return (
     <GameContext.Provider
-      value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, frameRate }}>
+      value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps }}>
       {children}
     </GameContext.Provider>
   );

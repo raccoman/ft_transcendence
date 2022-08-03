@@ -8,7 +8,6 @@ export interface QueuedProfile {
 
 export interface MatchProfile {
   profile: Profile;
-  background: string; //TODO: move in profile
   lives: number;
   input: { [key: string]: boolean };
   paddle: {
@@ -41,7 +40,7 @@ export interface Match {
     speedX: number;
     speedY: number;
     acceleration: number;
-  }
+  };
   settings: {
     type: MatchType;
     lives: number;
@@ -50,5 +49,6 @@ export interface Match {
   timings: {
     started_at: number;
     elapsed: number;
+    countdown: number;
   };
 }

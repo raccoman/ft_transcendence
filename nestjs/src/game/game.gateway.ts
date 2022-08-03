@@ -38,12 +38,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
   handleConnection(client: any, ...args): any {
   }
 
-  /**
-   * 1000ms / 60fps ≈ 16 milliseconds per frame
-   * 1000ms / 30fps ≈ 33 milliseconds per frame
-   *
-   */
-  @Interval(1000)
+  @Interval(50)
   private tickMatches() {
     this.gameService.tickMatches(this.server);
   }

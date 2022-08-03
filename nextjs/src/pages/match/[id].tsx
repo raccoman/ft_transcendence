@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useGame, useSession } from 'src/contexts';
-import { Heartbeat, HeartBreak } from 'phosphor-react';
+import { Eye, Heartbeat, HeartBreak } from 'phosphor-react';
 import { useEffect, useRef } from 'react';
 import { toMMSS } from 'src/utils/timestamp';
 
@@ -17,13 +17,12 @@ const Game: NextPage = () => {
   const previousTimeRef = useRef<number | undefined>();
 
   const { profile } = useSession();
-  const { match, onKeyUp, onKeyDown, runTick, frameRate } = useGame();
+  const { match, onKeyUp, onKeyDown, runTick, fps } = useGame();
 
   const render = (ms: number) => {
 
     if (previousTimeRef.current != undefined) {
-      const delta = (ms - previousTimeRef.current) / 1000;
-      runTick(delta);
+      runTick(ms - previousTimeRef.current);
     }
 
     previousTimeRef.current = ms;
@@ -97,8 +96,9 @@ const Game: NextPage = () => {
 
         </div>
 
-        <div className='border border-primary-400 rounded-lg overflow-hidden'>
-          <PongCanvas match={match} frameRate={frameRate} />
+        <div className='relative border border-primary-400 rounded-lg overflow-hidden'>
+          <p className='z-10 absolute right-3 top-2 text-gray-500'>{fps} FPS</p>
+          <PongCanvas match={match} frameRate={fps} />
         </div>
 
       </div>

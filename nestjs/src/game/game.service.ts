@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Match, MatchState, MatchType, QueuedProfile } from 'types';
+import { Match, MatchProfile, MatchState, MatchType, QueuedProfile } from 'types';
 import { Server, Socket } from 'socket.io';
 import * as cuid from 'cuid';
 
@@ -13,53 +13,155 @@ export class GameService {
 
   private static PADDLE_HEIGHT = 192;
   private static PADDLE_WIDTH = 20;
-  private static PADDLE_SPEED_Y = 300;
+  private static PADDLE_SPEED_Y = 15;
 
   private static BALL_RADIUS = 10;
-  private static BALL_ACCELERATION = 100;
+  private static BALL_SPEED_X = 10;
+  private static BALL_ACCELERATION = 10;
 
   private queues = new Map<MatchType, QueuedProfile[]>();
   private matches = new Map<string, Match>();
+
+  private prevMatchTick = Date.now();
 
   constructor(
     private readonly prisma: PrismaService,
   ) {
   }
 
+  private intersects(ball: Match['ball'], paddle: MatchProfile['paddle']) {
+
+    let testX = ball.posX;
+    let testY = ball.posY;
+
+    // which edge is closest? 1) test left edge
+    if (ball.posX < paddle.posX)
+      testX = paddle.posX;
+
+    // 2) right edge
+    else if (ball.posX > paddle.posX + GameService.PADDLE_WIDTH)
+      testX = paddle.posX + GameService.PADDLE_WIDTH;
+
+    // 3) top edge
+    if (ball.posY < paddle.posY)
+      testY = GameService.PADDLE_HEIGHT;
+
+    // 4) bottom edge
+    else if (ball.posY > paddle.posY + GameService.PADDLE_HEIGHT)
+      testY = paddle.posY + GameService.PADDLE_HEIGHT;
+
+    // get distance from the closest edges
+    const distX = ball.posX - testX;
+    const distY = ball.posY - testY;
+    const distance = Math.sqrt((distX * distX) + (distY * distY));
+
+    // if the distance is less than the radius, collision!
+    return distance <= ball.radius;
+  }
+
+  private tickStartingMatch(match: Match, partialSeconds: number) {
+
+    match.timings.countdown -= partialSeconds;
+
+    if (Math.ceil(match.timings.countdown) < 0) {
+      match.state = MatchState.RUNNING;
+      match.timings.countdown = 3;
+    }
+
+  }
+
+  private tickRunningMatch(match: Match, partialTicks: number) {
+
+    for (const player of match.players) {
+      const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
+      player.paddle.posY += player.paddle.speedY * dirY * partialTicks;
+      player.paddle.posY = Math.min(GameService.CANVAS_HEIGHT - GameService.PADDLE_HEIGHT, player.paddle.posY);
+      player.paddle.posY = Math.max(0, player.paddle.posY);
+    }
+
+    match.ball.posX += match.ball.speedX * partialTicks;
+    match.ball.posY += match.ball.speedY * partialTicks;
+
+    if (match.ball.posY + match.ball.radius > GameService.CANVAS_HEIGHT) {
+      match.ball.posY -= match.ball.radius;
+      match.ball.speedY *= -1;
+    }
+
+    if (match.ball.posY - match.ball.radius < 0) {
+      match.ball.posY += match.ball.radius;
+      match.ball.speedY *= -1;
+    }
+
+    const nearest = match.players[match.ball.posX < GameService.CANVAS_WIDTH / 2 ? 0 : 1];
+    if (this.intersects(match.ball, nearest.paddle)) {
+
+      let collision = match.ball.posY - (nearest.paddle.posY + GameService.PADDLE_HEIGHT / 2);
+      collision /= GameService.PADDLE_HEIGHT / 2;
+
+      // calculate angle
+      const angleRad = (collision * Math.PI) / 4;
+
+      // calculate direction
+      const direction = match.ball.posX < GameService.CANVAS_WIDTH / 2 ? 1 : -1;
+
+      match.ball.speedX = direction * match.ball.acceleration * Math.cos(angleRad) * partialTicks;
+      match.ball.speedY = match.ball.acceleration * Math.sin(angleRad) * partialTicks;
+
+      // increase acceleration
+      if (match.ball.acceleration < 20) {
+        match.ball.acceleration += 0.5;
+      }
+
+    }
+
+    if (match.ball.posX - match.ball.radius < 0 || match.ball.posX + match.ball.radius > GameService.CANVAS_WIDTH) {
+
+      const loser = match.players[match.ball.posX < GameService.CANVAS_WIDTH / 2 ? 0 : 1];
+      loser.lives--;
+
+      match.state = loser.lives > 0 ? MatchState.STARTING : MatchState.ENDING;
+
+      for (let i = 0; i < match.players.length; i++) {
+
+        const { paddle } = match.players[i];
+
+        paddle.posY = GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2;
+        paddle.posX = i % 2 == 0 ? GameService.CANVAS_PADDING_X : GameService.CANVAS_WIDTH - GameService.PADDLE_WIDTH - GameService.CANVAS_PADDING_X;
+        paddle.speedY = GameService.PADDLE_SPEED_Y;
+        paddle.speedX = 0;
+
+      }
+
+      match.ball.posY = GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS;
+      match.ball.posX = GameService.CANVAS_WIDTH / 2 - GameService.BALL_RADIUS;
+      match.ball.speedX = GameService.BALL_SPEED_X * (Math.random() >= 0.5 ? 1 : -1);
+      match.ball.speedY = 0;
+      match.ball.acceleration = GameService.BALL_ACCELERATION;
+    }
+  }
+
   public tickMatches(server: Server) {
+
+    const current = Date.now();
+    const partialTicks = (current - this.prevMatchTick) / 50;
+    const partialSeconds = (current - this.prevMatchTick) / 1000;
 
     for (const match of this.matches.values()) {
 
-      const timestamp = Date.now();
-      match.timings.elapsed = timestamp - match.timings.started_at;
+      match.timings.elapsed = current - match.timings.started_at;
 
-      for (const player of match.players) {
-
-        const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
-        player.paddle.posY += player.paddle.speedY * dirY;
-        player.paddle.posY = Math.min(GameService.CANVAS_HEIGHT - GameService.PADDLE_HEIGHT, player.paddle.posY);
-        player.paddle.posY = Math.max(0, player.paddle.posY);
+      if (match.state == MatchState.STARTING) {
+        this.tickStartingMatch(match, partialSeconds);
       }
 
-      match.ball.posX += match.ball.speedX;
-      match.ball.posY += match.ball.speedY;
-
-      if (match.ball.posY + match.ball.radius > GameService.CANVAS_HEIGHT ||
-        match.ball.posY - match.ball.radius < 0) {
-        match.ball.speedY += match.ball.acceleration;
-        match.ball.speedY *= -1;
+      if (match.state == MatchState.RUNNING) {
+        this.tickRunningMatch(match, partialTicks);
       }
-
-      if (match.ball.posX + match.ball.radius > GameService.CANVAS_WIDTH ||
-        match.ball.posX - match.ball.radius < 0) {
-        match.ball.speedX += match.ball.acceleration;
-        match.ball.speedX *= -1;
-      }
-
-      // const nearest = match.players[match.ball.posX < GameService.CANVAS_WIDTH / 2 ? 0 : 1];
 
       server.in(match.id).emit('MATCH-UPDATE', match);
     }
+
+    this.prevMatchTick = current;
   }
 
   private tickQueue(server: Server, type: MatchType) {
@@ -82,13 +184,13 @@ export class GameService {
         radius: GameService.BALL_RADIUS,
         posY: GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS,
         posX: GameService.CANVAS_WIDTH / 2 - GameService.BALL_RADIUS,
-        speedX: 20,
-        speedY: 6,
+        speedX: GameService.BALL_SPEED_X * (Math.random() >= 0.5 ? 1 : -1),
+        speedY: 0,
         acceleration: GameService.BALL_ACCELERATION,
       },
       settings: { lives: 5, type },
       state: MatchState.STARTING,
-      timings: { started_at: Date.now(), elapsed: 0 },
+      timings: { started_at: Date.now(), elapsed: 0, countdown: 5 },
     };
 
     for (let i = 0; i < queue.length; i++) {
@@ -97,11 +199,12 @@ export class GameService {
 
       match.players.push({
         profile: queued.profile,
-        background: 'https://static.vecteezy.com/system/resources/previews/001/907/544/original/flat-design-background-with-abstract-pattern-free-vector.jpg',
         lives: match.settings.lives,
         input: {
           'ArrowDown': false,
           'ArrowUp': false,
+          'ArrowRight': false,
+          'ArrowLeft': false,
         },
         paddle: {
           posY: GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2,
@@ -116,11 +219,13 @@ export class GameService {
 
     this.matches.set(match.id, match);
     server.in(match.id).emit('MATCH-FOUND', match);
-    console.debug('Match (' + match.id + ') has been created.');
   }
 
   public async playerInput(id: number, match_id: string, key: string, pressed: boolean) {
+
     const match = this.matches.get(match_id);
+    if (!match || match.state != MatchState.RUNNING)
+      return;
 
     const index = match.players.findIndex(x => x.profile.id === id);
     if (index < 0)
