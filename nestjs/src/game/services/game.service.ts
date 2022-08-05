@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Match, MatchProfile, MatchState, MatchType, QueuedProfile } from 'types';
+import { Ball, Match, MatchState, MatchType, Paddle, QueuedProfile } from 'types';
 import { Server, Socket } from 'socket.io';
 import * as cuid from 'cuid';
 
@@ -29,7 +29,45 @@ export class GameService {
   ) {
   }
 
-  private intersects(ball: Match['ball'], paddle: MatchProfile['paddle']) {
+  public tickQueues(server: Server) {
+    for (const [type, queue] of this.queues.entries()) {
+
+      if (queue.length < 2)
+        continue;
+
+      this.startGame(server, type, [queue.shift(), queue.shift()]);
+    }
+  }
+
+  public tickMatches(server: Server) {
+
+    const current = Date.now();
+    const partialTicks = (current - this.prevMatchTick) / 50;
+    const partialSeconds = (current - this.prevMatchTick) / 1000;
+
+    for (const match of this.matches.values()) {
+
+      if (match.state == MatchState.STARTING) {
+        this.tickStartingMatch(match, partialSeconds);
+      }
+
+      if (match.state == MatchState.RUNNING) {
+        match.timings.elapsed = current - match.timings.started_at;
+        this.tickRunningMatch(match, partialTicks);
+      }
+
+      if (match.state == MatchState.ENDING) {
+        this.tickEndingMatch(match, partialTicks);
+      }
+
+      server.in(match.id).emit('MATCH-UPDATE', match);
+    }
+
+    this.prevMatchTick = current;
+  }
+
+
+  private intersects(ball: Ball, paddle: Paddle) {
 
     let testX = ball.posX;
     let testY = ball.posY;
@@ -60,14 +98,11 @@ export class GameService {
   }
 
   private tickStartingMatch(match: Match, partialSeconds: number) {
-
     match.timings.countdown -= partialSeconds;
-
     if (Math.ceil(match.timings.countdown) < 0) {
       match.state = MatchState.RUNNING;
       match.timings.countdown = 3;
     }
-
   }
 
   private tickRunningMatch(match: Match, partialTicks: number) {
@@ -140,41 +175,40 @@ export class GameService {
     }
   }
 
-  public tickMatches(server: Server) {
+  private tickEndingMatch(match: Match, partialTicks: number) {
 
-    const current = Date.now();
-    const partialTicks = (current - this.prevMatchTick) / 50;
-    const partialSeconds = (current - this.prevMatchTick) / 1000;
+    const winner = match.players.find(x => x.lives > 0);
 
-    for (const match of this.matches.values()) {
+    this.prisma.$transaction(async (prisma: any) => {
 
-      match.timings.elapsed = current - match.timings.started_at;
-
-      if (match.state == MatchState.STARTING) {
-        this.tickStartingMatch(match, partialSeconds);
+      if (match.settings.type == MatchType.RANKED_1vs1) {
+        const profile = await prisma.profile.update({
+          where: {
+            id: winner.profile.id,
+          },
+          data: {
+            rp: {
+              increment: 15,
+            }
+          },
+        });
       }
 
-      if (match.state == MatchState.RUNNING) {
-        this.tickRunningMatch(match, partialTicks);
-      }
+      await prisma.match.upsert({
+        where: {
+          id: match.id
+        },
+        data: {
 
-      server.in(match.id).emit('MATCH-UPDATE', match);
-    }
+        }
+      })
 
-    this.prevMatchTick = current;
+    });
+
+    this.matches.delete(match.id);
   }
 
-  private tickQueue(server: Server, type: MatchType) {
-    const queue = this.queues.get(type);
-
-    console.debug('Ticking queue... (' + queue.length + '/' + 2 + ')');
-    if (queue.length < 2)
-      return;
-
-    this.startGame(server, type, queue);
-  }
-
-  private startGame(server: Server, type: MatchType, queue: QueuedProfile[]) {
+  private startGame(server: Server, type: MatchType, queue: [QueuedProfile, QueuedProfile]) {
 
     const match: Match = {
       id: cuid(),
@@ -221,6 +255,7 @@ export class GameService {
     server.in(match.id).emit('MATCH-FOUND', match);
   }
 
+
   public async playerInput(id: number, match_id: string, key: string, pressed: boolean) {
 
     const match = this.matches.get(match_id);
@@ -266,8 +301,6 @@ export class GameService {
     queue.push({ profile, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
-
-    this.tickQueue(server, type);
   }
 
   public async dequeue(server: Server, client: Socket, id: number) {

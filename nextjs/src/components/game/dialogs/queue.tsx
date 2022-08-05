@@ -23,7 +23,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
           <div className='flex flex-col text-center items-center py-2 px-20 space-y-4'>
 
             <Dialog.Title as='h3' className='text-lg font-semibold'>
-              Queue - Draft 1vs1
+              Queue - 1vs1
             </Dialog.Title>
 
             <div className='flex flex-col text-center items-center py-4'>

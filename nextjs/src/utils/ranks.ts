@@ -15,5 +15,5 @@ export const getNextRank = (rp: number) => {
 };
 
 export const getCurrentRank = (rp: number) => {
-  return Math.floor(Math.cbrt(rp * 5 / 4));
+  return Math.min(Math.floor(Math.cbrt(rp * 5 / 4)), 20);
 };

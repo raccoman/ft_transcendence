@@ -18,7 +18,6 @@ const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate 
           <Rect x={CANVAS_WIDTH / 2} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={imageP2}
                 fillPatternScale={{ x: -1, y: 1 }} />
 
-          {/*<Rect x={0} y={0} width={1024} height={576} stroke='white' strokeWidth={6} />*/}
           <Rect x={CANVAS_WIDTH / 2 - 3} y={0} width={3} height={576} fill='white' />
           <Circle x={512} y={288} radius={96} stroke='white' strokeWidth={3} />
 
@@ -39,9 +38,9 @@ const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate 
 
           <Layer>
 
-            <Group x={CANVAS_WIDTH / 2 - 150} y={CANVAS_HEIGHT / 2 - 150}>
-              <Rect x={0} y={0} width={300} height={300} fill='#1c1c1c' cornerRadius={150} />
-              <Text x={0} y={0} width={300} height={300} align='center' verticalAlign='middle'
+            <Group x={CANVAS_WIDTH / 2 - 150} y={CANVAS_HEIGHT / 2 - 75}>
+              <Rect x={0} y={0} width={300} height={150} fill='#1c1c1c' cornerRadius={20} />
+              <Text x={0} y={0} width={300} height={150} align='center' verticalAlign='middle'
                     fill='#4cc38a' wrap='char' fontStyle='bold' fontSize={60}
                     text={match.timings.countdown < 0 ? 'FIGHT' : Math.ceil(match.timings.countdown).toString()} />
             </Group>

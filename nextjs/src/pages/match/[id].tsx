@@ -1,12 +1,11 @@
-import dynamic from 'next/dynamic';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useGame, useSession } from 'src/contexts';
-import { Eye, Heartbeat, HeartBreak } from 'phosphor-react';
 import { useEffect, useRef } from 'react';
-import { toMMSS } from 'src/utils/timestamp';
-
-const PongCanvas = dynamic(() => import('src/components/game'), { ssr: false });
+import { GameBanner, GameCanvas } from 'src/components';
+import { MatchState } from 'types';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const Game: NextPage = () => {
 
@@ -64,44 +63,79 @@ const Game: NextPage = () => {
   }
 
   return (
-    <div className='h-full px-5 py-2 flex flex-col items-center justify-center'>
+    <div className='h-full px-5 py-2 flex flex-col items-center justify-center gap-20'>
 
-      <div className='flex flex-col space-y-4'>
+      {match.state === MatchState.ENDING && (
 
-        <div className='flex items-center justify-center py-2.5 px-10 space-x-10 border border-primary-400 rounded-lg'>
+        <>
 
-          <p className='text-xl font-medium w-[150px] text-center'>{match.players[0].profile.username}</p>
-          <div className='flex items-center space-x-2'>
-            {Array.from(Array(match.players[0].lives).keys()).map((value, index) => (
-              <Heartbeat key={index} className='text-red-600' weight='duotone' size={32} />
+          <div className='flex items-center gap-16'>
+
+            {match.players.map((player, index) => (
+
+              <>
+
+                <div className='flex flex-col justify-center items-center gap-4 w-[300px]'>
+
+
+                  <div className='flex flex-col justify-center gap-2'>
+
+                    <p className='text-2xl font-medium w-full text-center border border-primary-500 rounded-lg'>
+                      {player.profile.username}
+                    </p>
+
+                    <div className='border border-primary-500 rounded-lg overflow-hidden'>
+                      <img src={player.profile.avatar || '/assets/default-avatar.png'}
+                           className='w-[192px] h-[192px] object-cover'
+                           alt='avatar' />
+                    </div>
+
+                  </div>
+
+                  {player.lives > 0 && (
+                    <img src='/assets/match/winner.svg' width={384} alt='winner' />
+                  )}
+
+                  {player.lives <= 0 && (
+                    <img src='/assets/match/loser.svg' width={292} alt='loser' />
+                  )}
+
+                </div>
+
+
+                {index == 0 && (
+                  <Image src='/assets/match/competition.png' width={256} height={256} layout='fixed' />
+                )}
+
+              </>
             ))}
-            {Array.from(Array(match.settings.lives - match.players[0].lives).keys()).map((value, index) => (
-              <HeartBreak key={index} className='text-primary-400' weight='duotone' size={32} />
-            ))}
+
           </div>
 
-          <div className='py-2 px-4 border border-primary-400 rounded-md'>
-            <p className='text-xl font-medium font-mono'>{toMMSS(match.timings.elapsed)}</p>
-          </div>
+          <Link href='/'>
+            <button className='bg-accent rounded-lg px-20 py-2 font-semibold text-xl'>
+              PLAY AGAIN
+            </button>
+          </Link>
 
-          <div className='flex items-center space-x-2'>
-            {Array.from(Array(match.settings.lives - match.players[1].lives).keys()).map((value, index) => (
-              <HeartBreak key={index} className='text-primary-400' weight='duotone' size={32} />
-            ))}
-            {Array.from(Array(match.players[1].lives).keys()).map((value, index) => (
-              <Heartbeat key={index} className='text-red-600' weight='duotone' size={32} />
-            ))}
+        </>
+
+      )}
+
+      {match.state !== MatchState.ENDING && (
+
+        <div className='flex flex-col gap-4'>
+
+          <GameBanner match={match} />
+
+          <div className='relative border border-primary-400 rounded-lg overflow-hidden'>
+            <p className='z-10 absolute right-3 top-2'>{fps} FPS</p>
+            <GameCanvas match={match} frameRate={fps} />
           </div>
-          <p className='text-xl font-medium w-[150px] text-center'>{match.players[1].profile.username}</p>
 
         </div>
 
-        <div className='relative border border-primary-400 rounded-lg overflow-hidden'>
-          <p className='z-10 absolute right-3 top-2 text-gray-500'>{fps} FPS</p>
-          <PongCanvas match={match} frameRate={fps} />
-        </div>
-
-      </div>
+      )}
 
     </div>
   );
