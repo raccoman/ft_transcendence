@@ -8,7 +8,7 @@ import {
 import { Req, UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Server, Socket } from 'socket.io';
-import { GameService } from 'src/game/game.service';
+import { GameService } from 'src/game/services/game.service';
 import { MatchProfile, MatchType } from 'types';
 import { Interval } from '@nestjs/schedule';
 import { JoinQueueSchema, PlayerInputSchema } from 'src/game/schema';
@@ -32,7 +32,8 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
   ) {
   }
 
-  handleDisconnect(client: any): any {
+  handleDisconnect(client: Socket): any {
+    this.gameService.onDisconnect(client);
   }
 
   handleConnection(client: any, ...args): any {
@@ -43,6 +44,11 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
     this.gameService.tickMatches(this.server);
   }
 
+  @Interval(3000)
+  private tickQueues() {
+    this.gameService.tickQueues(this.server);
+  }
+
   @UseGuards(JwtAuthGuard)
   @SubscribeMessage('JOIN-QUEUE')
   async joinQueue(@MessageBody(new JoiValidationPipe(JoinQueueSchema)) data, @Req() request, @ConnectedSocket() client: Socket): Promise<number> {
@@ -50,7 +56,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
 
       const { user } = request;
       const { type } = data;
-      await this.gameService.enqueue(this.server, client, user.id, type);
+      await this.gameService.enqueue(client, user.id, type);
       return 0;
 
     } catch (ex) {
@@ -65,7 +71,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
     try {
 
       const { user } = request;
-      await this.gameService.dequeue(this.server, client, user.id);
+      await this.gameService.dequeue(client, user.id);
       return 0;
 
     } catch (ex) {

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { Ball, Match, MatchState, MatchType, Paddle, QueuedProfile } from 'types';
 import { Server, Socket } from 'socket.io';
+import { MatchService } from './match.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import * as cuid from 'cuid';
 
 @Injectable()
@@ -16,9 +17,10 @@ export class GameService {
   private static PADDLE_SPEED_Y = 15;
 
   private static BALL_RADIUS = 10;
-  private static BALL_SPEED_X = 10;
-  private static BALL_ACCELERATION = 10;
+  private static BALL_SPEED_X = 20;
+  private static BALL_ACCELERATION = 20;
 
+  private sockets = new Map<string, { id: number, match: Match | undefined }>();
   private queues = new Map<MatchType, QueuedProfile[]>();
   private matches = new Map<string, Match>();
 
@@ -26,7 +28,30 @@ export class GameService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly matchService: MatchService,
   ) {
+  }
+
+  public onDisconnect(client: Socket) {
+    const instance = this.sockets.get(client.id);
+    if (!instance)
+      return;
+
+    this.dequeue(client, instance.id);
+
+    if (instance.match) {
+
+      for (const player of instance.match.players) {
+
+        if (player.profile.id != instance.id)
+          continue;
+
+        player.lives = 0;
+        break;
+      }
+
+      instance.match.state = MatchState.ENDING;
+    }
   }
 
   public tickQueues(server: Server) {
@@ -52,7 +77,7 @@ export class GameService {
       }
 
       if (match.state == MatchState.RUNNING) {
-        match.timings.elapsed = current - match.timings.started_at;
+        match.timings.elapsed = current - match.timings.started_at.getTime();
         this.tickRunningMatch(match, partialTicks);
       }
 
@@ -65,7 +90,6 @@ export class GameService {
 
     this.prevMatchTick = current;
   }
-
 
   private intersects(ball: Ball, paddle: Paddle) {
 
@@ -143,7 +167,7 @@ export class GameService {
       match.ball.speedY = match.ball.acceleration * Math.sin(angleRad) * partialTicks;
 
       // increase acceleration
-      if (match.ball.acceleration < 20) {
+      if (match.ball.acceleration < 30) {
         match.ball.acceleration += 0.5;
       }
 
@@ -175,35 +199,32 @@ export class GameService {
     }
   }
 
-  private tickEndingMatch(match: Match, partialTicks: number) {
+  private async tickEndingMatch(match: Match, partialTicks: number) {
 
     const winner = match.players.find(x => x.lives > 0);
 
-    this.prisma.$transaction(async (prisma: any) => {
+    const saved = await this.matchService.upsert(match);
+    if (!saved) {
+      console.error('An error occurred while saving match ' + match.id + '.');
+    }
 
-      if (match.settings.type == MatchType.RANKED_1vs1) {
-        const profile = await prisma.profile.update({
-          where: {
-            id: winner.profile.id,
-          },
-          data: {
-            rp: {
-              increment: 15,
-            }
-          },
-        });
-      }
-
-      await prisma.match.upsert({
-        where: {
-          id: match.id
+    const updated = await this.prisma.profile.update({
+      where: {
+        id: winner.profile.id,
+      },
+      data: {
+        gems: {
+          increment: 25,
         },
-        data: {
-
-        }
-      })
-
+        rp: {
+          increment: match.settings.type == MatchType.RANKED_1vs1 ? 15 : 0,
+        },
+      },
     });
+
+    if (!updated) {
+      console.error('An error occurred while saving match ' + match.id + '.');
+    }
 
     this.matches.delete(match.id);
   }
@@ -224,12 +245,14 @@ export class GameService {
       },
       settings: { lives: 5, type },
       state: MatchState.STARTING,
-      timings: { started_at: Date.now(), elapsed: 0, countdown: 5 },
+      timings: { started_at: new Date(), elapsed: 0, countdown: 5 },
     };
 
     for (let i = 0; i < queue.length; i++) {
 
       const queued = queue.at(i);
+
+      this.sockets.set(queued.socket.id, { id: queued.profile.id, match: match });
 
       match.players.push({
         profile: queued.profile,
@@ -255,7 +278,6 @@ export class GameService {
     server.in(match.id).emit('MATCH-FOUND', match);
   }
 
-
   public async playerInput(id: number, match_id: string, key: string, pressed: boolean) {
 
     const match = this.matches.get(match_id);
@@ -269,7 +291,9 @@ export class GameService {
     match.players[index].input[key] = pressed;
   }
 
-  public async enqueue(server: Server, client: Socket, id: number, type: MatchType) {
+  public async enqueue(client: Socket, id: number, type: MatchType) {
+
+    this.sockets.set(client.id, { id, match: undefined });
 
     const queue = this.queues.get(type) || [];
 
@@ -303,16 +327,18 @@ export class GameService {
     console.debug('ID: ' + id + ' added to the queue.');
   }
 
-  public async dequeue(server: Server, client: Socket, id: number) {
+  public async dequeue(client: Socket, id: number) {
 
-    for (const [type, queue] of this.queues.entries()) {
+    this.sockets.delete(client.id);
+
+    for (let [type, queue] of this.queues.entries()) {
 
       for (let index = 0; index < queue.length; index++) {
 
         if (queue.at(index).profile.id != id)
           continue;
 
-        queue.splice(index, 1);
+        queue = queue.splice(index, 1);
         console.debug('ID: ' + id + ' removed from queue.');
         return;
       }
@@ -320,5 +346,4 @@ export class GameService {
 
     console.debug('ID: ' + id + ' wasn\'t in the queue.');
   }
-
 }

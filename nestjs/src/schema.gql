@@ -26,6 +26,16 @@ input JoinChannelInput {
   password: String
 }
 
+type Match {
+  id: String!
+  loser: Profile!
+  loser_id: Int!
+  started_at: DateTime!
+  type: Int!
+  winner: Profile!
+  winner_id: Int!
+}
+
 type Message {
   channel: Channel!
   channel_id: String!
@@ -57,12 +67,14 @@ type Partecipant {
 
 type Profile {
   avatar: String!
+  defeats: [Match!]!
   email: String!
   gems: Int!
   id: Int!
   rp: Int!
   updated_at: DateTime!
   username: String!
+  wins: [Match!]!
 }
 
 type Query {

@@ -18,6 +18,8 @@ model Profile {
   avatar		String
   gems			Int				@default(0)
   rp			Int				@default(150)
+  wins			Match[]         @relation("wins")
+  defeats	    Match[]         @relation("defeats")
   messages		Message[]
   belongs		Partecipant[]
   updated_at	DateTime		@default(now())
@@ -51,4 +53,15 @@ model Message {
   profile_id	Int
   text			String
   updated_at	DateTime	@default(now())
+}
+
+model Match {
+  id			String		@id @default(cuid())
+  winner		Profile		@relation("wins", fields: [winner_id], references: [id], onDelete: Cascade)
+  winner_id     Int
+  loser		    Profile		@relation("defeats", fields: [loser_id], references: [id], onDelete: Cascade)
+  loser_id      Int
+  type          String      @default("DRAFT_1vs1")
+  started_at    DateTime	@default(now())
+  playtime      Float       @default(0)
 }

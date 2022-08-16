@@ -47,8 +47,11 @@ export interface Match {
   };
   state: MatchState;
   timings: {
-    started_at: number;
+    started_at: Date;
     elapsed: number;
     countdown: number;
   };
 }
+
+export type Ball = Match['ball'];
+export type Paddle = MatchProfile['paddle'];

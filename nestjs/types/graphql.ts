@@ -38,6 +38,16 @@ export interface Channel {
     type: string;
 }
 
+export interface Match {
+    id: string;
+    loser: Profile;
+    loser_id: number;
+    started_at: DateTime;
+    type: string;
+    winner: Profile;
+    winner_id: number;
+}
+
 export interface Message {
     channel: Channel;
     channel_id: string;
@@ -69,12 +79,14 @@ export interface Partecipant {
 
 export interface Profile {
     avatar: string;
+    defeats: Match[];
     email: string;
     gems: number;
     id: number;
     rp: number;
     updated_at: DateTime;
     username: string;
+    wins: Match[];
 }
 
 export interface IQuery {
