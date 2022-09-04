@@ -1,8 +1,9 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { useQuery } from '@apollo/client';
 import { ME } from 'graphql/queries';
+import { Simulate } from 'react-dom/test-utils';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,

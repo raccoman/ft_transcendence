@@ -1,6 +1,5 @@
 import { FCWithChildren } from 'types';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useSession } from 'src/contexts';
 
 const Component: FCWithChildren = ({ children }) => {
@@ -12,13 +11,12 @@ const Component: FCWithChildren = ({ children }) => {
     <div className='flex items-center justify-center p-5 space-x-2'>
 
 
-      <Link href='/profile' passHref>
+      <Link href={'/profile/' + profile?.id} passHref>
 
         <div className='flex items-center'>
 
-          <div className='border-2 border-accent rounded-lg overflow-hidden'>
-            <img src={profile?.avatar || '/assets/default-avatar.png'} className='w-[48px] h-[48px] object-cover'
-                 alt='avatar' />
+          <div className='border border-accent rounded w-[48px] h-[48px]'>
+            <img src={profile?.avatar || '/assets/default-avatar.png'} className='w-full h-full object-cover' alt='avatar' />
           </div>
 
           <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>
@@ -37,15 +35,26 @@ const Component: FCWithChildren = ({ children }) => {
         </div>
       </Link>
 
-      <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>
-        <img src='/assets/trophy.svg' className='w-[24px] h-[24px]' alt='top-100' />
-        <p className='font-medium'>Top 100</p>
-      </div>
+      <Link href='/'>
+        <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>
+          <img src='/assets/game.svg' className='w-[24px] h-[24px]' alt='top-100' />
+          <p className='font-medium'>Play</p>
+        </div>
+      </Link>
 
-      <div className='flex items-center border border-primary-400 bg-accent rounded-br-md rounded-tr-md py-1.5 px-5 space-x-5 hover:bg-accent/80'>
-        <img src='/assets/shop.svg' className='w-[24px] h-[24px]' alt='top-100' />
-        <p className='font-medium'>Store</p>
-      </div>
+      <Link href='/leaderboards'>
+        <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>
+          <img src='/assets/trophy.svg' className='w-[24px] h-[24px]' alt='top-100' />
+          <p className='font-medium'>Top 100</p>
+        </div>
+      </Link>
+
+      <Link href='/store'>
+        <div className='flex items-center border border-primary-400 bg-accent rounded-br-md rounded-tr-md py-1.5 px-5 space-x-5 hover:bg-accent/80'>
+          <img src='/assets/shop.svg' className='w-[24px] h-[24px]' alt='top-100' />
+          <p className='font-medium'>Store</p>
+        </div>
+      </Link>
 
     </div>
 

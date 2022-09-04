@@ -1,125 +1,102 @@
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  DateTime: any;
-};
 
-export type Channel = {
-  __typename?: 'Channel';
-  id: Scalars['String'];
-  messages: Array<Message>;
-  name: Scalars['String'];
-  partecipants: Array<Partecipant>;
-  password?: Maybe<Scalars['String']>;
-  type: Scalars['String'];
-};
+/*
+ * -------------------------------------------------------
+ * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+ * -------------------------------------------------------
+ */
 
-export type CreateChannelInput = {
-  name: Scalars['String'];
-  password?: InputMaybe<Scalars['String']>;
-};
+/* tslint:disable */
+/* eslint-disable */
+export interface CreateChannelInput {
+    name: string;
+    password?: Nullable<string>;
+}
 
-export type JoinChannelInput = {
-  id: Scalars['String'];
-  password?: InputMaybe<Scalars['String']>;
-};
+export interface JoinChannelInput {
+    id: string;
+    password?: Nullable<string>;
+}
 
-export type Message = {
-  __typename?: 'Message';
-  channel: Channel;
-  channel_id: Scalars['String'];
-  id: Scalars['String'];
-  profile: Profile;
-  profile_id: Scalars['Int'];
-  text: Scalars['String'];
-  updated_at: Scalars['DateTime'];
-};
+export interface SendMessageInput {
+    id: string;
+    text: string;
+}
 
-export type Mutation = {
-  __typename?: 'Mutation';
-  create_channel: Channel;
-  join_channel: Channel;
-  leave_channel: Channel;
-  send_message: Channel;
-  upsert_punishment: Channel;
-};
+export interface UpsertPunishmentInput {
+    channel_id: string;
+    profile_id: number;
+    removed?: Nullable<boolean>;
+    type: string;
+}
 
+export interface Channel {
+    id: string;
+    messages: Message[];
+    name: string;
+    partecipants: Partecipant[];
+    password?: Nullable<string>;
+    type: string;
+}
 
-export type MutationCreate_ChannelArgs = {
-  input: CreateChannelInput;
-};
+export interface Match {
+    id: string;
+    loser: Profile;
+    loser_id: number;
+    started_at: DateTime;
+    type: string;
+    winner: Profile;
+    winner_id: number;
+}
 
+export interface Message {
+    channel: Channel;
+    channel_id: string;
+    id: string;
+    profile: Profile;
+    profile_id: number;
+    text: string;
+    updated_at: DateTime;
+}
 
-export type MutationJoin_ChannelArgs = {
-  input: JoinChannelInput;
-};
+export interface IMutation {
+    create_channel(input: CreateChannelInput): Channel | Promise<Channel>;
+    join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
+    leave_channel(id: string): Channel | Promise<Channel>;
+    send_message(input: SendMessageInput): Channel | Promise<Channel>;
+    upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
+}
 
+export interface Partecipant {
+    banned: boolean;
+    channel: Channel;
+    channel_id: string;
+    id: string;
+    muted: boolean;
+    profile: Profile;
+    profile_id: number;
+    role: string;
+}
 
-export type MutationLeave_ChannelArgs = {
-  id: Scalars['String'];
-};
+export interface Profile {
+    avatar: string;
+    defeats: Match[];
+    email: string;
+    gems: number;
+    id: number;
+    rp: number;
+    updated_at: DateTime;
+    username: string;
+    wins: Match[];
+}
 
+export interface IQuery {
+    channels(): Channel[] | Promise<Channel[]>;
+    me(): Nullable<Profile> | Promise<Nullable<Profile>>;
+}
 
-export type MutationSend_MessageArgs = {
-  input: SendMessageInput;
-};
+export interface ISubscription {
+    channel(): Channel | Promise<Channel>;
+}
 
-
-export type MutationUpsert_PunishmentArgs = {
-  input: UpsertPunishmentInput;
-};
-
-export type Partecipant = {
-  __typename?: 'Partecipant';
-  banned: Scalars['Boolean'];
-  channel: Channel;
-  channel_id: Scalars['String'];
-  id: Scalars['String'];
-  muted: Scalars['Boolean'];
-  profile: Profile;
-  profile_id: Scalars['Int'];
-  role: Scalars['String'];
-};
-
-export type Profile = {
-  __typename?: 'Profile';
-  avatar: Scalars['String'];
-  email: Scalars['String'];
-  gems: Scalars['Int'];
-  id: Scalars['Int'];
-  rp: Scalars['Int'];
-  updated_at: Scalars['DateTime'];
-  username: Scalars['String'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  channels: Array<Channel>;
-  me?: Maybe<Profile>;
-};
-
-export type SendMessageInput = {
-  id: Scalars['String'];
-  text: Scalars['String'];
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  channel: Channel;
-};
-
-export type UpsertPunishmentInput = {
-  channel_id: Scalars['String'];
-  profile_id: Scalars['Int'];
-  removed?: InputMaybe<Scalars['Boolean']>;
-  type: Scalars['String'];
-};
+export type DateTime = any;
+type Nullable<T> = T | null;

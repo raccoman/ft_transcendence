@@ -10,6 +10,32 @@ export const ME = gql`
             gems
             rp
             updated_at
+            wins {
+                id
+                winner {
+                    id
+                    username
+                }
+                loser {
+                    id
+                    username
+                }
+                type
+                started_at
+            }
+            defeats {
+                id
+                winner {
+                    id
+                    username
+                }
+                loser {
+                    id
+                    username
+                }
+                type
+                started_at
+            }
         }
     }
 `;
