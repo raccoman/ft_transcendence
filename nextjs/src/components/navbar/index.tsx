@@ -16,7 +16,7 @@ const Component: FCWithChildren = ({ children }) => {
         <div className='flex items-center'>
 
           <div className='border border-accent rounded w-[48px] h-[48px]'>
-            <img src={profile?.avatar || '/assets/default-avatar.png'} className='w-full h-full object-cover' alt='avatar' />
+            <img src={profile?.avatar || '/assets/default-avatar.png'} className='w-full h-full object-cover rounded' alt='avatar' />
           </div>
 
           <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>

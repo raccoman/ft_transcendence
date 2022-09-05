@@ -31,7 +31,7 @@ type Match {
   loser: Profile!
   loser_id: Int!
   started_at: DateTime!
-  type: Int!
+  type: String!
   winner: Profile!
   winner_id: Int!
 }
@@ -51,6 +51,7 @@ type Mutation {
   join_channel(input: JoinChannelInput!): Channel!
   leave_channel(id: String!): Channel!
   send_message(input: SendMessageInput!): Channel!
+  upload_avatar(file: Upload!): Boolean!
   upsert_punishment(input: UpsertPunishmentInput!): Channel!
 }
 
@@ -90,6 +91,9 @@ input SendMessageInput {
 type Subscription {
   channel: Channel!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input UpsertPunishmentInput {
   channel_id: String!

@@ -1,5 +1,11 @@
 import { gql } from '@apollo/client';
 
+export const UPLOAD_AVATAR = gql`
+    mutation upload_avatar($file: Upload!) {
+        upload_avatar(file: $file)
+    }
+`;
+
 export const CREATE_CHANNEL = gql`
     mutation create_channel($name: String!, $password: String) {
         create_channel(input: { name: $name, password: $password }) {

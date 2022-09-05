@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@headlessui/react": "^1.6.6",
+    "apollo-upload-client": "^17.0.0",
     "axios": "^0.27.2",
     "canvas": "^2.9.3",
     "graphql": "^16.5.0",
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^2.8.1",
     "@graphql-codegen/typescript": "^2.7.1",
+    "@types/apollo-upload-client": "^17.0.1",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.184",
     "@types/node": "18.0.5",

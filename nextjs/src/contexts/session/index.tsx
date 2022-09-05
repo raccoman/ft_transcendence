@@ -1,21 +1,21 @@
-import { createContext, useContext, useEffect } from 'react';
+import { ChangeEventHandler, createContext, useContext, useEffect } from 'react';
 import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { ME } from 'graphql/queries';
-import { Simulate } from 'react-dom/test-utils';
+import { UPLOAD_AVATAR } from 'graphql/mutations';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,
   isLoading: true,
   profile: undefined,
+  uploadAvatar: undefined,
 });
 
 export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
-  const { loading, data } = useQuery(ME, {
-    pollInterval: 300000,
-  });
+  const { loading, data, refetch } = useQuery(ME);
+  const [upload] = useMutation(UPLOAD_AVATAR);
 
   const signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
@@ -27,11 +27,34 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
     window.location.replace(INTRA_AUTHORIZATION);
   };
 
+  const uploadAvatar: ChangeEventHandler<HTMLInputElement> = async ({ target: { validity, files } }) => {
+    try {
+
+      if (!validity.valid || !files || files.length < 1)
+        return;
+
+      await upload({ variables: { file: files[0] } });
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
+
+  useEffect(() => {
+
+    const interval = setInterval(refetch, 300000);
+
+    return () => {
+      clearInterval(interval);
+    };
+
+  }, [refetch]);
+
   return (
     <SessionContext.Provider value={{
       signIn,
       isLoading: loading && !data,
       profile: data && data.me,
+      uploadAvatar,
     }}>
       {children}
     </SessionContext.Provider>

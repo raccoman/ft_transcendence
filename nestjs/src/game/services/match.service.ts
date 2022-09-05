@@ -35,8 +35,8 @@ export class MatchService {
 
     return this.prisma.match.create({
       data: {
-        winner_id: winner.profile.id,
-        loser_id: loser.profile.id,
+        winner_id: winner.id,
+        loser_id: loser.id,
         type: MatchType[match.settings.type],
         started_at: match.timings.started_at,
       },

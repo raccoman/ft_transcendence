@@ -28,6 +28,17 @@ export class ProfileService {
     });
   }
 
+  public uptime(id: number) {
+    return this.prisma.profile.update({
+      where: {
+        id,
+      },
+      data: {
+        updated_at: new Date(),
+      },
+    });
+  }
+
 }
 
 

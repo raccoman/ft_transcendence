@@ -43,7 +43,7 @@ export class GameService {
 
       for (const player of instance.match.players) {
 
-        if (player.profile.id != instance.id)
+        if (player.id != instance.id)
           continue;
 
         player.lives = 0;
@@ -210,7 +210,7 @@ export class GameService {
 
     const updated = await this.prisma.profile.update({
       where: {
-        id: winner.profile.id,
+        id: winner.id,
       },
       data: {
         gems: {
@@ -252,10 +252,10 @@ export class GameService {
 
       const queued = queue.at(i);
 
-      this.sockets.set(queued.socket.id, { id: queued.profile.id, match: match });
+      this.sockets.set(queued.socket.id, { id: queued.id, match: match });
 
       match.players.push({
-        profile: queued.profile,
+        id: queued.id,
         lives: match.settings.lives,
         input: {
           'ArrowDown': false,
@@ -284,7 +284,7 @@ export class GameService {
     if (!match || match.state != MatchState.RUNNING)
       return;
 
-    const index = match.players.findIndex(x => x.profile.id === id);
+    const index = match.players.findIndex(x => x.id === id);
     if (index < 0)
       throw new Error('Cannot find player in this specific match.');
 
@@ -299,7 +299,7 @@ export class GameService {
 
     for (let i = 0; i < queue.length; i++) {
       const queued = queue.at(i);
-      if (queued.profile.id != id)
+      if (queued.id != id)
         continue;
 
       console.debug('ID: ' + id + ' already in queue...');
@@ -321,8 +321,8 @@ export class GameService {
     if (!profile)
       throw new Error('Profile was not found!');
 
-    queue.push({ profile, socket: client });
-    queue.push({ profile, socket: client }); //TODO: Remove after test
+    queue.push({ id, socket: client });
+    queue.push({ id, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
   }
@@ -335,7 +335,7 @@ export class GameService {
 
       for (let index = 0; index < queue.length; index++) {
 
-        if (queue.at(index).profile.id != id)
+        if (queue.at(index).id != id)
           continue;
 
         queue = queue.splice(index, 1);

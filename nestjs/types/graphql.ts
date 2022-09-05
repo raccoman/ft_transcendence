@@ -63,6 +63,7 @@ export interface IMutation {
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     leave_channel(id: string): Channel | Promise<Channel>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
+    upload_avatar(file: Upload): boolean | Promise<boolean>;
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
 }
 
@@ -99,4 +100,5 @@ export interface ISubscription {
 }
 
 export type DateTime = any;
+export type Upload = any;
 type Nullable<T> = T | null;

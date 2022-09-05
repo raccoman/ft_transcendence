@@ -9,9 +9,13 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { ChatModule } from 'src/chat/chat.module';
 import { PubsubModule } from 'src/pubsub/pubsub.module';
 import { GameModule } from 'src/game/game.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     PubsubModule,

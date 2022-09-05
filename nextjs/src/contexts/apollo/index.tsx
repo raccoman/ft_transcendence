@@ -2,10 +2,11 @@ import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
 import { createClient } from 'graphql-ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { createUploadLink } from 'apollo-upload-client';
 
 const PROCESS_BROWSER = () => typeof window !== 'undefined';
 
-const HTTP_LINK = new HttpLink({
+const HTTP_LINK = createUploadLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
   credentials: 'include',
 });
