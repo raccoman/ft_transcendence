@@ -42,7 +42,8 @@ export interface GameContextProps {
 }
 
 export interface MatchProfile {
-  profile: Profile;
+  id: number;
+  username: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {
