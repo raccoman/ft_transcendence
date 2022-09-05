@@ -5,11 +5,10 @@ import {
   SubscribeMessage,
   WebSocketGateway, WebSocketServer,
 } from '@nestjs/websockets';
-import { Req, UseGuards, UsePipes } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Server, Socket } from 'socket.io';
 import { GameService } from 'src/game/services/game.service';
-import { MatchProfile, MatchType } from 'types';
 import { Interval } from '@nestjs/schedule';
 import { JoinQueueSchema, PlayerInputSchema } from 'src/game/schema';
 import { JoiValidationPipe } from 'src/pipes/joi';

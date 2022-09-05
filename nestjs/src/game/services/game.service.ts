@@ -201,29 +201,34 @@ export class GameService {
 
   private async tickEndingMatch(match: Match, partialTicks: number) {
 
-    const winner = match.players.find(x => x.lives > 0);
-
     const saved = await this.matchService.upsert(match);
     if (!saved) {
       console.error('An error occurred while saving match ' + match.id + '.');
     }
 
-    const updated = await this.prisma.profile.update({
-      where: {
-        id: winner.id,
-      },
-      data: {
-        gems: {
-          increment: 25,
-        },
-        rp: {
-          increment: match.settings.type == MatchType.RANKED_1vs1 ? 15 : 0,
-        },
-      },
-    });
+    for (const player of match.players) {
 
-    if (!updated) {
-      console.error('An error occurred while saving match ' + match.id + '.');
+      const isWinner = player.lives > 0;
+      const isRanked = match.settings.type == MatchType.RANKED_1vs1;
+
+      const updated = await this.prisma.profile.update({
+        where: {
+          id: player.id,
+        },
+        data: {
+          gems: {
+            increment: isWinner ? 25 : 5,
+          },
+          rp: {
+            increment: isRanked && isWinner ? 15 : 0,
+            decrement: isRanked && !isWinner ? 10 : 0,
+          },
+        },
+      });
+
+      if (!updated) {
+        console.error('An error occurred while saving match ' + match.id + '.');
+      }
     }
 
     this.matches.delete(match.id);
@@ -256,6 +261,7 @@ export class GameService {
 
       match.players.push({
         id: queued.id,
+        username: queued.username,
         lives: match.settings.lives,
         input: {
           'ArrowDown': false,
@@ -321,8 +327,8 @@ export class GameService {
     if (!profile)
       throw new Error('Profile was not found!');
 
-    queue.push({ id, socket: client });
-    queue.push({ id, socket: client }); //TODO: Remove after test
+    queue.push({ id, username: profile.username, socket: client });
+    queue.push({ id, username: profile.username, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
   }

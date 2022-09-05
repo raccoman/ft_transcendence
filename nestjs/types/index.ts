@@ -4,10 +4,12 @@ import { Profile } from 'types/graphql';
 export interface QueuedProfile {
   socket: Socket;
   id: number;
+  username: string;
 }
 
 export interface MatchProfile {
   id: number;
+  username: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {
