@@ -28,14 +28,12 @@ export class ProfileService {
     });
   }
 
-  public uptime(id: number) {
+  public update(id: number, data: any) {
     return this.prisma.profile.update({
       where: {
         id,
       },
-      data: {
-        updated_at: new Date(),
-      },
+      data
     });
   }
 

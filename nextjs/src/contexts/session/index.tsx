@@ -34,19 +34,17 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
         return;
 
       await upload({ variables: { file: files[0] } });
+      await refetch();
     } catch (ex) {
       console.error(ex);
     }
   };
 
   useEffect(() => {
-
     const interval = setInterval(refetch, 300000);
-
     return () => {
       clearInterval(interval);
     };
-
   }, [refetch]);
 
   return (

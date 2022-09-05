@@ -34,7 +34,7 @@ export class ProfileResolver {
   @Query(() => Profile, { nullable: true })
   async me(@Context() context) {
     const { req } = context;
-    return await this.profileService.uptime(req.user.id);
+    return await this.profileService.update(req.user.id, { updated_at: new Date() });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -44,10 +44,20 @@ export class ProfileResolver {
     filename,
   }: any): Promise<boolean> {
     const { req } = context;
+
+    const dest = req.user.id + path.parse(filename).ext;
+
     return new Promise(async (resolve, reject) =>
       createReadStream()
-        .pipe(createWriteStream(`./public/uploads/${req.user.id}${path.parse(filename).ext}`))
-        .on('finish', () => resolve(true))
+        .pipe(createWriteStream(`./uploads/${dest}`))
+        .on('finish', async () => {
+          try {
+            await this.profileService.update(req.user.id, { avatar: process.env.NESTJS_BASE_URL + '/profile/avatar/' + dest });
+            return reject(true);
+          } catch (exception) {
+            return reject(false);
+          }
+        })
         .on('error', () => reject(false)),
     );
   }
