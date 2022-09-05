@@ -73,13 +73,16 @@ const Profile: NextPage = () => {
                    alt='avatar' />
 
               {profile.id === me?.id && (
-                <div className='absolute bottom-0 w-[200px] h-[50px] bg-primary-500/95 items-center justify-center hidden group-hover:flex'>
-                  <label htmlFor='dropzone-file' className='flex flex-col justify-center items-center w-full h-full cursor-pointer'>
+                <div
+                  className='absolute bottom-0 w-[200px] h-[50px] bg-primary-500/95 items-center justify-center hidden group-hover:flex'>
+                  <label htmlFor='dropzone-file'
+                         className='flex flex-col justify-center items-center w-full h-full cursor-pointer'>
                     <div className='flex flex-col justify-center items-center'>
                       <p className='text-sm'>Click to upload</p>
                       <p className='text-xs font-extralight'>SVG, PNG, JPG or GIF</p>
                     </div>
-                    <input id='dropzone-file' type='file' onChange={uploadAvatar} accept='image/svg+xml, image/jpeg, image/png, image/gif' className='hidden' />
+                    <input id='dropzone-file' type='file' onChange={uploadAvatar}
+                           accept='image/svg+xml, image/jpeg, image/png, image/gif' className='hidden' />
                   </label>
                 </div>
               )}
@@ -156,10 +159,10 @@ const Profile: NextPage = () => {
         </div>
 
         <div className='flex flex-col space-y-5 w-full'>
+          <p className='text-xl font-medium'>Match History</p>
+
           <div className='grid grid-cols-1 gap-2 w-full'>
-            {_.merge(profile.wins, profile.defeats)
-              .slice(0)
-              .sort((a, b) => b.started_at - a.started_at)
+            {_.orderBy(_.merge(profile.wins, profile.defeats), ['started_at'], ['desc'])
               .slice(0, amount)
               .map((match, index) => (
 
@@ -184,7 +187,7 @@ const Profile: NextPage = () => {
                             <p
                               className={`font-medium ${isVictory ? 'text-green-500' : 'text-red-500'}`}>{isVictory ? 'VICTORY' : 'DEFEAT'}</p>
                             <p
-                              className='font-extralight text-sm'>{match.type == '0' ? 'Draft 1vs1' : 'Ranked 1vs1'}</p>
+                              className='font-extralight text-sm'>{match.type == 'DRAFT_1vs1' ? 'Draft 1vs1' : 'Ranked 1vs1'}</p>
                           </div>
 
 
