@@ -39,6 +39,12 @@ export class ProfileResolver {
     return this.matchService.findAllByLoser(id);
   }
 
+  @ResolveField()
+  async following(@Parent() profile: Profile) {
+    const { id } = profile;
+    return this.profileService.findFollowing(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Query(() => MeResponse, { nullable: true })
   async me(@Context() context) {

@@ -37,7 +37,19 @@ export class ProfileService {
         wins: true,
         defeats: true,
       },
-      data
+      data,
+    });
+  }
+
+  public findFollowing(id: number) {
+    return this.prisma.profile.findMany({
+      where: {
+        followedBy: {
+          every: {
+            id
+          }
+        }
+      },
     });
   }
 

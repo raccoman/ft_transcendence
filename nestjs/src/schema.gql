@@ -40,6 +40,7 @@ type MeResponse {
   avatar: String!
   defeats: [Match!]!
   email: String!
+  following: [Profile!]!
   gems: Int!
   id: Int!
   rp: Int!
@@ -89,6 +90,7 @@ type Profile {
   avatar: String!
   defeats: [Match!]!
   email: String!
+  following: [Profile!]!
   gems: Int!
   id: Int!
   rp: Int!

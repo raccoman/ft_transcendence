@@ -31,7 +31,6 @@ const TwoFactorAuthentication: NextPageWithLayout = () => {
 
       if (twofa_authenticate) {
         await router.push('/');
-        console.log('Redirecting to /')
       }
 
     } catch (ex) {

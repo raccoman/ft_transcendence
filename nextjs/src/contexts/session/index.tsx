@@ -71,10 +71,10 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
       profile: data && data.me,
       uploadAvatar,
       twoFactorAuth: {
-        refreshSecret: TFA_refreshSecret,
-        authenticate: TFA_authenticate,
-        enable: TFA_enable,
-        disable: TFA_disable,
+        refreshSecret: () => TFA_refreshSecret().then(refetch),
+        authenticate: () => TFA_authenticate().then(refetch),
+        enable: () => TFA_enable().then(refetch),
+        disable: () => TFA_disable().then(refetch),
       },
     }}>
       {children}

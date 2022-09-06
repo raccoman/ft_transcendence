@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
 }
 
@@ -12,58 +12,60 @@ datasource db {
 }
 
 model Profile {
-  id			Int				@id
-  username		String
-  email			String
-  avatar		String
-  gems			Int				@default(0)
-  rp			Int				@default(150)
+  id            Int           @id
+  username      String
+  email         String
+  avatar        String
+  gems          Int           @default(0)
+  rp            Int           @default(150)
   twofa_secret  String?
-  twofa_enabled Boolean         @default(false)
-  wins			Match[]         @relation("wins")
-  defeats	    Match[]         @relation("defeats")
-  messages		Message[]
-  belongs		Partecipant[]
-  updated_at	DateTime		@default(now())
+  twofa_enabled Boolean       @default(false)
+  wins          Match[]       @relation("wins")
+  defeats       Match[]       @relation("defeats")
+  messages      Message[]
+  belongs       Partecipant[]
+  followedBy    Profile[]     @relation("followers")
+  following     Profile[]     @relation("followers")
+  updated_at    DateTime      @default(now())
 }
 
 model Channel {
-  id			String			@id @default(cuid())
-  name			String
-  type			String			@default("PUBLIC")
-  password		String?
-  messages		Message[]
-  partecipants	Partecipant[]
+  id           String        @id @default(cuid())
+  name         String
+  type         String        @default("PUBLIC")
+  password     String?
+  messages     Message[]
+  partecipants Partecipant[]
 }
 
 model Partecipant {
-  id			String		@id @default(cuid())
-  profile		Profile		@relation(fields: [profile_id], references: [id], onDelete: Cascade)
-  profile_id	Int
-  channel		Channel		@relation(fields: [channel_id], references: [id], onDelete: Cascade)
-  channel_id	String
-  role			String		@default("MEMBER")
-  muted			Boolean		@default(false)
-  banned		Boolean		@default(false)
+  id         String  @id @default(cuid())
+  profile    Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  profile_id Int
+  channel    Channel @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id String
+  role       String  @default("MEMBER")
+  muted      Boolean @default(false)
+  banned     Boolean @default(false)
 }
 
 model Message {
-  id			String		@id @default(cuid())
-  channel		Channel		@relation(fields: [channel_id], references: [id], onDelete: Cascade)
-  channel_id	String
-  profile		Profile		@relation(fields: [profile_id], references: [id], onDelete: Cascade)
-  profile_id	Int
-  text			String
-  updated_at	DateTime	@default(now())
+  id         String   @id @default(cuid())
+  channel    Channel  @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel_id String
+  profile    Profile  @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  profile_id Int
+  text       String
+  updated_at DateTime @default(now())
 }
 
 model Match {
-  id			String		@id @default(cuid())
-  winner		Profile		@relation("wins", fields: [winner_id], references: [id], onDelete: Cascade)
-  winner_id     Int
-  loser		    Profile		@relation("defeats", fields: [loser_id], references: [id], onDelete: Cascade)
-  loser_id      Int
-  type          String      @default("DRAFT_1vs1")
-  started_at    DateTime	@default(now())
-  playtime      Float       @default(0)
+  id         String   @id @default(cuid())
+  winner     Profile  @relation("wins", fields: [winner_id], references: [id], onDelete: Cascade)
+  winner_id  Int
+  loser      Profile  @relation("defeats", fields: [loser_id], references: [id], onDelete: Cascade)
+  loser_id   Int
+  type       String   @default("DRAFT_1vs1")
+  started_at DateTime @default(now())
+  playtime   Float    @default(0)
 }

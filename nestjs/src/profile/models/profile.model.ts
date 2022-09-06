@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Match } from 'src/game/models/match.model';
+import { type } from 'os';
 
 @ObjectType()
 export class Profile {
@@ -33,6 +34,9 @@ export class Profile {
 
   @Field(type => [Match])
   defeats: Match[];
+
+  @Field(type => [Profile])
+  following: Profile[];
 
   @Field((type) => Date)
   updated_at: Date;

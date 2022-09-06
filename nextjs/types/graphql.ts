@@ -52,6 +52,7 @@ export interface MeResponse {
     avatar: string;
     defeats: Match[];
     email: string;
+    following: Profile[];
     gems: number;
     id: number;
     rp: number;
@@ -101,12 +102,12 @@ export interface Profile {
     avatar: string;
     defeats: Match[];
     email: string;
+    following: Profile[];
     gems: number;
     id: number;
     rp: number;
     twofa_enabled: boolean;
     twofa_secret?: Nullable<string>;
-    twofa_authenticated: boolean;
     updated_at: DateTime;
     username: string;
     wins: Match[];
