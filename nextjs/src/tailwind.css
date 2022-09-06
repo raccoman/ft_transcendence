@@ -25,3 +25,13 @@ body {
     @apply bg-primary-400;
     @apply rounded-full;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}

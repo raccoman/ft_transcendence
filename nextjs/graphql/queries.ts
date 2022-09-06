@@ -9,6 +9,8 @@ export const ME = gql`
             avatar
             gems
             rp
+            twofa_enabled
+            twofa_authenticated
             updated_at
             wins {
                 id

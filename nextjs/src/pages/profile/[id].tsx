@@ -12,7 +12,7 @@ const Profile: NextPage = () => {
 
   const router = useRouter();
   const { id } = router.query;
-  const { profile: me, uploadAvatar } = useSession();
+  const { profile: me, uploadAvatar, twoFactorAuth } = useSession();
 
   const [isLoading, setLoading] = useState(true);
   const [amount, setAmount] = useState(5);
@@ -157,6 +157,42 @@ const Profile: NextPage = () => {
           </div>
 
         </div>
+
+        {profile.id === me?.id && (
+          <div className='flex flex-col space-y-5 w-full'>
+
+            <p className='text-xl font-medium'>2FA Settings</p>
+
+            <div className='flex space-x-5'>
+
+              <div className='relative w-[100px] h-[100px] rounded overflow-hidden group'>
+                <img src={process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/auth/2fa-qrcode'}
+                     className='absolute w-[100px] h-[100px]' />
+                <div className={`absolute w-[100px] h-[100px] backdrop-blur-sm group-hover:hidden`} />
+              </div>
+
+              <div className='flex flex-col justify-end space-y-2'>
+                <p>
+                  Status: <span
+                  className={me.twofa_enabled ? 'text-accent' : 'text-red-500'}>{me.twofa_enabled ? 'Active' : 'Inactive'}</span>
+                </p>
+                <button onClick={() => me.twofa_enabled ? twoFactorAuth.disable() : twoFactorAuth.enable()}
+                        className={`rounded rounded py-1 px-2 text-sm font-medium ${me.twofa_enabled ? 'bg-red-500' : 'bg-accent'}`}>
+                  {me.twofa_enabled ? 'Deactive' : 'Activate (reccomended)'}
+                </button>
+              </div>
+
+              <div className='flex flex-col justify-end'>
+                <button onClick={() => twoFactorAuth.refreshSecret()}
+                        className={`rounded py-1 px-2 font-medium bg-red-500 text-sm`}>
+                  Regenerate secret
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        )}
 
         <div className='flex flex-col space-y-5 w-full'>
           <p className='text-xl font-medium'>Match History</p>

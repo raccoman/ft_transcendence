@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { ProfileService } from 'src/profile/profile.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -50,8 +51,9 @@ export class AuthService {
         email: data.email,
         avatar: data.image_url,
       });
-      if (profile == null)
+      if (profile == null) {
         throw new Error('An error occurred while creating your profile.');
+      }
 
       return { profile, status: 1 };
 

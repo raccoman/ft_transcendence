@@ -33,6 +33,10 @@ export class ProfileService {
       where: {
         id,
       },
+      include: {
+        wins: true,
+        defeats: true,
+      },
       data
     });
   }

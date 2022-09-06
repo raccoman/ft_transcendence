@@ -18,6 +18,8 @@ model Profile {
   avatar		String
   gems			Int				@default(0)
   rp			Int				@default(150)
+  twofa_secret  String?
+  twofa_enabled Boolean         @default(false)
   wins			Match[]         @relation("wins")
   defeats	    Match[]         @relation("defeats")
   messages		Message[]

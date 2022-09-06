@@ -9,7 +9,7 @@ import {
   Subscription,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Jwt2FAGuard } from 'src/auth/guards/jwt-2fa.guard';
 import { PartecipantService } from 'src/chat/services/partecipant.service';
 import { MessageService } from 'src/chat/services/message.service';
 import { ChannelService } from 'src/chat/services/channel.service';
@@ -71,14 +71,14 @@ export class ChatResolver {
   ) {
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Query(returns => [Channel])
   async channels(@Context() context) {
     return await this.channelService.findAll();
     // return await this.channelService.findAllByProfile(context.req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Mutation(returns => Channel, { name: 'create_channel' })
   async createChannel(@Context() context, @Args('input') input: CreateChannelInput) {
     const channel = await this.channelService.create(context.req.user.id, input);
@@ -86,7 +86,7 @@ export class ChatResolver {
     return channel;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Mutation(returns => Channel, { name: 'leave_channel' })
   async leaveChannel(@Context() context, @Args('id') id: string) {
     const channel = await this.channelService.leave(context.req.user.id, id);
@@ -94,7 +94,7 @@ export class ChatResolver {
     return channel;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Mutation(returns => Channel, { name: 'join_channel' })
   async joinChannel(@Context() context, @Args('input') input: JoinChannelInput) {
     const channel = await this.channelService.join(context.req.user.id, input);
@@ -102,7 +102,7 @@ export class ChatResolver {
     return channel;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Mutation(returns => Channel, { name: 'send_message' })
   async sendMessage(@Context() context, @Args('input') input: SendMessageInput) {
     const channel = await this.channelService.sendMessage(context.req.user.id, input);
@@ -110,7 +110,7 @@ export class ChatResolver {
     return channel;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Mutation(returns => Channel, { name: 'upsert_punishment' })
   async upsertPunishment(@Context() context, @Args('input') input: UpsertPunishmentInput) {
     const channel = await this.partecipantService.upsertPunishment(context.req.user.id, input);
@@ -120,7 +120,7 @@ export class ChatResolver {
     return channel;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @Subscription(returns => Channel, {
     name: 'channel',
     // filter: ({ channel }, variables, { req }) => {

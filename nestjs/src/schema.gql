@@ -36,6 +36,21 @@ type Match {
   winner_id: Int!
 }
 
+type MeResponse {
+  avatar: String!
+  defeats: [Match!]!
+  email: String!
+  gems: Int!
+  id: Int!
+  rp: Int!
+  twofa_authenticated: Boolean!
+  twofa_enabled: Boolean!
+  twofa_secret: String
+  updated_at: DateTime!
+  username: String!
+  wins: [Match!]!
+}
+
 type Message {
   channel: Channel!
   channel_id: String!
@@ -51,6 +66,10 @@ type Mutation {
   join_channel(input: JoinChannelInput!): Channel!
   leave_channel(id: String!): Channel!
   send_message(input: SendMessageInput!): Channel!
+  twofa_authenticate(token: String!): Boolean!
+  twofa_disable: Boolean!
+  twofa_enable: Boolean!
+  twofa_refresh_secret: Boolean!
   upload_avatar(file: Upload!): Boolean!
   upsert_punishment(input: UpsertPunishmentInput!): Channel!
 }
@@ -73,6 +92,8 @@ type Profile {
   gems: Int!
   id: Int!
   rp: Int!
+  twofa_enabled: Boolean!
+  twofa_secret: String
   updated_at: DateTime!
   username: String!
   wins: [Match!]!
@@ -80,7 +101,7 @@ type Profile {
 
 type Query {
   channels: [Channel!]!
-  me: Profile
+  me: MeResponse
 }
 
 input SendMessageInput {

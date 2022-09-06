@@ -48,6 +48,21 @@ export interface Match {
     winner_id: number;
 }
 
+export interface MeResponse {
+    avatar: string;
+    defeats: Match[];
+    email: string;
+    gems: number;
+    id: number;
+    rp: number;
+    twofa_authenticated: boolean;
+    twofa_enabled: boolean;
+    twofa_secret?: Nullable<string>;
+    updated_at: DateTime;
+    username: string;
+    wins: Match[];
+}
+
 export interface Message {
     channel: Channel;
     channel_id: string;
@@ -63,6 +78,11 @@ export interface IMutation {
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     leave_channel(id: string): Channel | Promise<Channel>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
+    twofa_authenticate(token: string): boolean | Promise<boolean>;
+    twofa_disable(): boolean | Promise<boolean>;
+    twofa_enable(): boolean | Promise<boolean>;
+    twofa_refresh_secret(): boolean | Promise<boolean>;
+    upload_avatar(file: Upload): boolean | Promise<boolean>;
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
 }
 
@@ -84,6 +104,9 @@ export interface Profile {
     gems: number;
     id: number;
     rp: number;
+    twofa_enabled: boolean;
+    twofa_secret?: Nullable<string>;
+    twofa_authenticated: boolean;
     updated_at: DateTime;
     username: string;
     wins: Match[];
@@ -91,7 +114,7 @@ export interface Profile {
 
 export interface IQuery {
     channels(): Channel[] | Promise<Channel[]>;
-    me(): Nullable<Profile> | Promise<Nullable<Profile>>;
+    me(): Nullable<MeResponse> | Promise<Nullable<MeResponse>>;
 }
 
 export interface ISubscription {
@@ -99,4 +122,5 @@ export interface ISubscription {
 }
 
 export type DateTime = any;
+export type Upload = any;
 type Nullable<T> = T | null;

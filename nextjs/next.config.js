@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    domains: ['cdn.intra.42.fr'],
+    domains: ['cdn.intra.42.fr', 'localhost'],
   },
 
 };

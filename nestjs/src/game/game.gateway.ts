@@ -6,7 +6,7 @@ import {
   WebSocketGateway, WebSocketServer,
 } from '@nestjs/websockets';
 import { Req, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Jwt2FAGuard } from 'src/auth/guards/jwt-2fa.guard';
 import { Server, Socket } from 'socket.io';
 import { GameService } from 'src/game/services/game.service';
 import { Interval } from '@nestjs/schedule';
@@ -48,7 +48,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
     this.gameService.tickQueues(this.server);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @SubscribeMessage('JOIN-QUEUE')
   async joinQueue(@MessageBody(new JoiValidationPipe(JoinQueueSchema)) data, @Req() request, @ConnectedSocket() client: Socket): Promise<number> {
     try {
@@ -64,7 +64,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @SubscribeMessage('LEAVE-QUEUE')
   async leaveQueue(@Req() request, @ConnectedSocket() client: Socket): Promise<number> {
     try {
@@ -79,7 +79,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2FAGuard)
   @SubscribeMessage('PLAYER-INPUT')
   async playerInput(@MessageBody(new JoiValidationPipe(PlayerInputSchema)) data, @Req() request, @ConnectedSocket() client: Socket): Promise<number> {
     try {

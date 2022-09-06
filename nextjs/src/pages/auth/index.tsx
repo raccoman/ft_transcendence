@@ -1,7 +1,6 @@
 import { EmptyLayout } from 'src/layouts';
 import { NextPageWithLayout } from 'types';
 import { useSession } from 'src/contexts';
-import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { CircleNotch } from 'phosphor-react';
 
@@ -9,15 +8,6 @@ const Index: NextPageWithLayout = () => {
 
   const router = useRouter();
   const { signIn, profile } = useSession();
-
-  useEffect(() => {
-
-    if (profile) {
-      router.back();
-      return;
-    }
-
-  }, [profile, router]);
 
   if (profile) {
     return (

@@ -1,7 +1,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
+import { ProfileService } from 'src/profile/profile.service';
 
 const extractJWTFromCookie = (request: Request) => {
 
@@ -28,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any) {
-    return { id: payload.id };
+    return { id: payload.id, twofa_authenticated: payload.twofa_authenticated };
   }
 
 }

@@ -22,6 +22,12 @@ export class Profile {
   @Field(type => Int)
   rp: number;
 
+  @Field({ nullable: true })
+  twofa_secret: string;
+
+  @Field()
+  twofa_enabled: boolean;
+
   @Field(type => [Match])
   wins: Match[];
 

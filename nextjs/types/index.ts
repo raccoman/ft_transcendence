@@ -19,6 +19,12 @@ export interface SessionContextProps {
   isLoading: boolean;
   profile: Profile | undefined;
   uploadAvatar: ChangeEventHandler<HTMLInputElement> | undefined;
+  twoFactorAuth: {
+    refreshSecret: any;
+    enable: any;
+    disable: any;
+    authenticate: any;
+  }
 }
 
 export interface ChatContextProps {

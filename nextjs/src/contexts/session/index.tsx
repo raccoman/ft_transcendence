@@ -3,19 +3,36 @@ import { FCWithChildren, SessionContextProps } from 'types';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 import { useMutation, useQuery } from '@apollo/client';
 import { ME } from 'graphql/queries';
-import { UPLOAD_AVATAR } from 'graphql/mutations';
+import {
+  TWOFA_AUTHENTICATE,
+  TWOFA_DISABLE,
+  TWOFA_ENABLE,
+  TWOFA_REFRESH_SECRET,
+  UPLOAD_AVATAR,
+} from 'graphql/mutations';
 
 const SessionContext = createContext<SessionContextProps>({
   signIn: undefined,
   isLoading: true,
   profile: undefined,
   uploadAvatar: undefined,
+  twoFactorAuth: {
+    refreshSecret: undefined,
+    disable: undefined,
+    enable: undefined,
+    authenticate: undefined,
+  },
 });
 
 export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
   const { loading, data, refetch } = useQuery(ME);
   const [upload] = useMutation(UPLOAD_AVATAR);
+
+  const [TFA_refreshSecret] = useMutation(TWOFA_REFRESH_SECRET);
+  const [TFA_authenticate] = useMutation(TWOFA_AUTHENTICATE);
+  const [TFA_enable] = useMutation(TWOFA_ENABLE);
+  const [TFA_disable] = useMutation(TWOFA_DISABLE);
 
   const signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
@@ -53,6 +70,12 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
       isLoading: loading && !data,
       profile: data && data.me,
       uploadAvatar,
+      twoFactorAuth: {
+        refreshSecret: TFA_refreshSecret,
+        authenticate: TFA_authenticate,
+        enable: TFA_enable,
+        disable: TFA_disable,
+      },
     }}>
       {children}
     </SessionContext.Provider>

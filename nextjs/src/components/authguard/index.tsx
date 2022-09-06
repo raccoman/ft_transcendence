@@ -1,7 +1,7 @@
 import { FCWithChildren } from 'types';
 import { useRouter } from 'next/router';
 import { useSession } from 'src/contexts';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CircleNotch } from 'phosphor-react';
 
 const Component: FCWithChildren<{ isPublic: boolean }> = ({ children, isPublic }) => {
@@ -19,9 +19,16 @@ const Component: FCWithChildren<{ isPublic: boolean }> = ({ children, isPublic }
       return;
     }
 
+    if (profile.twofa_enabled && !profile.twofa_authenticated) {
+      router.push('/auth/2fa');
+      return;
+    }
+
   }, [isLoading, isPublic, profile, router]);
 
-  if (isLoading || (!isPublic && !profile)) {
+  if (isLoading || (!isPublic && !profile) ||
+    (profile && profile.twofa_enabled && !profile.twofa_authenticated
+    && !router.pathname.includes('/auth/2fa'))) {
 
     return (
       <div className='min-h-screen h-full flex items-center justify-center bg-primary'>
@@ -30,6 +37,7 @@ const Component: FCWithChildren<{ isPublic: boolean }> = ({ children, isPublic }
         </div>
       </div>
     );
+
   }
 
   return (<>{children}</>);
