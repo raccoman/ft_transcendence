@@ -24,8 +24,6 @@ model Profile {
   defeats       Match[]       @relation("defeats")
   messages      Message[]
   belongs       Partecipant[]
-  followedBy    Profile[]     @relation("followers")
-  following     Profile[]     @relation("followers")
   updated_at    DateTime      @default(now())
 }
 

@@ -42,7 +42,7 @@ const Component: FCWithChildren = ({ children }) => {
         </div>
       </Link>
 
-      <Link href='/leaderboards'>
+      <Link href='/leaderboard'>
         <div className='flex items-center border border-primary-400 py-1.5 px-5 space-x-5 hover:bg-primary-500'>
           <img src='/assets/trophy.svg' className='w-[24px] h-[24px]' alt='top-100' />
           <p className='font-medium'>Top 100</p>

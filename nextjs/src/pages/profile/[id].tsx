@@ -7,6 +7,7 @@ import { Profile } from 'types/graphql';
 import { getCurrentRank } from 'src/utils/ranks';
 import _ from 'lodash';
 import { CircleNotch } from 'phosphor-react';
+import { ProfileStatus } from 'src/components';
 
 const Profile: NextPage = () => {
 
@@ -93,31 +94,7 @@ const Profile: NextPage = () => {
               <div className='flex flex-col'>
 
                 <p className='font-semibold text-2xl'>{profile.username}</p>
-
-                {_.once(() => {
-
-                  const date = new Date(profile?.updated_at);
-
-                  if (_.now() - date.getTime() > 300000) {
-                    return (
-                      <div className='flex space-x-2 items-center'>
-                        <div className='relative inline-flex rounded-full h-3 w-3 bg-red-500' />
-                        <p className='text-sm font-extralight'>Offline</p>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className='flex space-x-2 items-center'>
-                      <div className='relative inline-flex rounded-full h-3 w-3 bg-green-500'>
-                        <span
-                          className='absolute top-0 inline-flex rounded-full h-3 w-3 bg-green-500/75 animate-ping' />
-                      </div>
-                      <p className='text-sm font-extralight'>Online</p>
-                    </div>
-                  );
-
-                })()}
+                <ProfileStatus profile={profile} />
 
               </div>
 

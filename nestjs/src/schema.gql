@@ -40,7 +40,6 @@ type MeResponse {
   avatar: String!
   defeats: [Match!]!
   email: String!
-  following: [Profile!]!
   gems: Int!
   id: Int!
   rp: Int!
@@ -90,7 +89,6 @@ type Profile {
   avatar: String!
   defeats: [Match!]!
   email: String!
-  following: [Profile!]!
   gems: Int!
   id: Int!
   rp: Int!
@@ -104,6 +102,7 @@ type Profile {
 type Query {
   channels: [Channel!]!
   me: MeResponse
+  top_100: [Profile!]!
 }
 
 input SendMessageInput {

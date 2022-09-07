@@ -70,3 +70,14 @@ export const CHANNELS = gql`
         }
     }
 `;
+
+export const TOP_100 = gql`
+    query {
+        top_100 {
+            id
+            username
+            avatar
+            rp
+        }
+    }
+`;

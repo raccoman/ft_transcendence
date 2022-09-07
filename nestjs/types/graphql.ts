@@ -52,7 +52,6 @@ export interface MeResponse {
     avatar: string;
     defeats: Match[];
     email: string;
-    following: Profile[];
     gems: number;
     id: number;
     rp: number;
@@ -102,7 +101,6 @@ export interface Profile {
     avatar: string;
     defeats: Match[];
     email: string;
-    following: Profile[];
     gems: number;
     id: number;
     rp: number;
@@ -116,6 +114,7 @@ export interface Profile {
 export interface IQuery {
     channels(): Channel[] | Promise<Channel[]>;
     me(): Nullable<MeResponse> | Promise<Nullable<MeResponse>>;
+    top_100(): Profile[] | Promise<Profile[]>;
 }
 
 export interface ISubscription {

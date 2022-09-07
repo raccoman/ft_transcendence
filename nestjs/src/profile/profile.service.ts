@@ -41,14 +41,11 @@ export class ProfileService {
     });
   }
 
-  public findFollowing(id: number) {
+  public findTop100() {
     return this.prisma.profile.findMany({
-      where: {
-        followedBy: {
-          every: {
-            id
-          }
-        }
+      take: 100,
+      orderBy: {
+        rp: 'desc',
       },
     });
   }
