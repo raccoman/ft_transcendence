@@ -220,8 +220,7 @@ export class GameService {
             increment: isWinner ? 25 : 5,
           },
           rp: {
-            increment: isRanked && isWinner ? 15 : 0,
-            decrement: isRanked && !isWinner ? 10 : 0,
+            increment: isRanked ? (isWinner ? 15 : -10) : 0,
           },
         },
       });
