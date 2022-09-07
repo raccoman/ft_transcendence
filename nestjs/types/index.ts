@@ -5,11 +5,13 @@ export interface QueuedProfile {
   socket: Socket;
   id: number;
   username: string;
+  avatar: string;
 }
 
 export interface MatchProfile {
   id: number;
   username: string;
+  avatar: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {

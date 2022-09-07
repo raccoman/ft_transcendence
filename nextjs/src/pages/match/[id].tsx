@@ -80,24 +80,27 @@ const Game: NextPage = () => {
 
                   <div className='flex flex-col justify-center gap-2'>
 
-                    <p className='text-2xl font-medium w-full text-center border border-primary-500 rounded-lg'>
-                      {player.profile.username}
+                    <p className='text-2xl font-medium w-full text-center border border-primary-500 rounded'>
+                      {player.username}
                     </p>
 
-                    <div className='border border-primary-500 rounded-lg overflow-hidden'>
-                      <img src={player.profile.avatar || '/assets/default-avatar.png'}
-                           className='w-[192px] h-[192px] object-cover'
-                           alt='avatar' />
+                    <div className='border border-primary-500 rounded overflow-hidden w-[192px] h-[192px]'>
+                      <img src={player.avatar || '/assets/default-avatar.png'}
+                           className='rounded w-full h-full object-cover' alt='avatar' />
                     </div>
 
                   </div>
 
                   {player.lives > 0 && (
-                    <img src='/assets/match/winner.svg' width={384} alt='winner' />
+                    <div className='w-[200px] h-[100px]'>
+                      <img src='/assets/match/winner.svg' className='rounded w-full h-full object-cover' alt='winner' />
+                    </div>
                   )}
 
                   {player.lives <= 0 && (
-                    <img src='/assets/match/loser.svg' width={292} alt='loser' />
+                    <div className='w-[200px] h-[100px]'>
+                      <img src='/assets/match/loser.svg' className='rounded w-full h-full object-cover' alt='loser' />
+                    </div>
                   )}
 
                 </div>

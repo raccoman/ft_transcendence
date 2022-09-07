@@ -50,6 +50,7 @@ export interface GameContextProps {
 export interface MatchProfile {
   id: number;
   username: string;
+  avatar: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {

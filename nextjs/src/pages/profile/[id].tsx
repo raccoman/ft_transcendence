@@ -102,10 +102,19 @@ const Profile: NextPage = () => {
 
           <div className='flex flex-col justify-between w-full'>
 
-            <div className='flex flex-col'>
+            <div className='flex justify-between w-full'>
 
-              <p className='font-semibold text-2xl'>{profile.username}</p>
-              <ProfileStatus profile={profile} />
+              <div className='flex flex-col'>
+                <p className='font-semibold text-2xl'>{profile.username}</p>
+                <ProfileStatus profile={profile} />
+              </div>
+
+              <div className='flex space-x-2 items-center'>
+                <p className='text-lg font-medium'>Gems: {profile.gems}</p>
+                <div className='flex justify-center items-center'>
+                  <Image src='/assets/gem.svg' width={32} height={32} layout='fixed' />
+                </div>
+              </div>
 
             </div>
 

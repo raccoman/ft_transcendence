@@ -262,6 +262,7 @@ export class GameService {
       match.players.push({
         id: queued.id,
         username: queued.username,
+        avatar: queued.avatar,
         lives: match.settings.lives,
         input: {
           'ArrowDown': false,
@@ -327,8 +328,8 @@ export class GameService {
     if (!profile)
       throw new Error('Profile was not found!');
 
-    queue.push({ id, username: profile.username, socket: client });
-    queue.push({ id, username: profile.username, socket: client }); //TODO: Remove after test
+    queue.push({ id, username: profile.username, avatar: profile.avatar, socket: client });
+    queue.push({ id, username: profile.username, avatar: profile.avatar, socket: client }); //TODO: Remove after test
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
   }
