@@ -18,13 +18,13 @@ export class MatchResolver {
   @ResolveField()
   async winner(@Parent() match: Match) {
     const { winner_id } = match;
-    return this.profileService.findUnique(winner_id);
+    return this.profileService.findUnique(winner_id, false);
   }
 
   @ResolveField()
   async loser(@Parent() match: Match) {
     const { loser_id } = match;
-    return this.profileService.findUnique(loser_id);
+    return this.profileService.findUnique(loser_id, false);
   }
 
   @UseGuards(Jwt2FAGuard)

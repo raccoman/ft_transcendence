@@ -10,6 +10,7 @@ import * as path from 'path';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { TwoFactorAuthService } from 'src/auth/services/2fa.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { GraphQLInt } from 'graphql/type';
 
 @ObjectType()
 export class MeResponse extends Profile {
@@ -39,6 +40,7 @@ export class ProfileResolver {
     return this.matchService.findAllByLoser(id);
   }
 
+
   @UseGuards(JwtAuthGuard)
   @Query(() => MeResponse, { nullable: true })
   async me(@Context() context) {
@@ -50,6 +52,12 @@ export class ProfileResolver {
     }
 
     return { ...profile, twofa_authenticated: req.user.twofa_authenticated };
+  }
+
+  @UseGuards(Jwt2FAGuard)
+  @Query(() => Profile, { name: 'find_profile', nullable: true })
+  async findProfile(@Context() context, @Args({ name: 'id', type: () => GraphQLInt }) id) {
+    return await this.profileService.findUnique(id, false);
   }
 
   @UseGuards(Jwt2FAGuard)

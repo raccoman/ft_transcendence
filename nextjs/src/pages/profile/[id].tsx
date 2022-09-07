@@ -8,12 +8,15 @@ import { getCurrentRank } from 'src/utils/ranks';
 import _ from 'lodash';
 import { CircleNotch } from 'phosphor-react';
 import { ProfileStatus } from 'src/components';
+import { useLazyQuery } from '@apollo/client';
+import { FIND_PROFILE } from 'graphql/queries';
 
 const Profile: NextPage = () => {
 
   const router = useRouter();
   const { id } = router.query;
   const { profile: me, uploadAvatar, twoFactorAuth } = useSession();
+  const [getProfile] = useLazyQuery(FIND_PROFILE);
 
   const [isLoading, setLoading] = useState(true);
   const [amount, setAmount] = useState(5);
@@ -21,18 +24,27 @@ const Profile: NextPage = () => {
 
   useEffect(() => {
 
-    try {
+    const fetchProfile = async () => {
 
-      setLoading(true);
+      try {
 
-      if (id == me?.id) {
-        setProfile(me);
-        return;
+        setLoading(true);
+
+        if (id == me?.id) {
+          setProfile(me);
+          return;
+        }
+
+        const { data } = await getProfile({ variables: { id: parseInt(id as string) } });
+        setProfile(data.find_profile);
+
+      } finally {
+        setLoading(false);
       }
 
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    fetchProfile();
 
   }, [me]);
 
@@ -67,7 +79,8 @@ const Profile: NextPage = () => {
 
         <div className='flex space-x-5 w-full'>
 
-          <div className='border border-accent rounded w-[200px] h-[200px] relative group overflow-hidden'>
+          <div className='border border-accent rounded min-w-[200px] min-h-[200px] relative group overflow-hidden'>
+
             <img src={profile?.avatar || '/assets/default-avatar.png'} className='rounded w-full h-full object-cover'
                  alt='avatar' />
 

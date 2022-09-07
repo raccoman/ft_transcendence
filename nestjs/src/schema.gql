@@ -101,6 +101,7 @@ type Profile {
 
 type Query {
   channels: [Channel!]!
+  find_profile(id: Int!): Profile
   me: MeResponse
   top_100: [Profile!]!
 }

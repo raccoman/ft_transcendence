@@ -71,6 +71,46 @@ export const CHANNELS = gql`
     }
 `;
 
+export const FIND_PROFILE = gql`
+    query find_profile($id: Int!) {
+        find_profile(id: $id) {
+            id
+            username
+            email
+            avatar
+            gems
+            rp
+            updated_at
+            wins {
+                id
+                winner {
+                    id
+                    username
+                }
+                loser {
+                    id
+                    username
+                }
+                type
+                started_at
+            }
+            defeats {
+                id
+                winner {
+                    id
+                    username
+                }
+                loser {
+                    id
+                    username
+                }
+                type
+                started_at
+            }
+        }
+    }
+`;
+
 export const TOP_100 = gql`
     query {
         top_100 {

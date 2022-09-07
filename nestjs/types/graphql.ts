@@ -113,6 +113,7 @@ export interface Profile {
 
 export interface IQuery {
     channels(): Channel[] | Promise<Channel[]>;
+    find_profile(id: number): Nullable<Profile> | Promise<Nullable<Profile>>;
     me(): Nullable<MeResponse> | Promise<Nullable<MeResponse>>;
     top_100(): Profile[] | Promise<Profile[]>;
 }

@@ -9,8 +9,13 @@ export class ProfileService {
   ) {
   }
 
-  public findUnique(id: number) {
+  public findUnique(id: number, secret: boolean) {
     return this.prisma.profile.findUnique({
+      //TODO: Exclude these fields
+      // select: {
+      //   twofa_secret: secret,
+      //   twofa_enabled: secret,
+      // },
       where: {
         id,
       },
