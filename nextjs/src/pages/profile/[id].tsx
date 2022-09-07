@@ -65,70 +65,65 @@ const Profile: NextPage = () => {
 
       <div className='flex flex-col items-center space-y-10'>
 
-        <div className='flex items-end justify-between space-x-40'>
+        <div className='flex space-x-5 w-full'>
 
-          <div className='flex space-x-5'>
+          <div className='border border-accent rounded w-[200px] h-[200px] relative group overflow-hidden'>
+            <img src={profile?.avatar || '/assets/default-avatar.png'} className='rounded w-full h-full object-cover'
+                 alt='avatar' />
 
-            <div className='border border-accent rounded w-[200px] h-[200px] relative group overflow-hidden'>
-              <img src={profile?.avatar || '/assets/default-avatar.png'} className='rounded w-full h-full object-cover'
-                   alt='avatar' />
-
-              {profile.id === me?.id && (
-                <div
-                  className='absolute bottom-0 w-[200px] h-[50px] bg-primary-500/95 items-center justify-center hidden group-hover:flex'>
-                  <label htmlFor='dropzone-file'
-                         className='flex flex-col justify-center items-center w-full h-full cursor-pointer'>
-                    <div className='flex flex-col justify-center items-center'>
-                      <p className='text-sm'>Click to upload</p>
-                      <p className='text-xs font-extralight'>SVG, PNG, JPG or GIF</p>
-                    </div>
-                    <input id='dropzone-file' type='file' onChange={uploadAvatar}
-                           accept='image/svg+xml, image/jpeg, image/png, image/gif' className='hidden' />
-                  </label>
-                </div>
-              )}
-            </div>
-
-            <div className='min-h-full flex flex-col justify-between'>
-
-              <div className='flex flex-col'>
-
-                <p className='font-semibold text-2xl'>{profile.username}</p>
-                <ProfileStatus profile={profile} />
-
+            {profile.id === me?.id && (
+              <div
+                className='absolute bottom-0 w-[200px] h-[50px] bg-primary-500/95 items-center justify-center hidden group-hover:flex'>
+                <label htmlFor='dropzone-file'
+                       className='flex flex-col justify-center items-center w-full h-full cursor-pointer'>
+                  <div className='flex flex-col justify-center items-center'>
+                    <p className='text-sm'>Click to upload</p>
+                    <p className='text-xs font-extralight'>SVG, PNG, JPG or GIF</p>
+                  </div>
+                  <input id='dropzone-file' type='file' onChange={uploadAvatar}
+                         accept='image/svg+xml, image/jpeg, image/png, image/gif' className='hidden' />
+                </label>
               </div>
-
-              <div className='bg-primary-500 p-2.5 rounded flex items-end space-x-2.5'>
-
-                <div className='bg-primary-400 p-1 rounded flex items-center justify-center'>
-                  <Image src={`/assets/ranks/${getCurrentRank(profile.rp)}.svg`} width={96} height={96}
-                         alt='current-rank' />
-                </div>
-
-                <p className='text-amber-400 text-lg font-medium whitespace-nowrap'>{profile.rp}<br />RANKED POINTS</p>
-
-              </div>
-
-            </div>
-
+            )}
           </div>
 
-          <div className='rounded bg-primary-400 p-5 flex space-x-5 justify-center'>
+          <div className='flex flex-col justify-between w-full'>
 
-            <div className='flex flex-col items-center'>
-              <p className='font-extralight'>Wins</p>
-              <p className='font-medium'>{profile.wins.length}</p>
+            <div className='flex flex-col'>
+
+              <p className='font-semibold text-2xl'>{profile.username}</p>
+              <ProfileStatus profile={profile} />
+
             </div>
 
-            <div className='flex flex-col items-center'>
-              <p className='font-extralight'>Games</p>
-              <p className='font-medium'>{profile.wins.length + profile.defeats.length}</p>
-            </div>
+            <div className='flex space-x-5 justify-center items-center bg-primary-500 rounded p-5'>
 
-            <div className='flex flex-col items-center'>
-              <p className='font-extralight'>Win Rate</p>
-              <p
-                className='font-medium'>{(profile.wins.length / (profile.wins.length + profile.defeats.length) * 100).toFixed(2)} %</p>
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Wins</p>
+                <p className='font-medium'>{profile.wins.length}</p>
+              </div>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Games</p>
+                <p className='font-medium'>{profile.wins.length + profile.defeats.length}</p>
+              </div>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Win Rate</p>
+                <p
+                  className='font-medium'>{(profile.wins.length / (profile.wins.length + profile.defeats.length) * 100).toFixed(2)} %</p>
+              </div>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Ranked Points</p>
+                <p className='font-medium text-amber-500'>{profile.rp}</p>
+              </div>
+
+              <div className='flex items-center justify-center'>
+                <Image src={`/assets/ranks/${getCurrentRank(profile.rp)}.svg`} width={80} height={80}
+                       alt='current-rank' />
+              </div>
+
             </div>
 
           </div>
