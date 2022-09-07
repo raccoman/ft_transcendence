@@ -23,11 +23,12 @@ const Leaderboard: NextPage = () => {
   }
 
   return (
-    <div className='px-5 py-20 flex flex-col items-center'>
+    <div className='px-5 py-20 flex flex-col items-center space-y-10'>
 
-      <div className='grid grid-cols-1'>
+      <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
         {data.top_100.map((profile: Profile, index: number) => (
-          <div className='flex p-2 bg-primary-500 rounded justify-between space-x-52'>
+          <div
+            className={`flex p-2 ${index % 2 == 0 ? 'bg-primary-500' : 'bg-primary-600'} rounded justify-between space-x-52`}>
 
             <div className='flex space-x-5 items-center'>
 
@@ -51,15 +52,34 @@ const Leaderboard: NextPage = () => {
 
             </div>
 
-            <div className='flex space-x-5 items-center'>
-              <div className='flex space-x-5 items-center'>
-                <p className='font-medium text-amber-500'>{profile.rp} RP</p>
+            <div className='flex space-x-5 items-center bg-primary-400 rounded px-5'>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Wins</p>
+                <p className='font-medium'>{profile.wins.length}</p>
               </div>
 
-              <div className='bg-primary-400 rounded flex items-center justify-center'>
-                <Image src={`/assets/ranks/${getCurrentRank(profile.rp)}.svg`} width={60} height={60}
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Games</p>
+                <p className='font-medium'>{profile.wins.length + profile.defeats.length}</p>
+              </div>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Win Rate</p>
+                <p
+                  className='font-medium'>{(profile.wins.length / (profile.wins.length + profile.defeats.length) * 100).toFixed(2)} %</p>
+              </div>
+
+              <div className='flex flex-col items-center'>
+                <p className='font-extralight'>Ranked Points</p>
+                <p className='font-medium text-amber-500'>{profile.rp}</p>
+              </div>
+
+              <div className='flex items-center justify-center'>
+                <Image src={`/assets/ranks/${getCurrentRank(profile.rp)}.svg`} width={50} height={50}
                        alt='current-rank' />
               </div>
+
             </div>
 
           </div>

@@ -78,6 +78,12 @@ export const TOP_100 = gql`
             username
             avatar
             rp
+            wins {
+                id
+            }
+            defeats {
+                id
+            }
         }
     }
 `;
