@@ -69,3 +69,9 @@ export const UPSERT_PUNISHMENT = gql`
         }
     }
 `;
+
+export const PURCHASE_BACKGROUND = gql`
+    mutation purchase_background($id: String!) {
+        purchase_background(id: $id)
+    }
+`;

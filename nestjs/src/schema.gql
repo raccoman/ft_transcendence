@@ -74,6 +74,7 @@ type Mutation {
   create_channel(input: CreateChannelInput!): Channel!
   join_channel(input: JoinChannelInput!): Channel!
   leave_channel(id: String!): Channel!
+  purchase_background(id: String!): Boolean!
   send_message(input: SendMessageInput!): Channel!
   twofa_authenticate(token: String!): Boolean!
   twofa_disable: Boolean!

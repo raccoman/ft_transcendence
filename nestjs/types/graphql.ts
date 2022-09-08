@@ -92,6 +92,7 @@ export interface IMutation {
     create_channel(input: CreateChannelInput): Channel | Promise<Channel>;
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     leave_channel(id: string): Channel | Promise<Channel>;
+    purchase_background(id: string): boolean | Promise<boolean>;
     send_message(input: SendMessageInput): Channel | Promise<Channel>;
     twofa_authenticate(token: string): boolean | Promise<boolean>;
     twofa_disable(): boolean | Promise<boolean>;

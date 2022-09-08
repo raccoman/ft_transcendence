@@ -38,6 +38,7 @@ export const ME = gql`
                 type
                 started_at
             }
+            active_bg
             backgrounds {
                 id
                 name

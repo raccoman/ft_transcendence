@@ -6,6 +6,8 @@ import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import * as path from 'path';
 import { createWriteStream } from 'fs';
 import { BackgroundService } from 'src/assets/services/background.service';
+import { GraphQLString } from 'graphql/type';
+import { ProfileService } from 'src/profile/profile.service';
 
 
 @InputType()
@@ -27,6 +29,7 @@ export class BackgroundResolver {
 
   constructor(
     private readonly backgroundService: BackgroundService,
+    private readonly profileService: ProfileService,
   ) {
   }
 
@@ -62,6 +65,40 @@ export class BackgroundResolver {
   @Query(() => [Background], { name: 'backgrounds' })
   async getBackgrounds(@Context() context) {
     return this.backgroundService.findMany();
+  }
+
+  @UseGuards(Jwt2FAGuard)
+  @Mutation(() => Boolean, { name: 'purchase_background' })
+  async purchaseBackground(@Context() context, @Args({ name: 'id', type: () => GraphQLString }) id): Promise<boolean> {
+
+    const { req } = context;
+
+    const profile = await this.profileService.findUnique(req.user.id, false);
+    if (!profile) {
+      return false;
+    }
+
+    const background = await this.backgroundService.findUnique(id);
+    if (!background) {
+      return false;
+    }
+
+    if (profile.gems < background.price) {
+      return false;
+    }
+
+    const snapshot = await this.profileService.update(req.user.id, {
+      gems: {
+        decrement: background.price,
+      },
+      backgrounds: {
+        connect: {
+          id: background.id,
+        },
+      },
+    });
+
+    return snapshot != null;
   }
 
 }
