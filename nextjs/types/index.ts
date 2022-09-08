@@ -1,7 +1,7 @@
 import type { ChangeEventHandler, FC, ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import { Channel, MeResponse, Profile } from 'types/graphql';
+import { Background, Channel, MeResponse, Profile } from 'types/graphql';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -51,6 +51,7 @@ export interface MatchProfile {
   id: number;
   username: string;
   avatar: string;
+  background: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {

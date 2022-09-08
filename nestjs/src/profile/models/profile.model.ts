@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Match } from 'src/game/models/match.model';
+import { Background } from 'src/assets/models/background.model';
 
 @ObjectType()
 export class Profile {
@@ -33,6 +34,12 @@ export class Profile {
 
   @Field(type => [Match])
   defeats: Match[];
+
+  @Field(type => Int)
+  active_bg: number;
+
+  @Field(type => [Background])
+  backgrounds: Background[];
 
   @Field((type) => Date)
   updated_at: Date;

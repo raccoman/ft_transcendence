@@ -262,6 +262,7 @@ export class GameService {
         id: queued.id,
         username: queued.username,
         avatar: queued.avatar,
+        background: queued.background,
         lives: match.settings.lives,
         input: {
           'ArrowDown': false,
@@ -322,13 +323,29 @@ export class GameService {
       where: {
         id,
       },
+      include: {
+        backgrounds: true,
+      },
     });
 
     if (!profile)
       throw new Error('Profile was not found!');
 
-    queue.push({ id, username: profile.username, avatar: profile.avatar, socket: client });
-    queue.push({ id, username: profile.username, avatar: profile.avatar, socket: client }); //TODO: Remove after test
+    queue.push({
+      id,
+      username: profile.username,
+      avatar: profile.avatar,
+      background: process.env.NESTJS_BASE_URL + '/assets/background/' + (profile.active_bg < 0 ? 'default' : profile.backgrounds[profile.active_bg].id) + '.jpeg',
+      socket: client,
+    });
+    queue.push({
+      id,
+      username: profile.username,
+      avatar: profile.avatar,
+      background: process.env.NESTJS_BASE_URL + '/assets/background/' + (profile.active_bg < 0 ? 'default' : profile.backgrounds[profile.active_bg].id) + '.jpeg',
+      socket: client,
+    });
+
     this.queues.set(type, queue);
     console.debug('ID: ' + id + ' added to the queue.');
   }

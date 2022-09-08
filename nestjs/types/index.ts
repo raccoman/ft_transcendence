@@ -6,12 +6,14 @@ export interface QueuedProfile {
   id: number;
   username: string;
   avatar: string;
+  background: string;
 }
 
 export interface MatchProfile {
   id: number;
   username: string;
   avatar: string;
+  background: string;
   lives: number;
   input: { [key: string]: boolean };
   paddle: {

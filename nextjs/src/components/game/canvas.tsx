@@ -6,16 +6,18 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH, PADDLE_HEIGHT, PADDLE_WIDTH } from 'src/co
 
 const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate }) => {
 
-    const [imageP1] = useImage('https://as1.ftcdn.net/v2/jpg/02/98/83/56/1000_F_298835677_qp9DhjpPxKnuEunLPWrsSgOvjvyx4aFl.jpg');
-    const [imageP2] = useImage('https://as1.ftcdn.net/v2/jpg/02/98/83/56/1000_F_298835677_qp9DhjpPxKnuEunLPWrsSgOvjvyx4aFl.jpg');
+    const [p1, p2] = match.players;
+
+    const [bgP1] = useImage(p1.background);
+    const [bgP2] = useImage(p2.background);
 
     return (
       <Stage width={CANVAS_WIDTH} height={CANVAS_HEIGHT}>
 
         <Layer>
 
-          <Rect x={0} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={imageP1} />
-          <Rect x={CANVAS_WIDTH / 2} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={imageP2}
+          <Rect x={0} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={bgP1} />
+          <Rect x={CANVAS_WIDTH / 2} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={bgP2}
                 fillPatternScale={{ x: -1, y: 1 }} />
 
           <Rect x={CANVAS_WIDTH / 2 - 3} y={0} width={3} height={576} fill='white' />
@@ -27,9 +29,9 @@ const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate 
 
           <Circle x={match.ball.renderPosX} y={match.ball.renderPosY} radius={match.ball.radius} fill='#1c1c1c' />
 
-          <Rect x={match.players[0].paddle.posX} y={match.players[0].paddle.posY} width={PADDLE_WIDTH}
+          <Rect x={p1.paddle.posX} y={p1.paddle.posY} width={PADDLE_WIDTH}
                 height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
-          <Rect x={match.players[1].paddle.posX} y={match.players[1].paddle.posY} width={PADDLE_WIDTH}
+          <Rect x={p2.paddle.posX} y={p2.paddle.posY} width={PADDLE_WIDTH}
                 height={PADDLE_HEIGHT} fill='white' cornerRadius={5} />
 
         </Layer>

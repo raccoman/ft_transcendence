@@ -24,6 +24,8 @@ model Profile {
   defeats       Match[]       @relation("defeats")
   messages      Message[]
   belongs       Partecipant[]
+  active_bg     Int           @default(-1)
+  backgrounds   Background[]
   updated_at    DateTime      @default(now())
 }
 
@@ -66,4 +68,12 @@ model Match {
   type       String   @default("DRAFT_1vs1")
   started_at DateTime @default(now())
   playtime   Float    @default(0)
+}
+
+model Background {
+    id         String   @id @default(cuid())
+    name       String
+    rarity     String   @default("COMMON")
+    price      Int
+    owners     Profile[]
 }

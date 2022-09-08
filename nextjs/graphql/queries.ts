@@ -38,6 +38,10 @@ export const ME = gql`
                 type
                 started_at
             }
+            backgrounds {
+                id
+                name
+            }
         }
     }
 `;
@@ -124,6 +128,17 @@ export const TOP_100 = gql`
             defeats {
                 id
             }
+        }
+    }
+`;
+
+export const GET_BACKGROUNDS = gql`
+    query {
+        backgrounds {
+            id
+            name
+            rarity
+            price
         }
     }
 `;

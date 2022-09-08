@@ -22,11 +22,24 @@ export interface SendMessageInput {
     text: string;
 }
 
+export interface UploadBackgroundInput {
+    name: string;
+    price: number;
+    rarity: string;
+}
+
 export interface UpsertPunishmentInput {
     channel_id: string;
     profile_id: number;
     removed?: Nullable<boolean>;
     type: string;
+}
+
+export interface Background {
+    id: string;
+    name: string;
+    price: number;
+    rarity: string;
 }
 
 export interface Channel {
@@ -83,6 +96,7 @@ export interface IMutation {
     twofa_enable(): boolean | Promise<boolean>;
     twofa_refresh_secret(): boolean | Promise<boolean>;
     upload_avatar(file: Upload): boolean | Promise<boolean>;
+    upload_background(file: Upload, input: UploadBackgroundInput): boolean | Promise<boolean>;
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
 }
 
@@ -112,6 +126,7 @@ export interface Profile {
 }
 
 export interface IQuery {
+    backgrounds(): Background[] | Promise<Background[]>;
     channels(): Channel[] | Promise<Channel[]>;
     find_profile(id: number): Nullable<Profile> | Promise<Nullable<Profile>>;
     me(): Nullable<MeResponse> | Promise<Nullable<MeResponse>>;

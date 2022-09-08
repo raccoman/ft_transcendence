@@ -41,6 +41,7 @@ export class ProfileService {
       include: {
         wins: true,
         defeats: true,
+        backgrounds: true,
       },
       data,
     });

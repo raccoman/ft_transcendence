@@ -11,6 +11,7 @@ import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { TwoFactorAuthService } from 'src/auth/services/2fa.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { GraphQLInt } from 'graphql/type';
+import { BackgroundService } from 'src/assets/services/background.service';
 
 @ObjectType()
 export class MeResponse extends Profile {
@@ -23,6 +24,7 @@ export class ProfileResolver {
 
   constructor(
     private readonly profileService: ProfileService,
+    private readonly backgroundService: BackgroundService,
     private readonly matchService: MatchService,
     private readonly twoFactorAuthService: TwoFactorAuthService,
   ) {
@@ -38,6 +40,12 @@ export class ProfileResolver {
   async defeats(@Parent() profile: Profile) {
     const { id } = profile;
     return this.matchService.findAllByLoser(id);
+  }
+
+  @ResolveField()
+  async backgrounds(@Parent() profile: Profile) {
+    const { id } = profile;
+    return this.backgroundService.findAllByOwner(id);
   }
 
 
@@ -72,10 +80,10 @@ export class ProfileResolver {
 
     return new Promise(async (resolve, reject) =>
       createReadStream()
-        .pipe(createWriteStream(`./uploads/${dest}`))
+        .pipe(createWriteStream(`./uploads/avatars/${dest}`))
         .on('finish', async () => {
           try {
-            await this.profileService.update(req.user.id, { avatar: process.env.NESTJS_BASE_URL + '/profile/avatar/' + dest });
+            await this.profileService.update(req.user.id, { avatar: process.env.NESTJS_BASE_URL + '/assets/avatar/' + dest });
             return resolve(true);
           } catch (exception) {
             return resolve(false);

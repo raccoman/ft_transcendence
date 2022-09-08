@@ -13,7 +13,7 @@ async function bootstrap() {
     },
   });
   app.use(cookieParser());
-  app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);

@@ -9,6 +9,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { ChatModule } from 'src/chat/chat.module';
 import { PubsubModule } from 'src/pubsub/pubsub.module';
 import { GameModule } from 'src/game/game.module';
+import { AssetsModule } from 'src/assets/assets.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { GameModule } from 'src/game/game.module';
     ProfileModule,
     ChatModule,
     GameModule,
+    AssetsModule,
   ],
 })
 export class AppModule {

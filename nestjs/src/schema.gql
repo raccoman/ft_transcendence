@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Background {
+  id: String!
+  name: String!
+  price: Int!
+  rarity: String!
+}
+
 type Channel {
   id: String!
   messages: [Message!]!
@@ -37,7 +44,9 @@ type Match {
 }
 
 type MeResponse {
+  active_bg: Int!
   avatar: String!
+  backgrounds: [Background!]!
   defeats: [Match!]!
   email: String!
   gems: Int!
@@ -71,6 +80,7 @@ type Mutation {
   twofa_enable: Boolean!
   twofa_refresh_secret: Boolean!
   upload_avatar(file: Upload!): Boolean!
+  upload_background(file: Upload!, input: UploadBackgroundInput!): Boolean!
   upsert_punishment(input: UpsertPunishmentInput!): Channel!
 }
 
@@ -86,7 +96,9 @@ type Partecipant {
 }
 
 type Profile {
+  active_bg: Int!
   avatar: String!
+  backgrounds: [Background!]!
   defeats: [Match!]!
   email: String!
   gems: Int!
@@ -100,6 +112,7 @@ type Profile {
 }
 
 type Query {
+  backgrounds: [Background!]!
   channels: [Channel!]!
   find_profile(id: Int!): Profile
   me: MeResponse
@@ -117,6 +130,12 @@ type Subscription {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input UploadBackgroundInput {
+  name: String!
+  price: Int!
+  rarity: String!
+}
 
 input UpsertPunishmentInput {
   channel_id: String!
