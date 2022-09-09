@@ -90,6 +90,7 @@ export interface Message {
 
 export interface IMutation {
     create_channel(input: CreateChannelInput): Channel | Promise<Channel>;
+    equip_background(id?: Nullable<string>): boolean | Promise<boolean>;
     join_channel(input: JoinChannelInput): Channel | Promise<Channel>;
     leave_channel(id: string): Channel | Promise<Channel>;
     purchase_background(id: string): boolean | Promise<boolean>;

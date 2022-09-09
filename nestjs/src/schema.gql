@@ -72,6 +72,7 @@ type Message {
 
 type Mutation {
   create_channel(input: CreateChannelInput!): Channel!
+  equip_background(id: String): Boolean!
   join_channel(input: JoinChannelInput!): Channel!
   leave_channel(id: String!): Channel!
   purchase_background(id: String!): Boolean!

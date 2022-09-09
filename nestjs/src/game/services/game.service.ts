@@ -8,17 +8,19 @@ import * as cuid from 'cuid';
 @Injectable()
 export class GameService {
 
+  public static SERVER_TPS = 15;
+
   private static CANVAS_WIDTH = 1024;
   private static CANVAS_HEIGHT = 576;
   private static CANVAS_PADDING_X = 20;
 
   private static PADDLE_HEIGHT = 192;
   private static PADDLE_WIDTH = 20;
-  private static PADDLE_SPEED_Y = 15;
+  private static PADDLE_SPEED_Y = 10;
 
   private static BALL_RADIUS = 10;
-  private static BALL_SPEED_X = 20;
-  private static BALL_ACCELERATION = 20;
+  private static BALL_SPEED_X = 5;
+  private static BALL_ACCELERATION = 5;
 
   private sockets = new Map<string, { id: number, match: Match | undefined }>();
   private queues = new Map<MatchType, QueuedProfile[]>();
@@ -67,12 +69,13 @@ export class GameService {
   public tickMatches(server: Server) {
 
     const current = Date.now();
-    const partialTicks = (current - this.prevMatchTick) / 50;
+    const partialTicks = (current - this.prevMatchTick) / GameService.SERVER_TPS;
     const partialSeconds = (current - this.prevMatchTick) / 1000;
 
     for (const match of this.matches.values()) {
 
       if (match.state == MatchState.STARTING) {
+        match.timings.elapsed = current - match.timings.started_at.getTime();
         this.tickStartingMatch(match, partialSeconds);
       }
 

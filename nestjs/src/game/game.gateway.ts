@@ -38,7 +38,7 @@ export default class GameGateway implements OnGatewayDisconnect, OnGatewayConnec
   handleConnection(client: any, ...args): any {
   }
 
-  @Interval(50)
+  @Interval(GameService.SERVER_TPS)
   private tickMatches() {
     this.gameService.tickMatches(this.server);
   }

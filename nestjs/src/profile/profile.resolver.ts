@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { TwoFactorAuthService } from 'src/auth/services/2fa.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { GraphQLInt } from 'graphql/type';
+import { GraphQLInt, GraphQLString } from 'graphql/type';
 import { BackgroundService } from 'src/assets/services/background.service';
 
 @ObjectType()
@@ -102,6 +102,25 @@ export class ProfileResolver {
       const data = await this.twoFactorAuthService.generateSecret(req.user.id);
       return resolve(!!data);
     });
+  }
+
+  @UseGuards(Jwt2FAGuard)
+  @Mutation(() => Boolean, { name: 'equip_background' })
+  async equipBackground(@Context() context, @Args({ name: 'id', type: () => GraphQLString, nullable: true }) id) {
+
+    const { req } = context;
+
+    const profile = await this.profileService.findUnique(req.user.id, false);
+    if (!profile) {
+      return false;
+    }
+
+    const index = profile.backgrounds.findIndex(x => x.id == id);
+    const snapshot = await this.profileService.update(req.user.id, {
+      active_bg: index,
+    });
+
+    return snapshot != null;
   }
 
 }

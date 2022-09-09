@@ -19,6 +19,11 @@ export class ProfileService {
       where: {
         id,
       },
+      include: {
+        wins: true,
+        defeats: true,
+        backgrounds: true,
+      },
     });
   }
 
@@ -29,6 +34,11 @@ export class ProfileService {
         username,
         email,
         avatar,
+      },
+      include: {
+        wins: true,
+        defeats: true,
+        backgrounds: true,
       },
     });
   }
