@@ -245,13 +245,15 @@ export class GameService {
 
       for (let i = 0; i < match.players.length; i++) {
 
-        const { paddle } = match.players[i];
+        const { paddle, input } = match.players[i];
 
         paddle.posY = GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2;
         paddle.posX = i % 2 == 0 ? GameService.CANVAS_PADDING_X : GameService.CANVAS_WIDTH - GameService.PADDLE_WIDTH - GameService.CANVAS_PADDING_X;
         paddle.speedY = GameService.PADDLE_SPEED_Y;
         paddle.speedX = 0;
 
+        input['ArrowDown'] = false;
+        input['ArrowUp'] = false;
       }
 
       match.ball.posY = GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS;

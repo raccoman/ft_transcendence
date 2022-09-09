@@ -2,6 +2,7 @@ import { FCWithChildren, GameContextProps, Match, MatchProfile, MatchType } from
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
+import { useSession } from 'src/contexts/session';
 
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 576;
@@ -26,6 +27,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const router = useRouter();
 
+  const { profile } = useSession();
   const [queued, setQueued] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
 
@@ -135,6 +137,15 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     };
 
   }, []);
+
+  useEffect(() => {
+
+    if (socket.connected) {
+      socket.emit('AUTHENTICATE', {});
+    }
+
+  }, [profile]);
+
 
   return (
     <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps }}>
