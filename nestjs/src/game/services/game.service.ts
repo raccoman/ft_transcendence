@@ -1,72 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { Ball, Match, MatchState, MatchType, Paddle, QueuedProfile } from 'types';
-import { Server, Socket } from 'socket.io';
+import {
+  Ball,
+  GameDisconnectInput,
+  GameMoveInput,
+  GameStartInput, GameStateInput,
+  Match,
+  MatchState,
+  Paddle,
+} from 'types';
+import { Server } from 'socket.io';
 import { MatchService } from './match.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as cuid from 'cuid';
 
 @Injectable()
 export class GameService {
 
-  public static SERVER_TPS = 15;
+  public static readonly SERVER_TPS = 15;
 
-  private static CANVAS_WIDTH = 1024;
-  private static CANVAS_HEIGHT = 576;
-  private static CANVAS_PADDING_X = 20;
+  private static readonly CANVAS_WIDTH = 1024;
+  private static readonly CANVAS_HEIGHT = 576;
+  private static readonly CANVAS_PADDING_X = 20;
 
-  private static PADDLE_HEIGHT = 192;
-  private static PADDLE_WIDTH = 20;
-  private static PADDLE_SPEED_Y = 10;
+  private static readonly PADDLE_HEIGHT = 192;
+  private static readonly PADDLE_WIDTH = 20;
+  private static readonly PADDLE_SPEED_Y = 10;
 
-  private static BALL_RADIUS = 10;
-  private static BALL_SPEED_X = 5;
-  private static BALL_ACCELERATION = 5;
+  private static readonly BALL_RADIUS = 10;
+  private static readonly BALL_SPEED_X = 5;
+  private static readonly BALL_ACCELERATION = 5;
 
-  private sockets = new Map<string, { id: number, match: Match | undefined }>();
-  private queues = new Map<MatchType, QueuedProfile[]>();
-  private matches = new Map<string, Match>();
-
+  private readonly matches = new Map<string, Match>();
   private prevMatchTick = Date.now();
 
   constructor(
-    private readonly prisma: PrismaService,
     private readonly matchService: MatchService,
   ) {
   }
 
-  public onDisconnect(client: Socket) {
-    const instance = this.sockets.get(client.id);
-    if (!instance)
-      return;
+  public disconnect({ socket, id }: GameDisconnectInput) {
 
-    this.dequeue(client, instance.id);
+    for (let [match_id, match] of this.matches.entries()) {
 
-    if (instance.match) {
-
-      for (const player of instance.match.players) {
-
-        if (player.id != instance.id)
-          continue;
-
-        player.lives = 0;
-        break;
+      const index = match.players.findIndex(x => x.profile.id === id || x.socket === socket);
+      if (index < 0) {
+        continue;
       }
 
-      instance.match.state = MatchState.ENDING;
+      match.players[index].lives = 0;
+      match.state = MatchState.ENDING;
+      break;
     }
+
   }
 
-  public tickQueues(server: Server) {
-    for (const [type, queue] of this.queues.entries()) {
-
-      if (queue.length < 2)
-        continue;
-
-      this.startGame(server, type, [queue.shift(), queue.shift()]);
-    }
-  }
-
-  public tickMatches(server: Server) {
+  public tick(server: Server) {
 
     const current = Date.now();
     const partialTicks = (current - this.prevMatchTick) / GameService.SERVER_TPS;
@@ -74,24 +61,94 @@ export class GameService {
 
     for (const match of this.matches.values()) {
 
-      if (match.state == MatchState.STARTING) {
-        match.timings.elapsed = current - match.timings.started_at.getTime();
-        this.tickStartingMatch(match, partialSeconds);
+      match.timings.elapsed = current - match.timings.started_at.getTime();
+
+      switch (match.state) {
+
+        case MatchState.STARTING: {
+          this.starting({ match, partialTicks, partialSeconds });
+          break;
+        }
+
+        case MatchState.RUNNING: {
+          this.running({ match, partialTicks, partialSeconds });
+          break;
+        }
+
+        case MatchState.ENDING: {
+          this.ending({ match, partialTicks, partialSeconds });
+          break;
+        }
+
       }
 
-      if (match.state == MatchState.RUNNING) {
-        match.timings.elapsed = current - match.timings.started_at.getTime();
-        this.tickRunningMatch(match, partialTicks);
-      }
-
-      if (match.state == MatchState.ENDING) {
-        this.tickEndingMatch(match, partialTicks);
-      }
-
-      server.in(match.id).emit('MATCH-UPDATE', match);
+      this.emit(server, 'MATCH-UPDATE', match);
     }
 
     this.prevMatchTick = current;
+  }
+
+  public move({ socket, profile, match_id, key, pressed }: GameMoveInput) {
+
+    const match = this.matches.get(match_id);
+    if (!match || match.state !== MatchState.RUNNING) {
+      return;
+    }
+
+    const index = match.players.findIndex(x => x.profile.id === profile.id || x.socket === socket);
+    if (index < 0) {
+      return;
+    }
+
+    match.players[index].input[key] = pressed;
+  }
+
+  public start({ server, type, challengers }: GameStartInput) {
+
+    const match: Match = {
+      id: cuid(),
+      players: challengers.map(({ socket, profile }, index) => ({
+        socket,
+        profile,
+        background: process.env.NESTJS_BASE_URL + '/assets/background/' + (profile.active_bg < 0 ? 'default' : profile.backgrounds[profile.active_bg].id) + '.jpeg',
+        lives: 5,
+        input: {
+          'ArrowDown': false,
+          'ArrowUp': false,
+          'ArrowRight': false,
+          'ArrowLeft': false,
+        },
+        paddle: {
+          posY: GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2,
+          posX: index % 2 == 0 ? GameService.CANVAS_PADDING_X : GameService.CANVAS_WIDTH - GameService.PADDLE_WIDTH - GameService.CANVAS_PADDING_X,
+          speedY: GameService.PADDLE_SPEED_Y,
+          speedX: 0,
+        },
+      })),
+      ball: {
+        radius: GameService.BALL_RADIUS,
+        posY: GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS,
+        posX: GameService.CANVAS_WIDTH / 2 - GameService.BALL_RADIUS,
+        speedX: GameService.BALL_SPEED_X * (Math.random() >= 0.5 ? 1 : -1),
+        speedY: 0,
+        acceleration: GameService.BALL_ACCELERATION,
+      },
+      settings: {
+        lives: 5,
+        type,
+      },
+      state: MatchState.STARTING,
+      timings: {
+        started_at: new Date(),
+        elapsed: 0,
+        countdown: 5,
+      },
+    };
+
+    this.matches.set(match.id, match);
+
+    match.players.forEach((x) => x.socket.join(match.id));
+    this.emit(server, 'MATCH-FOUND', match);
   }
 
   private intersects(ball: Ball, paddle: Paddle) {
@@ -124,15 +181,18 @@ export class GameService {
     return distance <= ball.radius;
   }
 
-  private tickStartingMatch(match: Match, partialSeconds: number) {
+  private starting({ match, partialTicks, partialSeconds }: GameStateInput) {
     match.timings.countdown -= partialSeconds;
-    if (Math.ceil(match.timings.countdown) < 0) {
-      match.state = MatchState.RUNNING;
-      match.timings.countdown = 3;
+
+    if (Math.ceil(match.timings.countdown) >= 0) {
+      return;
     }
+
+    match.state = MatchState.RUNNING;
+    match.timings.countdown = 3;
   }
 
-  private tickRunningMatch(match: Match, partialTicks: number) {
+  private running({ match, partialTicks, partialSeconds }: GameStateInput) {
 
     for (const player of match.players) {
       const dirY = +player.input['ArrowDown'] - +player.input['ArrowUp'];
@@ -202,174 +262,24 @@ export class GameService {
     }
   }
 
-  private async tickEndingMatch(match: Match, partialTicks: number) {
+  private ending({ match, partialTicks, partialSeconds }: GameStateInput) {
+    this.matchService.upsert(match);
 
-    const saved = await this.matchService.upsert(match);
-    if (!saved) {
-      console.error('An error occurred while saving match ' + match.id + '.');
-    }
-
-    for (const player of match.players) {
-
-      const isWinner = player.lives > 0;
-      const isRanked = match.settings.type == MatchType.RANKED_1vs1;
-
-      const updated = await this.prisma.profile.update({
-        where: {
-          id: player.id,
-        },
-        data: {
-          gems: {
-            increment: isWinner ? 25 : 5,
-          },
-          rp: {
-            increment: isRanked ? (isWinner ? 15 : -10) : 0,
-          },
-        },
-      });
-
-      if (!updated) {
-        console.error('An error occurred while saving match ' + match.id + '.');
-      }
-    }
-
+    match.players.forEach(x => x.socket.leave(match.id));
     this.matches.delete(match.id);
   }
 
-  private startGame(server: Server, type: MatchType, queue: [QueuedProfile, QueuedProfile]) {
+  private emit(server: Server, event: string, match: Match) {
 
-    const match: Match = {
-      id: cuid(),
-      players: [],
-      spectators: [],
-      ball: {
-        radius: GameService.BALL_RADIUS,
-        posY: GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS,
-        posX: GameService.CANVAS_WIDTH / 2 - GameService.BALL_RADIUS,
-        speedX: GameService.BALL_SPEED_X * (Math.random() >= 0.5 ? 1 : -1),
-        speedY: 0,
-        acceleration: GameService.BALL_ACCELERATION,
-      },
-      settings: { lives: 5, type },
-      state: MatchState.STARTING,
-      timings: { started_at: new Date(), elapsed: 0, countdown: 5 },
+    const message = {
+      ...match,
+      players: [
+        ...match.players
+          .map(x => ({ ...x, socket: undefined })),
+      ],
     };
 
-    for (let i = 0; i < queue.length; i++) {
-
-      const queued = queue.at(i);
-
-      this.sockets.set(queued.socket.id, { id: queued.id, match: match });
-
-      match.players.push({
-        id: queued.id,
-        username: queued.username,
-        avatar: queued.avatar,
-        background: queued.background,
-        lives: match.settings.lives,
-        input: {
-          'ArrowDown': false,
-          'ArrowUp': false,
-          'ArrowRight': false,
-          'ArrowLeft': false,
-        },
-        paddle: {
-          posY: GameService.CANVAS_HEIGHT / 2 - GameService.PADDLE_HEIGHT / 2,
-          posX: i % 2 == 0 ? GameService.CANVAS_PADDING_X : GameService.CANVAS_WIDTH - GameService.PADDLE_WIDTH - GameService.CANVAS_PADDING_X,
-          speedY: GameService.PADDLE_SPEED_Y,
-          speedX: 0,
-        },
-      });
-
-      queued.socket.join(match.id);
-    }
-
-    this.matches.set(match.id, match);
-    server.in(match.id).emit('MATCH-FOUND', match);
+    server.in(match.id).emit(event, message);
   }
 
-  public async playerInput(id: number, match_id: string, key: string, pressed: boolean) {
-
-    const match = this.matches.get(match_id);
-    if (!match || match.state != MatchState.RUNNING)
-      return;
-
-    const index = match.players.findIndex(x => x.id === id);
-    if (index < 0)
-      throw new Error('Cannot find player in this specific match.');
-
-    match.players[index].input[key] = pressed;
-  }
-
-  public async enqueue(client: Socket, id: number, type: MatchType) {
-
-    this.sockets.set(client.id, { id, match: undefined });
-
-    const queue = this.queues.get(type) || [];
-
-    for (let i = 0; i < queue.length; i++) {
-      const queued = queue.at(i);
-      if (queued.id != id)
-        continue;
-
-      console.debug('ID: ' + id + ' already in queue...');
-
-      if (queued.socket === client)
-        return;
-
-      queue[i].socket = client;
-      console.debug('ID: ' + id + ' already in queue, but socket instance has changed.');
-      return;
-    }
-
-    const profile = await this.prisma.profile.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        backgrounds: true,
-      },
-    });
-
-    if (!profile)
-      throw new Error('Profile was not found!');
-
-    queue.push({
-      id,
-      username: profile.username,
-      avatar: profile.avatar,
-      background: process.env.NESTJS_BASE_URL + '/assets/background/' + (profile.active_bg < 0 ? 'default' : profile.backgrounds[profile.active_bg].id) + '.jpeg',
-      socket: client,
-    });
-    queue.push({
-      id,
-      username: profile.username,
-      avatar: profile.avatar,
-      background: process.env.NESTJS_BASE_URL + '/assets/background/' + (profile.active_bg < 0 ? 'default' : profile.backgrounds[profile.active_bg].id) + '.jpeg',
-      socket: client,
-    });
-
-    this.queues.set(type, queue);
-    console.debug('ID: ' + id + ' added to the queue.');
-  }
-
-  public async dequeue(client: Socket, id: number) {
-
-    this.sockets.delete(client.id);
-
-    for (let [type, queue] of this.queues.entries()) {
-
-      for (let index = 0; index < queue.length; index++) {
-
-        if (queue.at(index).id != id)
-          continue;
-
-        queue = queue.splice(index, 1);
-        console.debug('ID: ' + id + ' removed from queue.');
-        return;
-      }
-    }
-
-    console.debug('ID: ' + id + ' wasn\'t in the queue.');
-  }
 }

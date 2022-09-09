@@ -44,6 +44,7 @@
     "graphql-upload": "^14.0.0",
     "graphql-ws": "^5.9.1",
     "joi": "^17.6.0",
+    "otplib": "^12.0.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "qrcode": "^1.5.1",

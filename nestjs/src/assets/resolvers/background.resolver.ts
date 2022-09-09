@@ -73,7 +73,7 @@ export class BackgroundResolver {
 
     const { req } = context;
 
-    const profile = await this.profileService.findUnique(req.user.id, false);
+    const profile = await this.profileService.findUnique(req.user.id);
     if (!profile) {
       return false;
     }

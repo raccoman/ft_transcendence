@@ -19,12 +19,13 @@ export interface SessionContextProps {
   isLoading: boolean;
   profile: MeResponse | undefined;
   uploadAvatar: ChangeEventHandler<HTMLInputElement> | undefined;
+  equipBackground: ((id: string | undefined) => any) | undefined;
   twoFactorAuth: {
     refreshSecret: any;
     enable: any;
     disable: any;
     authenticate: any;
-  }
+  };
 }
 
 export interface ChatContextProps {
@@ -48,12 +49,13 @@ export interface GameContextProps {
 }
 
 export interface MatchProfile {
-  id: number;
-  username: string;
-  avatar: string;
+
+  profile: Partial<Profile>;
   background: string;
+
   lives: number;
   input: { [key: string]: boolean };
+
   paddle: {
     posY: number;
     posX: number;
@@ -62,11 +64,13 @@ export interface MatchProfile {
     renderPosX: number;
     renderPosY: number;
   };
+
 }
 
 export enum MatchType {
   DRAFT_1vs1,
   RANKED_1vs1,
+  CUSTOM_1vs1,
 }
 
 export enum MatchState {
@@ -78,7 +82,6 @@ export enum MatchState {
 export interface Match {
   id: string;
   players: MatchProfile[];
-  spectators: Profile[];
   ball: {
     radius: number;
     posY: number;
@@ -88,15 +91,19 @@ export interface Match {
     acceleration: number;
     renderPosX: number;
     renderPosY: number;
-  }
+  };
   settings: {
     type: MatchType;
     lives: number;
   };
   state: MatchState;
   timings: {
-    started_at: number;
+    started_at: Date;
     elapsed: number;
     countdown: number;
   };
 }
+
+export type Ball = Match['ball'];
+export type Paddle = MatchProfile['paddle'];
+export type Partial<T> = { [P in keyof T]?: T[P]; };

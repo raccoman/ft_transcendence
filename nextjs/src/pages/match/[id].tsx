@@ -81,11 +81,11 @@ const Game: NextPage = () => {
                   <div className='flex flex-col justify-center gap-2'>
 
                     <p className='text-2xl font-medium w-full text-center border border-primary-500 rounded'>
-                      {player.username}
+                      {player.profile.username}
                     </p>
 
                     <div className='border border-primary-500 rounded overflow-hidden w-[192px] h-[192px]'>
-                      <img src={player.avatar || '/assets/default-avatar.png'}
+                      <img src={player.profile.avatar || '/assets/default-avatar.png'}
                            className='rounded w-full h-full object-cover' alt='avatar' />
                     </div>
 

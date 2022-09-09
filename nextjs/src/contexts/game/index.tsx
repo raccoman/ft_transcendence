@@ -31,11 +31,8 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const [fps, setFps] = useState(0);
 
-  // const BALL_HIT_WALL_SOUND = new Audio('public/assets/sounds/ball-hit-wall.mp3');
-  // const BALL_HIT_PADDLE_SOUND = new Audio('public/assets/sounds/ball-hit-paddle.mp3');
-
   const joinQueue = (type: MatchType) => {
-    socket.emit('JOIN-QUEUE', { type }, (error: string) => setQueued(!error));
+    socket.emit('JOIN-QUEUE', { type }, () => setQueued(true));
   };
   const leaveQueue = () => {
     socket.emit('LEAVE-QUEUE', {}, () => setQueued(false));
@@ -48,8 +45,9 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
       return;
 
-    socket.emit('PLAYER-INPUT', { match: match.id, key: e.key, pressed: false });
+    socket.emit('MOVE-PADDLE', { match_id: match.id, key: e.key, pressed: false });
   };
+
   const onKeyDown = (e: KeyboardEvent) => {
     if (!match || e.repeat)
       return;
@@ -57,7 +55,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
       return;
 
-    socket.emit('PLAYER-INPUT', { match: match.id, key: e.key, pressed: true });
+    socket.emit('MOVE-PADDLE', { match_id: match.id, key: e.key, pressed: true });
   };
 
   const runTick = (elapsed: number) => {
@@ -91,13 +89,12 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   useEffect(() => {
 
     socket.on('connect', () => {
-      console.log('Successfully connected websocket.');
+      console.debug('Successfully connected websocket.');
     });
 
     socket.on('connect_error', (error) => {
       console.error(error);
     });
-
 
     socket.on('disconnect', (reason) => {
       console.debug(reason);
@@ -126,8 +123,8 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
       });
     });
 
-    console.log('Connecting websocket...');
     socket.connect();
+    socket.emit('AUTHENTICATE', {});
 
     return () => {
       if (!socket)
@@ -140,8 +137,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   }, []);
 
   return (
-    <GameContext.Provider
-      value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps }}>
+    <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps }}>
       {children}
     </GameContext.Provider>
   );

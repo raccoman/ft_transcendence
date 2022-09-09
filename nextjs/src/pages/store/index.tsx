@@ -30,8 +30,7 @@ const CorfirmPurchaseDialog: FC<{
 
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
-        <div
-          className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl space-y-10'>
+        <div className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl space-y-10'>
 
           <div className='flex flex-col text-center items-center py-2 px-10 space-y-2'>
 

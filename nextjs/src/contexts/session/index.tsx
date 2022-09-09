@@ -4,6 +4,7 @@ import { customAlphabet, urlAlphabet } from 'nanoid';
 import { useMutation, useQuery } from '@apollo/client';
 import { ME } from 'graphql/queries';
 import {
+  EQUIP_BACKGROUND,
   TWOFA_AUTHENTICATE,
   TWOFA_DISABLE,
   TWOFA_ENABLE,
@@ -16,6 +17,7 @@ const SessionContext = createContext<SessionContextProps>({
   isLoading: true,
   profile: undefined,
   uploadAvatar: undefined,
+  equipBackground: undefined,
   twoFactorAuth: {
     refreshSecret: undefined,
     disable: undefined,
@@ -28,6 +30,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
   const { loading, data, refetch } = useQuery(ME);
   const [upload] = useMutation(UPLOAD_AVATAR);
+  const [equipBackground] = useMutation(EQUIP_BACKGROUND);
 
   const [TFA_refreshSecret] = useMutation(TWOFA_REFRESH_SECRET);
   const [TFA_authenticate] = useMutation(TWOFA_AUTHENTICATE);
@@ -70,6 +73,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
       isLoading: loading && !data,
       profile: data && data.me,
       uploadAvatar,
+      equipBackground: (id: string | undefined) => equipBackground({ variables: { id } }).then(refetch),
       twoFactorAuth: {
         refreshSecret: () => TFA_refreshSecret().then(refetch),
         authenticate: () => TFA_authenticate().then(refetch),

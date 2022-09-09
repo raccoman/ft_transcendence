@@ -75,3 +75,9 @@ export const PURCHASE_BACKGROUND = gql`
         purchase_background(id: $id)
     }
 `;
+
+export const EQUIP_BACKGROUND = gql`
+    mutation equip_background($id: String) {
+        equip_background(id: $id)
+    }
+`;

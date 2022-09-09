@@ -22,7 +22,7 @@ export class TwoFactorAuthResolver {
   async twoFactorAuthenticate(@Context() context, @Args({ name: 'token', type: () => GraphQLString }) token) {
     const { req: { user, res } } = context;
 
-    const profile = await this.profileService.findUnique(user.id, true);
+    const profile = await this.profileService.findUnique(user.id);
     if (!profile || !profile.twofa_enabled || !profile.twofa_secret) {
       return false;
     }

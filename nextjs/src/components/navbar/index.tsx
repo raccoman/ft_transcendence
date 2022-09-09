@@ -8,7 +8,7 @@ const Component: FCWithChildren = ({ children }) => {
 
   return (
 
-    <div className='flex items-center justify-center p-5 space-x-2'>
+    <div className='flex items-center justify-center p-5 space-x-2 cursor-pointer'>
 
 
       <Link href={'/profile/' + profile?.id} passHref>

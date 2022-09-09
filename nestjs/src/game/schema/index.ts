@@ -3,11 +3,11 @@ import { isCuid } from 'cuid';
 
 export const PlayerInputSchema = Joi.object({
 
-  match: Joi.string()
+  match_id: Joi.string()
     .custom((value, helpers) => {
 
       if (!isCuid(value))
-        return helpers.error('Match must be a valid cuid.');
+        return helpers.error('Match id must be a valid cuid.');
 
       return true;
     })
@@ -23,6 +23,6 @@ export const PlayerInputSchema = Joi.object({
 });
 
 export const JoinQueueSchema = Joi.object({
-  type: Joi.valid('DRAFT_1vs1', 0, 'RANKED_1vs1', 1)
+  type: Joi.valid('DRAFT_1vs1', 'RANKED_1vs1', 'CUSTOM_1vs1', 0, 1, 2)
     .required(),
 });

@@ -22,7 +22,7 @@ export class PartecipantResolver {
   @ResolveField()
   async profile(@Parent() message: Message) {
     const { profile_id } = message;
-    return this.profileService.findUnique(profile_id, false);
+    return this.profileService.findUnique(profile_id);
   }
 
 }

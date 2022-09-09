@@ -24,7 +24,7 @@ export class TwoFactorAuthService {
 
   public async getSecret(id: number) {
 
-    const { twofa_secret: secret } = await this.profileService.findUnique(id, true);
+    const { twofa_secret: secret } = await this.profileService.findUnique(id);
     if (!secret) {
       return this.generateSecret(id);
     }

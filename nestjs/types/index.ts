@@ -1,32 +1,66 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Profile } from 'types/graphql';
 
 export interface QueuedProfile {
   socket: Socket;
+  profile: Partial<Profile>;
+}
+
+export interface MatchmakingEnqueueInput {
+  socket: Socket;
+  profile: Partial<Profile>;
+  type: MatchType;
+}
+
+export interface MatchmakingDequeueInput {
+  socket: Socket;
   id: number;
-  username: string;
-  avatar: string;
-  background: string;
+}
+
+export type GameDisconnectInput = MatchmakingDequeueInput;
+
+export interface GameMoveInput {
+  socket: Socket,
+  profile: Partial<Profile>
+  match_id: string;
+  key: string;
+  pressed: boolean;
+}
+
+export interface GameStartInput {
+  server: Server;
+  type: MatchType;
+  challengers: QueuedProfile[];
+}
+
+export interface GameStateInput {
+  match: Match;
+  partialTicks: number;
+  partialSeconds: number;
 }
 
 export interface MatchProfile {
-  id: number;
-  username: string;
-  avatar: string;
+
+  socket: Socket;
+  profile: Partial<Profile>;
   background: string;
+
   lives: number;
   input: { [key: string]: boolean };
+
   paddle: {
     posY: number;
     posX: number;
     speedX: number;
     speedY: number;
   };
+
 }
 
 export enum MatchType {
   DRAFT_1vs1,
   RANKED_1vs1,
+  CUSTOM_1vs1,
 }
 
 export enum MatchState {
@@ -38,7 +72,6 @@ export enum MatchState {
 export interface Match {
   id: string;
   players: MatchProfile[];
-  spectators: Profile[];
   ball: {
     radius: number;
     posY: number;
@@ -61,3 +94,4 @@ export interface Match {
 
 export type Ball = Match['ball'];
 export type Paddle = MatchProfile['paddle'];
+export type Partial<T> = { [P in keyof T]?: T[P]; };

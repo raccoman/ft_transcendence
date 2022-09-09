@@ -65,7 +65,7 @@ export class ProfileResolver {
   @UseGuards(Jwt2FAGuard)
   @Query(() => Profile, { name: 'find_profile', nullable: true })
   async findProfile(@Context() context, @Args({ name: 'id', type: () => GraphQLInt }) id) {
-    return await this.profileService.findUnique(id, false);
+    return await this.profileService.findUnique(id);
   }
 
   @UseGuards(Jwt2FAGuard)
@@ -110,7 +110,7 @@ export class ProfileResolver {
 
     const { req } = context;
 
-    const profile = await this.profileService.findUnique(req.user.id, false);
+    const profile = await this.profileService.findUnique(req.user.id);
     if (!profile) {
       return false;
     }

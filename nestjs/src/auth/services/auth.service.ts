@@ -40,7 +40,7 @@ export class AuthService {
       if (me_status != 200)
         throw new Error('Error while fetching: https://api.intra.42.fr/v2/me');
 
-      let profile = await this.profile.findUnique(data.id, true);
+      let profile = await this.profile.findUnique(data.id);
       if (profile != null) {
         return { profile, status: 0 };
       }

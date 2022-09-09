@@ -15,7 +15,7 @@ const Profile: NextPage = () => {
 
   const router = useRouter();
   const { id } = router.query;
-  const { profile: me, uploadAvatar, twoFactorAuth } = useSession();
+  const { profile: me, uploadAvatar, equipBackground, twoFactorAuth } = useSession();
   const [getProfile] = useLazyQuery(FIND_PROFILE);
 
   const [isLoading, setLoading] = useState(true);
@@ -208,7 +208,8 @@ const Profile: NextPage = () => {
                   {profile.active_bg >= 0 && (
                     <div
                       className='rounded-b absolute bottom-0 w-[148px] h-[50px] bg-primary-500 items-center justify-center px-2 hidden group-hover:flex'>
-                      <button className='w-full bg-accent rounded font-medium text-sm p-1'>
+                      <button onClick={() => equipBackground && equipBackground(undefined)}
+                              className='w-full bg-accent rounded font-medium text-sm p-1'>
                         Equip
                       </button>
                     </div>
@@ -238,7 +239,8 @@ const Profile: NextPage = () => {
                       {!active && (
                         <div
                           className='rounded-b absolute bottom-0 w-[148px] h-[50px] bg-primary-500 items-center justify-center px-2 hidden group-hover:flex'>
-                          <button className='w-full bg-accent rounded font-medium text-sm p-1'>
+                          <button onClick={() => equipBackground && equipBackground(background.id)}
+                                  className='w-full bg-accent rounded font-medium text-sm p-1'>
                             Equip
                           </button>
                         </div>
