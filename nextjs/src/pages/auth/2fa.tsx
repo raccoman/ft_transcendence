@@ -1,16 +1,15 @@
 import { EmptyLayout } from 'src/layouts';
 import { NextPageWithLayout } from 'types';
 import { useSession } from 'src/contexts';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useDigitInput from 'react-digit-input';
 import _ from 'lodash';
-import { useMutation } from '@apollo/client';
 
 const TwoFactorAuthentication: NextPageWithLayout = () => {
 
   const router = useRouter();
-  const { signIn, profile, twoFactorAuth } = useSession();
+  const { twoFactorAuth } = useSession();
 
   const [invalid, setInvalid] = useState(false);
   const [token, setToken] = useState('');

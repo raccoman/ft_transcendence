@@ -76,7 +76,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
       equipBackground: (id: string | undefined) => equipBackground({ variables: { id } }).then(refetch),
       twoFactorAuth: {
         refreshSecret: () => TFA_refreshSecret().then(refetch),
-        authenticate: () => TFA_authenticate().then(refetch),
+        authenticate: (data: any) => TFA_authenticate(data),
         enable: () => TFA_enable().then(refetch),
         disable: () => TFA_disable().then(refetch),
       },
