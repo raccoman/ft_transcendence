@@ -1,6 +1,16 @@
 import { Server, Socket } from 'socket.io';
 import { Profile } from 'types/graphql';
 
+export interface SocialAuthenticationInput {
+  code: string;
+}
+
+export interface SocialAuthenticationResponse {
+  profile: any;
+  created: boolean;
+  exception?: string;
+}
+
 export interface QueuedProfile {
   socket: Socket;
   profile: Partial<Profile>;

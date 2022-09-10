@@ -1,13 +1,10 @@
 import {
-  Body,
   Controller,
   Get,
   HttpStatus,
-  Post,
   Query,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
@@ -29,17 +26,18 @@ export class AuthController {
   ) {
   }
 
-  @Get('sign-in')
-  async signin(
-    @Query('provider') provider: 'GITHUB' | 'INTRA',
+  @Get('callback/github')
+  async callback_github(
     @Query('code') code: string,
-    @Query('state') state: string,
     @Res({ passthrough: true }) response: Response,
   ) {
 
-    const { profile, status, error } = await this.authService.signin(code, provider);
-    if (status < -1) {
-      return response.status(HttpStatus.BAD_REQUEST).send(error);
+    const { profile, created, exception } = await this.authService.intra({ code });
+    if (exception) {
+      response
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json(exception);
+      return;
     }
 
     const access_token = await this.jwtService.signAsync({
@@ -52,11 +50,44 @@ export class AuthController {
       .status(200)
       .cookie(process.env.JWT_COOKIE_NAME, access_token, { httpOnly: true })
       .redirect(
-        status == 1 ?
+        created ?
           process.env.NEXTJS_BASE_URL + '/profile/' + profile.id
           :
           process.env.NEXTJS_BASE_URL + '/',
       );
+
+  }
+
+  @Get('callback/intra')
+  async callback_intra(
+    @Query('code') code: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+
+    const { profile, created, exception } = await this.authService.github({ code });
+    if (exception) {
+      response
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json(exception);
+      return;
+    }
+
+    const access_token = await this.jwtService.signAsync({
+      'id': profile.id,
+      'twofa_enabled': profile.twofa_enabled,
+      'twofa_authenticated': false,
+    });
+
+    return response
+      .status(200)
+      .cookie(process.env.JWT_COOKIE_NAME, access_token, { httpOnly: true })
+      .redirect(
+        created ?
+          process.env.NEXTJS_BASE_URL + '/profile/' + profile.id
+          :
+          process.env.NEXTJS_BASE_URL + '/',
+      );
+
   }
 
   @Get('2fa-qrcode')
