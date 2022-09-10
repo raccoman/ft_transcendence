@@ -116,7 +116,7 @@ const Game: NextPage = () => {
           </div>
 
           <Link href='/'>
-            <button className='bg-accent rounded-lg px-20 py-2 font-semibold text-xl'>
+            <button className='bg-accent rounded px-20 py-2 font-semibold text-xl'>
               PLAY AGAIN
             </button>
           </Link>
@@ -131,7 +131,7 @@ const Game: NextPage = () => {
 
           <GameBanner match={match} />
 
-          <div className='relative border border-primary-400 rounded-lg overflow-hidden'>
+          <div className='relative border border-primary-400 rounded overflow-hidden'>
             <p className='z-10 absolute right-3 top-2'>{fps} FPS</p>
             <GameCanvas match={match} frameRate={fps} />
           </div>

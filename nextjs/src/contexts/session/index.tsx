@@ -13,7 +13,8 @@ import {
 } from 'graphql/mutations';
 
 const SessionContext = createContext<SessionContextProps>({
-  signIn: undefined,
+  ft_signIn: undefined,
+  github_signIn: undefined,
   isLoading: true,
   profile: undefined,
   uploadAvatar: undefined,
@@ -37,14 +38,24 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
   const [TFA_enable] = useMutation(TWOFA_ENABLE);
   const [TFA_disable] = useMutation(TWOFA_DISABLE);
 
-  const signIn = () => {
+  const ft_signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
       'client_id=' + process.env.NEXT_PUBLIC_INTRA_CLIENT_ID + '&' +
-      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '&' +
+      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '?provider=INTRA&' +
       'state=' + customAlphabet(urlAlphabet)() + '&' +
       'response_type=code';
 
     window.location.replace(INTRA_AUTHORIZATION);
+  };
+
+  const github_signIn = () => {
+    const GITHUB_AUTHORIZATION = 'https://github.com/login/oauth/authorize?' +
+      'client_id=' + process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID + '&' +
+      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '?provider=GITHUB&' +
+      'state=' + customAlphabet(urlAlphabet)() + '&' +
+      'scope=read:user';
+
+    window.location.replace(GITHUB_AUTHORIZATION);
   };
 
   const uploadAvatar: ChangeEventHandler<HTMLInputElement> = async ({ target: { validity, files } }) => {
@@ -69,7 +80,8 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
 
   return (
     <SessionContext.Provider value={{
-      signIn,
+      ft_signIn,
+      github_signIn,
       isLoading: loading && !data,
       profile: data && data.me,
       uploadAvatar,

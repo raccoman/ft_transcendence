@@ -29,7 +29,7 @@ const Component: FC<{ channel: Channel }> = ({ channel }) => {
 
     }} className='bg-primary-500 p-2.5 flex space-x-2.5 items-center'>
       <input ref={inputRef} type='text' placeholder='Write a message...'
-             className='bg-primary-400 w-full text-sm rounded-md px-2 py-1 outline-none border border-transparent focus:border-accent'
+             className='bg-primary-400 w-full text-sm rounded px-2 py-1 outline-none border border-transparent focus:border-accent'
              required />
       <button type='submit'>
         <CaretCircleUp size={24} weight='duotone' className='text-accent' />

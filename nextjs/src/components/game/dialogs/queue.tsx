@@ -18,7 +18,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
 
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
-        <div className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
+        <div className='relative bg-primary-600 border border-primary-400 rounded overflow-hidden shadow-xl'>
 
           <div className='flex flex-col text-center items-center py-2 px-20 space-y-4'>
 
@@ -46,7 +46,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
 
           {!isLoading && (
             <div className='bg-primary-500 p-2.5 flex flex-col space-y-2'>
-              <button className='bg-red-600 font-medium p-1.5 rounded-md w-full' onClick={onClose}>
+              <button className='bg-red-600 font-medium p-1.5 rounded w-full' onClick={onClose}>
                 Leave Queue
               </button>
             </div>

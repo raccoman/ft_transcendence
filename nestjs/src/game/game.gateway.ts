@@ -13,13 +13,12 @@ import { Interval } from '@nestjs/schedule';
 import { JoinQueueSchema, PlayerInputSchema } from 'src/game/schema';
 import { JoiValidationPipe } from 'src/pipes/joi';
 import { MatchmakingService } from 'src/game/services/matchmaking.service';
-import { Match, Partial } from 'types';
+import { Partial } from 'types';
 import { Profile } from 'types/graphql';
-import { ProfileService } from 'src/profile/profile.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 
-@WebSocketGateway(80, {
+@WebSocketGateway(2023, {
   cors: {
     origin: [process.env.NEXTJS_BASE_URL],
     credentials: true,

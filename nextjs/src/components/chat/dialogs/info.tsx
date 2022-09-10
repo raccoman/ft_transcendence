@@ -83,7 +83,7 @@ const Component: FC<{
 
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
-        <div className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl p-2.5'>
+        <div className='relative bg-primary-600 border border-primary-400 rounded overflow-hidden shadow-xl p-2.5'>
 
           <div className='flex justify-between items-center space-x-28'>
             <h1 className='text-lg font-semibold'>Channel Info</h1>
@@ -160,7 +160,7 @@ const Component: FC<{
 
           </div>
 
-          <button className='bg-red-600 font-medium p-1.5 rounded-md w-full'
+          <button className='bg-red-600 font-medium p-1.5 rounded w-full'
                   onClick={onLeaveChannel}
                   disabled={partecipant.muted || partecipant.banned}>
             {partecipant.role == 'OWNER' ? 'Delete channel' : 'Leave channel'}

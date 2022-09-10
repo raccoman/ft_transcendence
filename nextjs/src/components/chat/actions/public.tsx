@@ -12,7 +12,7 @@ const Component: FC<{ channel: Channel }> = ({ channel }) => {
 
   return (
     <div className='bg-primary-500 p-2.5 flex space-x-2.5 items-center'>
-      <button className='w-full py-1.5 bg-accent rounded-md font-medium text-sm' onClick={onJoinChannel}>
+      <button className='w-full py-1.5 bg-accent rounded font-medium text-sm' onClick={onJoinChannel}>
         Join channel
       </button>
     </div>

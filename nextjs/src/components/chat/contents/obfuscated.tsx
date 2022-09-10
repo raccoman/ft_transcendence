@@ -11,7 +11,7 @@ const Component: FC = () => (
 
           {random && (<div className='col-span-1' />)}
 
-          <div className={`${random ? 'rounded-bl-none' : 'rounded-br-none'} col-span-2 flex flex-col bg-primary-400 rounded-lg px-2 py-2 space-y-2`}>
+          <div className={`${random ? 'rounded-bl-none' : 'rounded-br-none'} col-span-2 flex flex-col bg-primary-400 rounded px-2 py-2 space-y-2`}>
             <div className='h-2 bg-primary-500 rounded' />
             <div className='grid grid-cols-3 gap-4'>
               <div className={`${random ? 'col-span-2' : 'col-span-1'} h-2 bg-primary-500 rounded`} />

@@ -17,7 +17,9 @@ const extractJWTFromCookie = (request: Request) => {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
-  constructor() {
+  constructor(
+    private readonly profileService: ProfileService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         extractJWTFromCookie,
@@ -29,6 +31,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any) {
+
+    const profile = await this.profileService.findUnique(payload.id);
+    if (!profile) {
+      throw new UnauthorizedException();
+    }
+
     return { id: payload.id, twofa_authenticated: payload.twofa_authenticated };
   }
 

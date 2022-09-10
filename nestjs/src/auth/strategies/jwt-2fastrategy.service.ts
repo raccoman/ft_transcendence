@@ -15,7 +15,7 @@ const extractJWTFromCookie = (request: Request) => {
 };
 
 @Injectable()
-export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
+export class Jwt2FAStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
 
   constructor(
     private readonly profileService: ProfileService,
@@ -32,10 +32,10 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
 
   async validate(payload: any) {
 
-    // const profile = await this.profileService.findUnique(payload.id);
-    // if (!profile) {
-    //   throw new UnauthorizedException();
-    // }
+    const profile = await this.profileService.findUnique(payload.id);
+    if (!profile) {
+      throw new UnauthorizedException();
+    }
 
     if (payload.twofa_enabled && !payload.twofa_authenticated) {
       throw new UnauthorizedException();

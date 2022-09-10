@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
         <div className='grid grid-cols-2 gap-10'>
 
-          <div className='border border-primary-400 rounded-lg flex flex-col items-center overflow-hidden shadow-lg'>
+          <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
 
             <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
               Draft 1vs1
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
 
               </div>
 
-              <button className='w-full py-1.5 bg-accent rounded-md font-medium text-sm'
+              <button className='w-full py-1.5 bg-accent rounded font-medium text-sm'
                       onClick={() => joinQueue(MatchType.DRAFT_1vs1)}>
                 Join queue
               </button>
@@ -48,7 +48,7 @@ const Home: NextPage = () => {
 
           </div>
 
-          <div className='border border-primary-400 rounded-lg flex flex-col items-center overflow-hidden shadow-lg'>
+          <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
 
             <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
               Ranked 1vs1
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
 
               </div>
 
-              <button className='w-full py-1.5 bg-accent rounded-md font-medium text-sm'
+              <button className='w-full py-1.5 bg-accent rounded font-medium text-sm'
                       onClick={() => joinQueue(MatchType.RANKED_1vs1)}>
                 Join queue
               </button>

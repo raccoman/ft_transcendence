@@ -82,7 +82,7 @@ export class MatchmakingService {
       }
     }
 
-    console.debug('Profile (id=' + id + ') was not in queue.');
+    //console.debug('Profile (id=' + id + ') was not in queue.');
     return true;
   }
 

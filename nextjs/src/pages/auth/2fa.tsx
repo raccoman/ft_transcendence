@@ -73,7 +73,7 @@ const TwoFactorAuthentication: NextPageWithLayout = () => {
             })}
           </div>
 
-          <button onClick={onSubmit} className='p-2 rounded-lg bg-accent font-medium border border-primary-400'>
+          <button onClick={onSubmit} className='p-2 rounded bg-accent font-medium border border-primary-400'>
             Verify token
           </button>
 

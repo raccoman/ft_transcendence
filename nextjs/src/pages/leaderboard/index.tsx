@@ -27,7 +27,7 @@ const Leaderboard: NextPage = () => {
 
       <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
         {data.top_100.map((profile: Profile, index: number) => (
-          <div key={index} className={`flex p-2 ${index % 2 == 0 ? 'bg-primary-500' : 'bg-primary-600'} rounded justify-between space-x-52`}>
+          <div key={index} className={`flex p-2 bg-primary-600 justify-between space-x-52`}>
 
             <div className='flex space-x-5 items-center'>
 

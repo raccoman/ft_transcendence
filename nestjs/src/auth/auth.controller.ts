@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/services/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { Jwt2FAGuard } from 'src/auth/guards/jwt-2fa.guard';
@@ -31,13 +31,13 @@ export class AuthController {
 
   @Get('sign-in')
   async signin(
+    @Query('provider') provider: 'GITHUB' | 'INTRA',
     @Query('code') code: string,
     @Query('state') state: string,
     @Res({ passthrough: true }) response: Response,
   ) {
 
-    const { profile, status, error } = await this.authService.signin(code, state);
-
+    const { profile, status, error } = await this.authService.signin(code, provider);
     if (status < -1) {
       return response.status(HttpStatus.BAD_REQUEST).send(error);
     }

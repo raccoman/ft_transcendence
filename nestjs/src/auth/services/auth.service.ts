@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { ProfileService } from 'src/profile/profile.service';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -13,8 +12,21 @@ export class AuthService {
   ) {
   }
 
-  public async signin(code: string, state: string): Promise<any> {
+  public async signin(code: string, provider: 'GITHUB' | 'INTRA'): Promise<any> {
 
+    if (provider === 'INTRA') {
+      return await this.intra(code);
+    }
+
+    if (provider === 'GITHUB') {
+      return await this.github(code);
+    }
+
+    return { profile: null, status: -1, error: 'Unknown provider.' };
+  }
+
+
+  public async intra(code: string) {
     try {
 
       const {
@@ -61,8 +73,61 @@ export class AuthService {
       console.error(exception);
       return { profile: null, status: -1, error: exception.message };
     }
-
   }
 
+  public async github(code: string) {
+    try {
+
+      const {
+        data: { access_token: github_token },
+        status: token_status,
+      } = await lastValueFrom(this.axios.post('https://github.com/login/oauth/access_token', {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code: code,
+        redirect_uri: process.env.NESTJS_BASE_URL + '/auth/sign-in',
+      }, {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }));
+
+
+      if (token_status != 200) {
+        return { profile: null, status: -1, error: 'Could not retrieve github access_token.' };
+      }
+
+      const { data, status: me_status } = await lastValueFrom(this.axios.get('https://api.github.com/user', {
+        headers: {
+          'Authorization': `Bearer ${github_token}`,
+        },
+      }));
+
+      if (me_status != 200) {
+        throw new Error('Error while fetching: https://api.github.com/user');
+      }
+
+      let profile = await this.profile.findUnique(data.id);
+      if (profile != null) {
+        return { profile, status: 0 };
+      }
+
+      profile = await this.profile.create({
+        id: data.id,
+        username: data.login,
+        email: data.email,
+        avatar: data.avatar_url,
+      });
+      if (profile == null) {
+        throw new Error('An error occurred while creating your profile.');
+      }
+
+      return { profile, status: 1 };
+
+    } catch (exception: any) {
+      console.error(exception);
+      return { profile: null, status: -1, error: exception.message };
+    }
+  }
 
 }

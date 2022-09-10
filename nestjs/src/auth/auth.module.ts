@@ -3,7 +3,7 @@ import { AuthController } from 'src/auth/auth.controller';
 import { AuthService } from 'src/auth/services/auth.service';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
-import { Jwt2faStrategy } from 'src/auth/strategies/jwt-2fa.strategy';
+import { Jwt2FAStrategy } from 'src/auth/strategies/jwt-2fastrategy.service';
 import { ConfigService } from '@nestjs/config';
 import { ProfileService } from 'src/profile/profile.service';
 import { TwoFactorAuthService } from 'src/auth/services/2fa.service';
@@ -21,7 +21,7 @@ import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
       }),
     }),
   ],
-  providers: [Jwt2faStrategy, JwtStrategy, ProfileService, AuthService, TwoFactorAuthService, TwoFactorAuthResolver],
+  providers: [Jwt2FAStrategy, JwtStrategy, ProfileService, AuthService, TwoFactorAuthService, TwoFactorAuthResolver],
   controllers: [AuthController],
 })
 export class AuthModule {

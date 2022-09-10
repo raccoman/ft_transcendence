@@ -9,7 +9,7 @@ const Component: FC<{ match: Match }> = ({ match }) => {
 
   return (
 
-    <div className='flex items-center justify-center py-2.5 px-10 space-x-10 border border-primary-400 rounded-lg'>
+    <div className='flex items-center justify-center py-2.5 px-10 space-x-10 border border-primary-400 rounded'>
 
       <p className='text-xl font-medium w-[150px] text-center'>{a.profile.username}</p>
       <div className='flex items-center space-x-2'>
@@ -24,7 +24,7 @@ const Component: FC<{ match: Match }> = ({ match }) => {
 
       </div>
 
-      <div className='py-2 px-4 border border-primary-400 rounded-md'>
+      <div className='py-2 px-4 border border-primary-400 rounded'>
         <p className='text-xl font-medium font-mono'>{toMMSS(match.timings.elapsed)}</p>
       </div>
 

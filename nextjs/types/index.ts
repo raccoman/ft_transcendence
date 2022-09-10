@@ -15,7 +15,8 @@ export type AppPropsWithLayout = AppProps & {
 export type FCWithChildren<V = {}> = FC<{ children?: ReactNode } & V>
 
 export interface SessionContextProps {
-  signIn: (() => void) | undefined;
+  ft_signIn: (() => void) | undefined;
+  github_signIn: (() => void) | undefined;
   isLoading: boolean;
   profile: MeResponse | undefined;
   uploadAvatar: ChangeEventHandler<HTMLInputElement> | undefined;

@@ -43,7 +43,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
         <Dialog.Overlay className='fixed inset-0 backdrop-blur-sm' />
 
         <form onSubmit={onCreateChannel}
-              className='relative bg-primary-600 border border-primary-400 rounded-lg overflow-hidden shadow-xl'>
+              className='relative bg-primary-600 border border-primary-400 rounded overflow-hidden shadow-xl'>
 
           <div className='flex flex-col text-center items-center py-8 px-4 space-y-4'>
 
@@ -65,13 +65,13 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
               <input type='text' placeholder='Choose a name...'
                      value={name}
                      onChange={e => setName(e.target.value)}
-                     className='bg-primary-400 w-full text-sm rounded-md px-2 py-1 outline-none border border-transparent focus:border-accent'
+                     className='bg-primary-400 w-full text-sm rounded px-2 py-1 outline-none border border-transparent focus:border-accent'
                      required />
 
               <input type='password' placeholder='Choose a password...'
                      value={password}
                      onChange={e => setPassword(e.target.value)}
-                     className='bg-primary-400 w-full text-sm rounded-md px-2 py-1 outline-none border border-transparent focus:border-accent' />
+                     className='bg-primary-400 w-full text-sm rounded px-2 py-1 outline-none border border-transparent focus:border-accent' />
             </div>
 
           </div>
@@ -86,7 +86,7 @@ const Component: FC<{ isOpen: boolean, onClose: any }> = ({ isOpen, onClose }) =
             <div className='bg-primary-500 p-2.5 flex flex-col space-y-2'>
               <button
                 type='submit'
-                className='bg-accent font-medium p-1.5 rounded-md'
+                className='bg-accent font-medium p-1.5 rounded'
                 ref={initialFocus}>
                 Confirm
               </button>

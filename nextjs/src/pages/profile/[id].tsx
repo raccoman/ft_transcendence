@@ -46,7 +46,7 @@ const Profile: NextPage = () => {
 
     fetchProfile();
 
-  }, [me]);
+  }, [me, id]);
 
   if (isLoading) {
     return (
@@ -79,7 +79,7 @@ const Profile: NextPage = () => {
 
         <div className='flex space-x-5 w-full'>
 
-          <div className='border border-accent rounded min-w-[200px] min-h-[200px] relative group overflow-hidden'>
+          <div className='border border-accent rounded min-w-[200px] h-[200px] relative group overflow-hidden'>
 
             <img src={profile?.avatar || '/assets/default-avatar.png'} className='rounded w-full h-full object-cover'
                  alt='avatar' />

@@ -33,7 +33,7 @@ const Component: FC<{ channel: Channel }> = ({ channel }) => {
       {!hasFailed && (
         <>
           <input ref={inputRef} type='text' placeholder='Enter the passsword...'
-                 className='bg-primary-400 w-full text-sm rounded-md px-2 py-1 outline-none border border-transparent focus:border-accent'
+                 className='bg-primary-400 w-full text-sm rounded px-2 py-1 outline-none border border-transparent focus:border-accent'
                  required />
           <button type='submit'>
             <LockKeyOpen size={24} weight='duotone' className='text-accent' />
@@ -42,7 +42,7 @@ const Component: FC<{ channel: Channel }> = ({ channel }) => {
       )}
       {hasFailed && (
         <input ref={inputRef} type='text' placeholder='Wrong password!'
-               className='placeholder-white bg-red-400 w-full text-sm rounded-md px-2 py-1 outline-none border border-red-600 animate-pulse'
+               className='placeholder-white bg-red-400 w-full text-sm rounded px-2 py-1 outline-none border border-red-600 animate-pulse'
                required disabled />
       )}
     </form>

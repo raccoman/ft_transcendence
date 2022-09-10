@@ -3,11 +3,12 @@ import { NextPageWithLayout } from 'types';
 import { useSession } from 'src/contexts';
 import { useRouter } from 'next/router';
 import { CircleNotch } from 'phosphor-react';
+import Image from 'next/image';
 
 const Index: NextPageWithLayout = () => {
 
   const router = useRouter();
-  const { signIn, profile } = useSession();
+  const { ft_signIn, github_signIn, profile } = useSession();
 
   if (profile) {
     return (
@@ -23,18 +24,30 @@ const Index: NextPageWithLayout = () => {
     <div className='min-h-screen h-full flex flex-col justify-center items-center'>
 
       <div
-        className='rounded-xl bg-primary-500 border border-primary-400 px-20 py-10 flex flex-col items-center space-y-24'>
+        className='rounded bg-primary-500 border border-primary-400 px-20 py-10 flex flex-col items-center space-y-16'>
 
         <div className='flex flex-col items-center space-y-1'>
           <h1 className='font-semibold text-2xl'>
             Welcome to <span className='text-accent'>ft_transcendence</span>
           </h1>
-          <p>To get started log in to your intra account</p>
+          <p>To get started log in to your account</p>
         </div>
 
-        <button onClick={signIn} className='w-full p-2 rounded-lg bg-accent font-medium border border-primary-400'>
-          Sign in with 42
-        </button>
+        <div className='flex flex-col space-y-2 w-full'>
+
+          <button onClick={ft_signIn}
+                  className='border border-primary-400 rounded flex items-center py-2 px-5 space-x-5 bg-[#00babc] text-black font-medium'>
+            <Image src='/assets/oauth/ft.png' width={24} height={24} />
+            <p>Sign in with Intra</p>
+          </button>
+
+          <button onClick={github_signIn}
+                  className='border border-primary-400 rounded flex items-center py-2 px-5 space-x-5 bg-[#171515] font-medium'>
+            <Image src='/assets/oauth/github.svg' width={24} height={24} className='text-white' />
+            <p>Sign in with Github</p>
+          </button>
+
+        </div>
 
       </div>
 
