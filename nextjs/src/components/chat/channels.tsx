@@ -21,7 +21,8 @@ export const Channels: FC<{
 
       <ChannelCreateDialog isOpen={isCreateDialogOpen} onClose={() => setCreateDialogOpen(false)} />
 
-      <div className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2 bg-primary-600'>
+      <div
+        className='self-end flex flex-col divide-y divide-primary-400 border border-primary-400 px-5 py-2 rounded-tr-md rounded-tl-md space-y-2 bg-primary-600'>
 
         <div className='flex space-x-10 justify-between'>
 
@@ -55,23 +56,21 @@ export const Channels: FC<{
 
         </div>
 
-        {isExpanded && (
-          <div className='grid grid-cols-1 divide-y divide-primary-400 items-start pt-2 px-2'>
+        <div className={`${isExpanded ? 'grid' : 'hidden'} grid-cols-1 divide-y divide-primary-400 items-start pt-2 px-2`}>
 
-            {channels.length <= 0 && (
-              <div className='h-full flex justify-center items-center min-h-[150px]'>
-                <p className='text-center font-light'>Apparently no one wants<br />to talk with you...</p>
-              </div>
-            )}
+          {channels.length <= 0 && (
+            <div className='h-full flex justify-center items-center min-h-[150px]'>
+              <p className='text-center font-light'>Apparently no one wants<br />to talk with you...</p>
+            </div>
+          )}
 
-            {channels.map((channel, index) => {
-              return (
-                <Channel key={index} channel={channel} ID={ID} setID={setID} />
-              );
-            })}
+          {channels.map((channel, index) => {
+            return (
+              <Channel key={index} channel={channel} ID={ID} setID={setID} />
+            );
+          })}
 
-          </div>
-        )}
+        </div>
 
       </div>
     </>

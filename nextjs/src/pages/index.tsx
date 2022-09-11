@@ -8,14 +8,14 @@ import { InQueueDialog } from 'src/components/game/dialogs';
 const Home: NextPage = () => {
 
   const { profile } = useSession();
-  const { queued, joinQueue, leaveQueue } = useGame();
+  const { queued, joinQueue, leaveQueue, onGoingMatches } = useGame();
 
   return (
     <>
 
       <InQueueDialog isOpen={queued} onClose={leaveQueue} />
 
-      <div className='px-5 py-20 flex justify-center'>
+      <div className='px-5 py-20 flex flex-col items-center'>
 
         <div className='grid grid-cols-2 gap-10'>
 
@@ -106,6 +106,15 @@ const Home: NextPage = () => {
 
           </div>
 
+        </div>
+
+        <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
+          {onGoingMatches
+            .map((match, index) => (
+              <div key={index}>
+                {JSON.stringify(match.elapsed)}
+              </div>
+            ))}
         </div>
 
       </div>

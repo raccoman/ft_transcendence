@@ -11,29 +11,19 @@ import {
   Sword,
   X,
 } from 'phosphor-react';
-import Link from 'next/link';
 
 const isRoleHigher = (a: Partecipant, b: Partecipant) => {
-  if (a.role == b.role)
-    return 0;
+  const priority = { 'OWNER': 10, 'ADMIN': 5, 'MEMBER': 1 };
 
-  if (a.role == 'OWNER')
-    return 1;
-
-  if (b.role == 'OWNER')
-    return -1;
-
-  if (a.role == 'ADMIN')
-    return 1;
-
-  return -1;
+  //@ts-ignore
+  return priority[b.role] - priority[a.role];
 };
 
 const Component: FC<{
   isOpen: boolean,
   onClose: any,
-  channel: Channel | undefined
-  partecipant: Partecipant | undefined
+  channel: Channel | undefined,
+  partecipant: Partecipant | undefined,
 }> = ({ isOpen, onClose, channel, partecipant }) => {
 
   const { upsertPunishment, leaveChannel } = useChat();
@@ -102,60 +92,60 @@ const Component: FC<{
             <div className='h-[1px] bg-primary-400 w-full' />
 
             <div className='grid grid-cols-1 px-2'>
-              {channel.partecipants.map((p, index) => (
-                <div key={index} className='flex items-center justify-between'>
+              {channel.partecipants
+                .slice()
+                .sort(isRoleHigher)
+                .map((p, index) => (
+                  <div key={index} className='flex items-center justify-between'>
 
-                  <div className='flex items-center space-x-2'>
+                    <div className='flex items-center space-x-2'>
 
-                    {p.role == 'OWNER' && (<Crown className='text-amber-600' weight='duotone' size={18} />)}
-                    {p.role == 'ADMIN' && (<Sword className='text-green-600' weight='duotone' size={18} />)}
-                    {p.role == 'MEMBER' && (
-                      <PersonSimple className='text-gray-600' weight='duotone' size={18} />)}
+                      {p.role == 'OWNER' && (<Crown className='text-amber-600' weight='duotone' size={18} />)}
+                      {p.role == 'ADMIN' && (<Sword className='text-green-600' weight='duotone' size={18} />)}
+                      {p.role == 'MEMBER' && (<PersonSimple className='text-gray-600' weight='duotone' size={18} />)}
 
-                    <Link href={`/profile/${p.profile.id}`} passHref>
                       <a>{p.profile.username}</a>
-                    </Link>
+
+                    </div>
+
+                    <div className={`${partecipant?.role === 'MEMBER' || partecipant?.profile.id === p.profile.id ? 'hidden' : 'flex'} items-center space-x-2`}>
+
+                      {!p.muted && (
+                        <button className='rounded-full p-1.5 hover:bg-secondary/10'
+                                onClick={() => onUpsertPunishment(p, 'MUTE', false)}
+                                disabled={!isRoleHigher(partecipant, p)}>
+                          <SpeakerSimpleHigh className='text-gray-600' weight='duotone' size={18} />
+                        </button>
+                      )}
+
+                      {p.muted && (
+                        <button className='rounded-full p-1.5 hover:bg-secondary/10'
+                                onClick={() => onUpsertPunishment(p, 'MUTE', true)}
+                                disabled={!isRoleHigher(partecipant, p)}>
+                          <SpeakerSimpleSlash className='text-accent' weight='duotone' size={18} />
+                        </button>
+                      )}
+
+                      {!p.banned && (
+                        <button className='rounded-full p-1.5 hover:bg-secondary/10'
+                                onClick={() => onUpsertPunishment(p, 'BAN', false)}
+                                disabled={!isRoleHigher(partecipant, p)}>
+                          <PlugsConnected className='text-gray-600' weight='duotone' size={18} />
+                        </button>
+                      )}
+
+                      {p.banned && (
+                        <button className='rounded-full p-1.5 hover:bg-secondary/10'
+                                onClick={() => onUpsertPunishment(p, 'BAN', true)}
+                                disabled={!isRoleHigher(partecipant, p)}>
+                          <Plugs className='text-accent' weight='duotone' size={18} />
+                        </button>
+                      )}
+
+                    </div>
 
                   </div>
-
-                  <div className='flex items-center space-x-2'>
-
-                    {!p.muted && (
-                      <button className='rounded-full p-1.5 hover:bg-secondary/10'
-                              onClick={() => onUpsertPunishment(p, 'MUTE', false)}
-                              disabled={!isRoleHigher(partecipant, p)}>
-                        <SpeakerSimpleHigh className='text-gray-600' weight='duotone' size={18} />
-                      </button>
-                    )}
-
-                    {p.muted && (
-                      <button className='rounded-full p-1.5 hover:bg-secondary/10'
-                              onClick={() => onUpsertPunishment(p, 'MUTE', true)}
-                              disabled={!isRoleHigher(partecipant, p)}>
-                        <SpeakerSimpleSlash className='text-accent' weight='duotone' size={18} />
-                      </button>
-                    )}
-
-                    {!p.banned && (
-                      <button className='rounded-full p-1.5 hover:bg-secondary/10'
-                              onClick={() => onUpsertPunishment(p, 'BAN', false)}
-                              disabled={!isRoleHigher(partecipant, p)}>
-                        <PlugsConnected className='text-gray-600' weight='duotone' size={18} />
-                      </button>
-                    )}
-
-                    {p.banned && (
-                      <button className='rounded-full p-1.5 hover:bg-secondary/10'
-                              onClick={() => onUpsertPunishment(p, 'BAN', true)}
-                              disabled={!isRoleHigher(partecipant, p)}>
-                        <Plugs className='text-accent' weight='duotone' size={18} />
-                      </button>
-                    )}
-
-                  </div>
-
-                </div>
-              ))}
+                ))}
             </div>
 
           </div>

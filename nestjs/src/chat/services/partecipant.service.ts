@@ -45,7 +45,7 @@ export class PartecipantService {
 
       const target = await prisma.partecipant.findFirst({
         where: {
-          profile_id,
+          profile_id: input.profile_id,
           channel_id: input.channel_id,
         },
       });

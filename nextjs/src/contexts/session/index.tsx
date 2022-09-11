@@ -41,7 +41,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
   const ft_signIn = () => {
     const INTRA_AUTHORIZATION = 'https://api.intra.42.fr/oauth/authorize?' +
       'client_id=' + process.env.NEXT_PUBLIC_INTRA_CLIENT_ID + '&' +
-      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '?provider=INTRA&' +
+      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '/intra&' +
       'state=' + customAlphabet(urlAlphabet)() + '&' +
       'response_type=code';
 
@@ -51,7 +51,7 @@ export const SessionContextProvider: FCWithChildren = ({ children }) => {
   const github_signIn = () => {
     const GITHUB_AUTHORIZATION = 'https://github.com/login/oauth/authorize?' +
       'client_id=' + process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID + '&' +
-      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '?provider=GITHUB&' +
+      'redirect_uri=' + process.env.NEXT_PUBLIC_REDIRECT_URI + '/github&' +
       'state=' + customAlphabet(urlAlphabet)() + '&' +
       'scope=read:user';
 

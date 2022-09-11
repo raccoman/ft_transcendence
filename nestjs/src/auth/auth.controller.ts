@@ -32,7 +32,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
 
-    const { profile, created, exception } = await this.authService.intra({ code });
+    const { profile, created, exception } = await this.authService.github({ code });
     if (exception) {
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -64,7 +64,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
 
-    const { profile, created, exception } = await this.authService.github({ code });
+    const { profile, created, exception } = await this.authService.intra({ code });
     if (exception) {
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)

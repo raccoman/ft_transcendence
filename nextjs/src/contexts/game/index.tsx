@@ -3,6 +3,10 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
 import { useSession } from 'src/contexts/session';
+import { useQuery, useSubscription } from '@apollo/client';
+import { ON_CHANNEL_UPDATE, ON_MATCH_UPDATE } from 'graphql/subscriptions';
+import { OnGoingMatch } from 'types/graphql';
+import { ONGOING_MATCHES } from 'graphql/queries';
 
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 576;
@@ -19,6 +23,7 @@ const GameContext = createContext<GameContextProps>({
   onKeyUp: undefined,
   runTick: undefined,
   fps: 0,
+  onGoingMatches: [],
 });
 
 const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true });
@@ -26,10 +31,13 @@ const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true
 export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const router = useRouter();
-
   const { profile } = useSession();
+  const query = useQuery(ONGOING_MATCHES);
+  const subscription = useSubscription(ON_MATCH_UPDATE);
+
   const [queued, setQueued] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
+  const [onGoingMatches, setOnGoingMatches] = useState<OnGoingMatch[]>([]);
 
   const [fps, setFps] = useState(0);
 
@@ -87,6 +95,18 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     });
 
   };
+
+  useEffect(() => {
+
+    if (query.data) {
+      setOnGoingMatches([...query.data.matches]);
+    }
+
+    if (subscription.data) {
+      query.refetch();
+    }
+
+  }, [query, subscription]);
 
   useEffect(() => {
 
@@ -148,7 +168,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
 
   return (
-    <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps }}>
+    <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps, onGoingMatches }}>
       {children}
     </GameContext.Provider>
   );

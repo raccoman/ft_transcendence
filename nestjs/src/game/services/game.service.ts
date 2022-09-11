@@ -5,12 +5,14 @@ import {
   GameMoveInput,
   GameStartInput, GameStateInput,
   Match,
-  MatchState,
+  MatchState, MatchType,
   Paddle,
 } from 'types';
 import { Server } from 'socket.io';
 import { MatchService } from './match.service';
 import * as cuid from 'cuid';
+import { PubsubService } from 'src/pubsub/pubsub.service';
+import { OnGoingMatch } from 'src/game/models/ongoing-match.model';
 
 @Injectable()
 export class GameService {
@@ -33,6 +35,7 @@ export class GameService {
   private prevMatchTick = Date.now();
 
   constructor(
+    private readonly pubSubService: PubsubService,
     private readonly matchService: MatchService,
   ) {
   }
@@ -83,6 +86,9 @@ export class GameService {
       }
 
       this.emit(server, 'MATCH-UPDATE', match);
+      if (current - this.prevMatchTick >= 1000) {
+        this.broadcast(match);
+      }
     }
 
     this.prevMatchTick = current;
@@ -149,6 +155,22 @@ export class GameService {
 
     match.players.forEach((x) => x.socket.join(match.id));
     this.emit(server, 'MATCH-FOUND', match);
+  }
+
+  public ongoing(): OnGoingMatch[] {
+    return Array.from(this.matches.values())
+      .map(match => ({
+        id: match.id,
+        players: match.players.map(x => ({
+          id: x.profile.id,
+          avatar: x.profile.avatar,
+          username: x.profile.username,
+          lives: x.lives,
+        })),
+        type: MatchType[match.settings.type],
+        state: MatchState[match.state],
+        elapsed: match.timings.elapsed,
+      }));
   }
 
   private intersects(ball: Ball, paddle: Paddle) {
@@ -282,6 +304,24 @@ export class GameService {
     };
 
     server.in(match.id).emit(event, message);
+  }
+
+  private broadcast(match: Match) {
+
+    const ongoing: OnGoingMatch = {
+      id: match.id,
+      players: match.players.map(x => ({
+        id: x.profile.id,
+        avatar: x.profile.avatar,
+        username: x.profile.username,
+        lives: x.lives,
+      })),
+      type: MatchType[match.settings.type],
+      state: MatchState[match.state],
+      elapsed: match.timings.elapsed,
+    };
+
+    this.pubSubService.publish('MATCH', ongoing);
   }
 
 }

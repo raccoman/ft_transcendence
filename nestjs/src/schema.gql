@@ -86,6 +86,21 @@ type Mutation {
   upsert_punishment(input: UpsertPunishmentInput!): Channel!
 }
 
+type OnGoingMatch {
+  elapsed: Int!
+  id: String!
+  players: [OnGoingMatchProfile!]!
+  state: String!
+  type: String!
+}
+
+type OnGoingMatchProfile {
+  avatar: String!
+  id: Int!
+  lives: Int!
+  username: String!
+}
+
 type Partecipant {
   banned: Boolean!
   channel: Channel!
@@ -117,6 +132,7 @@ type Query {
   backgrounds: [Background!]!
   channels: [Channel!]!
   find_profile(id: Int!): Profile
+  matches: [OnGoingMatch!]!
   me: MeResponse
   top_100: [Profile!]!
 }
@@ -128,6 +144,7 @@ input SendMessageInput {
 
 type Subscription {
   channel: Channel!
+  matches: OnGoingMatch!
 }
 
 """The `Upload` scalar type represents a file upload."""

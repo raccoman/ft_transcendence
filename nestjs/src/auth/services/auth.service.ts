@@ -84,62 +84,62 @@ export class AuthService {
 
   public async github({ code }: SocialAuthenticationInput): Promise<SocialAuthenticationResponse> {
 
-    const {
-      data: { access_token },
-      status: token_status,
-    } = await lastValueFrom(this.axios.post(AuthService.GITHUB_TOKEN_API, {
-      client_id: AuthService.GITHUB_CLIENT_ID,
-      client_secret: AuthService.GITHUB_CLIENT_SECRET,
-      code: code,
-      redirect_uri: AuthService.GITHUB_CALLBACK_URI,
-    }, {
-      headers: {
-        'Accept': 'application/json',
-      },
-    }));
+      const {
+        data: { access_token },
+        status: token_status,
+      } = await lastValueFrom(this.axios.post(AuthService.GITHUB_TOKEN_API, {
+        client_id: AuthService.GITHUB_CLIENT_ID,
+        client_secret: AuthService.GITHUB_CLIENT_SECRET,
+        code: code,
+        redirect_uri: AuthService.GITHUB_CALLBACK_URI,
+      }, {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }));
 
-    if (token_status != HttpStatus.OK) {
-      return {
-        profile: null,
-        created: false,
-        exception: 'Request (url=' + AuthService.GITHUB_TOKEN_API + ') has failed (status=' + token_status + ').',
-      };
-    }
+      if (token_status != HttpStatus.OK) {
+        return {
+          profile: null,
+          created: false,
+          exception: 'Request (url=' + AuthService.GITHUB_TOKEN_API + ') has failed (status=' + token_status + ').',
+        };
+      }
 
-    const { data, status: user_status } = await lastValueFrom(this.axios.get(AuthService.GITHUB_USER_API, {
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-      },
-    }));
+      const { data, status: user_status } = await lastValueFrom(this.axios.get(AuthService.GITHUB_USER_API, {
+        headers: {
+          'Authorization': `Bearer ${access_token}`,
+        },
+      }));
 
-    if (user_status != HttpStatus.OK) {
-      return {
-        profile: null,
-        created: false,
-        exception: 'Request (url=' + AuthService.GITHUB_USER_API + ') has failed (status=' + user_status + ').',
-      };
-    }
+      if (user_status != HttpStatus.OK) {
+        return {
+          profile: null,
+          created: false,
+          exception: 'Request (url=' + AuthService.GITHUB_USER_API + ') has failed (status=' + user_status + ').',
+        };
+      }
 
-    let profile = await this.profile.findUnique(data.id);
-    if (profile != null) {
-      return { profile, created: false };
-    }
+      let profile = await this.profile.findUnique(data.id);
+      if (profile != null) {
+        return { profile, created: false };
+      }
 
-    profile = await this.profile.create({
-      id: data.id,
-      username: data.login,
-      email: data.email,
-      avatar: data.avatar_url,
-    });
-    if (!profile) {
-      return {
-        profile: null,
-        created: false,
-        exception: 'Profile creation on database has failed.',
-      };
-    }
+      profile = await this.profile.create({
+        id: data.id,
+        username: data.login,
+        email: data.email,
+        avatar: data.avatar_url,
+      });
+      if (!profile) {
+        return {
+          profile: null,
+          created: false,
+          exception: 'Profile creation on database has failed.',
+        };
+      }
 
-    return { profile, created: true };
+      return { profile, created: true };
   }
 
 }
