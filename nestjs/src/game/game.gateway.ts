@@ -10,7 +10,7 @@ import { Jwt2FAGuard } from 'src/auth/guards/jwt-2fa.guard';
 import { Server, Socket } from 'socket.io';
 import { GameService } from 'src/game/services/game.service';
 import { Interval } from '@nestjs/schedule';
-import { JoinQueueSchema, PlayerInputSchema } from 'src/game/schema';
+import { JoinQueueInputSchema, MovePaddleInputSchema, SpectateMatchInputSchema } from 'src/game/schema';
 import { JoiValidationPipe } from 'src/pipes/joi';
 import { MatchmakingService } from 'src/game/services/matchmaking.service';
 import { Partial } from 'types';
@@ -96,7 +96,7 @@ export default class GameGateway implements OnGatewayDisconnect {
 
   @UseGuards(Jwt2FAGuard)
   @SubscribeMessage('JOIN-QUEUE')
-  async enqueue(@MessageBody(new JoiValidationPipe(JoinQueueSchema)) data, @Req() request, @ConnectedSocket() socket: Socket) {
+  async enqueue(@MessageBody(new JoiValidationPipe(JoinQueueInputSchema)) data, @Req() request, @ConnectedSocket() socket: Socket) {
 
     const { user: { id } } = request;
     const { type } = data;
@@ -118,7 +118,7 @@ export default class GameGateway implements OnGatewayDisconnect {
 
   @UseGuards(Jwt2FAGuard)
   @SubscribeMessage('MOVE-PADDLE')
-  async move(@MessageBody(new JoiValidationPipe(PlayerInputSchema)) data, @Req() request, @ConnectedSocket() socket: Socket) {
+  async move(@MessageBody(new JoiValidationPipe(MovePaddleInputSchema)) data, @Req() request, @ConnectedSocket() socket: Socket) {
 
     const { user: { id } } = request;
     const { match_id, key, pressed } = data;
@@ -129,6 +129,20 @@ export default class GameGateway implements OnGatewayDisconnect {
     }
 
     this.gameService.move({ socket, profile, match_id, key, pressed });
+  }
+
+  @UseGuards(Jwt2FAGuard)
+  @SubscribeMessage('SPECTATE-MATCH')
+  async spectate(@MessageBody(new JoiValidationPipe(SpectateMatchInputSchema)) data, @Req() request, @ConnectedSocket() socket: Socket) {
+
+    const { id } = data;
+
+    const profile = this.sockets.get(socket.id);
+    if (!profile) {
+      return;
+    }
+
+    this.gameService.spectate({ socket, profile, id });
   }
 
 }

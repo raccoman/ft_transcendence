@@ -37,6 +37,12 @@ export interface GameMoveInput {
   pressed: boolean;
 }
 
+export interface SpectateInput {
+  socket: Socket,
+  profile: Partial<Profile>
+  id: string;
+}
+
 export interface GameStartInput {
   server: Server;
   type: MatchType;
@@ -97,6 +103,7 @@ export enum MatchState {
 export interface Match {
   id: string;
   players: MatchProfile[];
+  spectators: Partial<Profile>[];
   ball: {
     radius: number;
     posY: number;

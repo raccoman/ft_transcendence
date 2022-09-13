@@ -6,7 +6,7 @@ import {
   GameStartInput, GameStateInput,
   Match,
   MatchState, MatchType,
-  Paddle,
+  Paddle, SpectateInput,
 } from 'types';
 import { Server } from 'socket.io';
 import { MatchService } from './match.service';
@@ -43,6 +43,12 @@ export class GameService {
 
     for (let [match_id, match] of this.matches.entries()) {
 
+      const spIndex = match.spectators.findIndex(x => x.id === id);
+      if (spIndex >= 0) {
+        match.spectators.splice(spIndex, 1);
+        return;
+      }
+
       const index = match.players.findIndex(x => x.profile.id === id || x.socket === socket);
       if (index < 0) {
         continue;
@@ -50,7 +56,7 @@ export class GameService {
 
       match.players[index].lives = 0;
       match.state = MatchState.ENDING;
-      break;
+      return;
     }
 
   }
@@ -127,6 +133,27 @@ export class GameService {
     match.players[index].input[key] = pressed;
   }
 
+  public spectate({ socket, profile, id }: SpectateInput) {
+
+    const match = this.matches.get(id);
+    if (!match || match.state === MatchState.ENDING) {
+      return;
+    }
+
+    match.spectators.push(profile);
+
+    const message = {
+      ...match,
+      players: [
+        ...match.players
+          .map(x => ({ ...x, socket: undefined })),
+      ],
+    };
+
+    socket.emit('MATCH-FOUND', message);
+    socket.join(match.id);
+  }
+
   public start({ server, type, challengers }: GameStartInput) {
 
     const match: Match = {
@@ -149,6 +176,7 @@ export class GameService {
           speedX: 0,
         },
       })),
+      spectators: [],
       ball: {
         radius: GameService.BALL_RADIUS,
         posY: GameService.CANVAS_HEIGHT / 2 - GameService.BALL_RADIUS,
