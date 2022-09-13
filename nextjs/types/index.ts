@@ -1,7 +1,7 @@
 import type { ChangeEventHandler, FC, ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import { Background, Channel, MeResponse, OnGoingMatch, Profile } from 'types/graphql';
+import { Channel, MeResponse, Profile } from 'types/graphql';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -48,6 +48,21 @@ export interface GameContextProps {
   runTick: any;
   fps: number;
   onGoingMatches: OnGoingMatch[];
+}
+
+export interface OnGoingMatch {
+  elapsed: number;
+  id: string;
+  players: OnGoingMatchProfile[];
+  state: string;
+  type: string;
+}
+
+export interface OnGoingMatchProfile {
+  avatar: string;
+  id: number;
+  lives: number;
+  username: string;
 }
 
 export interface MatchProfile {

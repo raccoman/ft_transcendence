@@ -51,6 +51,12 @@ export default class GameGateway implements OnGatewayDisconnect {
     this.sockets.delete(socket.id);
   }
 
+  @Interval(500)
+  private tickOnGoingMatches() {
+    this.gameService.broadcast(this.server);
+  }
+
+
   @Interval(GameService.SERVER_TPS)
   private tickMatches() {
     this.gameService.tick(this.server);
@@ -84,6 +90,7 @@ export default class GameGateway implements OnGatewayDisconnect {
       return;
     }
 
+    socket.join('ONGOING-MATCHES');
     this.sockets.set(socket.id, profile);
   }
 

@@ -37,17 +37,4 @@ export class MatchResolver {
     return this.profileService.findTop100();
   }
 
-  @UseGuards(Jwt2FAGuard)
-  @Query(returns => [OnGoingMatch], { name: 'matches' })
-  async onGoingMatches(@Context() context) {
-    return this.gameService.ongoing();
-  }
-
-
-  @UseGuards(Jwt2FAGuard)
-  @Subscription(returns => OnGoingMatch, { name: 'matches' })
-  async onMatchUpdate(@Context() context) {
-    return this.pubSubService.subscribe('MATCH');
-  }
-
 }

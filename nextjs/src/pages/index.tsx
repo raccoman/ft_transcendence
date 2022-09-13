@@ -15,9 +15,9 @@ const Home: NextPage = () => {
 
       <InQueueDialog isOpen={queued} onClose={leaveQueue} />
 
-      <div className='px-5 py-20 flex flex-col items-center'>
+      <div className='px-5 py-20 space-y-20 flex flex-col items-center'>
 
-        <div className='grid grid-cols-2 gap-10'>
+        <div className='grid grid-cols-3 gap-10'>
 
           <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
 
@@ -106,18 +106,80 @@ const Home: NextPage = () => {
 
           </div>
 
+          <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
+
+            <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
+              Custom 1vs1
+            </p>
+
+            <div className='flex flex-col justify-between w-full h-full space-y-10 p-5'>
+
+              <div className='flex flex-col space-y-10 items-center'>
+
+                <Image src='/assets/ranks/0.svg' width={128} height={128} alt='unranked-match' />
+
+                <p className='font-light text-xs text-center'>
+                  It features all the rules, gameplay changes<br />
+                  as the Ranked match but does not affect<br />
+                  the player&apos;s statistics.
+                </p>
+
+              </div>
+
+              <button className='w-full py-1.5 bg-accent rounded font-medium text-sm'
+                      onClick={() => joinQueue(MatchType.DRAFT_1vs1)}>
+                Join queue
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
 
         <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
-          {onGoingMatches
-            .map((match, index) => (
-              <div key={index}>
-                {JSON.stringify(match.elapsed)}
+          {onGoingMatches.map((match, index) => (
+
+            <div key={index} className='flex p-2 bg-primary-600 justify-between space-x-40 items-center'>
+
+              <div className='flex space-x-5'>
+
+                <div className='bg-primary-400 p-2.5 rounded flex justify-center items-center'>
+                  <Image src='/assets/game.svg' width={32} height={32} />
+                </div>
+
+
+                <div className='flex flex-col'>
+                  <p className='font-extralight text-sm'>{match.type == 'DRAFT_1vs1' ? 'Draft 1vs1' : 'Ranked 1vs1'}</p>
+                </div>
+
               </div>
-            ))}
+
+              <div className='flex space-x-2 items-center'>
+                <p>{match.players[0].username}</p>
+                <span className='font-medium text-xl text-amber-500'>VS</span>
+                <p>{match.players[1].username}</p>
+              </div>
+
+              <div className='flex flex-col'>
+
+                <button className='px-5 py-1.5 bg-accent rounded font-medium text-sm'>
+                  Spectate
+                </button>
+
+                <p className='font-extralight text-sm'>
+                  {match.elapsed}
+                </p>
+
+              </div>
+
+            </div>
+
+          ))}
         </div>
 
       </div>
+
     </>
   );
 };

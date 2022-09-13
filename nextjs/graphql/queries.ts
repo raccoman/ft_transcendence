@@ -143,20 +143,3 @@ export const GET_BACKGROUNDS = gql`
         }
     }
 `;
-
-export const ONGOING_MATCHES = gql`
-    query {
-        matches {
-            id
-            players {
-                id
-                username
-                avatar
-                lives
-            }
-            type
-            state
-            elapsed
-        }
-    }
-`;

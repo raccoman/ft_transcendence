@@ -1,12 +1,9 @@
-import { FCWithChildren, GameContextProps, Match, MatchProfile, MatchType } from 'types';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { FCWithChildren, GameContextProps, Match, MatchType } from 'types';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
 import { useSession } from 'src/contexts/session';
-import { useQuery, useSubscription } from '@apollo/client';
-import { ON_CHANNEL_UPDATE, ON_MATCH_UPDATE } from 'graphql/subscriptions';
-import { OnGoingMatch } from 'types/graphql';
-import { ONGOING_MATCHES } from 'graphql/queries';
+import { OnGoingMatch } from 'types';
 
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 576;
@@ -32,8 +29,6 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   const router = useRouter();
   const { profile } = useSession();
-  const query = useQuery(ONGOING_MATCHES);
-  const subscription = useSubscription(ON_MATCH_UPDATE);
 
   const [queued, setQueued] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
@@ -98,18 +93,6 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
   useEffect(() => {
 
-    if (query.data) {
-      setOnGoingMatches([...query.data.matches]);
-    }
-
-    if (subscription.data) {
-      query.refetch();
-    }
-
-  }, [query, subscription]);
-
-  useEffect(() => {
-
     socket.on('connect', () => {
       console.debug('Successfully connected websocket.');
     });
@@ -120,6 +103,10 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
 
     socket.on('disconnect', (reason) => {
       console.debug(reason);
+    });
+
+    socket.on('ONGOING-MATCHES', async (data) => {
+      setOnGoingMatches([...data]);
     });
 
     socket.on('MATCH-FOUND', async (data) => {
@@ -157,15 +144,6 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     };
 
   }, []);
-
-  useEffect(() => {
-
-    if (socket.connected) {
-      socket.emit('AUTHENTICATE', {});
-    }
-
-  }, [profile]);
-
 
   return (
     <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps, onGoingMatches }}>

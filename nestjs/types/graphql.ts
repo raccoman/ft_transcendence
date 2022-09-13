@@ -104,21 +104,6 @@ export interface IMutation {
     upsert_punishment(input: UpsertPunishmentInput): Channel | Promise<Channel>;
 }
 
-export interface OnGoingMatch {
-    elapsed: number;
-    id: string;
-    players: OnGoingMatchProfile[];
-    state: string;
-    type: string;
-}
-
-export interface OnGoingMatchProfile {
-    avatar: string;
-    id: number;
-    lives: number;
-    username: string;
-}
-
 export interface Partecipant {
     banned: boolean;
     channel: Channel;
@@ -150,14 +135,12 @@ export interface IQuery {
     backgrounds(): Background[] | Promise<Background[]>;
     channels(): Channel[] | Promise<Channel[]>;
     find_profile(id: number): Nullable<Profile> | Promise<Nullable<Profile>>;
-    matches(): OnGoingMatch[] | Promise<OnGoingMatch[]>;
     me(): Nullable<MeResponse> | Promise<Nullable<MeResponse>>;
     top_100(): Profile[] | Promise<Profile[]>;
 }
 
 export interface ISubscription {
     channel(): Channel | Promise<Channel>;
-    matches(): OnGoingMatch | Promise<OnGoingMatch>;
 }
 
 export type DateTime = any;

@@ -49,6 +49,21 @@ export interface GameStateInput {
   partialSeconds: number;
 }
 
+export interface OnGoingMatch {
+  elapsed: number;
+  id: string;
+  players: OnGoingMatchProfile[];
+  state: string;
+  type: string;
+}
+
+export interface OnGoingMatchProfile {
+  avatar: string;
+  id: number;
+  lives: number;
+  username: string;
+}
+
 export interface MatchProfile {
 
   socket: Socket;
