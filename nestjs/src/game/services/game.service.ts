@@ -3,15 +3,17 @@ import {
   Ball,
   GameDisconnectInput,
   GameMoveInput,
-  GameStartInput, GameStateInput,
+  GameStartInput,
+  GameStateInput,
   Match,
-  MatchState, MatchType,
-  Paddle, SpectateInput,
+  MatchState,
+  MatchType,
+  Paddle,
+  SpectateInput,
 } from 'types';
 import { Server } from 'socket.io';
 import { MatchService } from './match.service';
 import * as cuid from 'cuid';
-import { PubsubService } from 'src/pubsub/pubsub.service';
 import { OnGoingMatch } from 'src/game/models/ongoing-match.model';
 
 @Injectable()
@@ -318,8 +320,6 @@ export class GameService {
 
   private ending({ match, partialTicks, partialSeconds }: GameStateInput) {
     this.matchService.upsert(match);
-
-    match.players.forEach(x => x.socket.leave(match.id));
     this.matches.delete(match.id);
   }
 
@@ -334,5 +334,9 @@ export class GameService {
     };
 
     server.in(match.id).emit(event, message);
+
+    if (match.state == MatchState.ENDING) {
+      match.players.forEach(x => x.socket.leave(match.id));
+    }
   }
 }

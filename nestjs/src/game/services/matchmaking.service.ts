@@ -57,7 +57,7 @@ export class MatchmakingService {
     }
 
     queue.push({ socket, profile });
-    queue.push({ socket, profile }); //TODO: Delete this line
+    //queue.push({ socket, profile }); //TODO: Delete this line
 
     this.queues.set(type, queue);
     console.debug('Profile (id=' + profile.id + ') successfully added to ' + MatchType[type] + ' queue. (' + queue.length + '/2)');
