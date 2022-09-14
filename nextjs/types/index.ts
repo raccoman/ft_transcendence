@@ -39,15 +39,17 @@ export interface ChatContextProps {
 }
 
 export interface GameContextProps {
-  queued: boolean;
+  spectateMatch: any;
+  leaveMatch: any,
+  inQueue: boolean;
   joinQueue: any;
   leaveQueue: any;
   match: Match | undefined;
+  onGoingMatches: OnGoingMatch[];
   onKeyDown: any;
   onKeyUp: any;
   runTick: any;
   fps: number;
-  onGoingMatches: OnGoingMatch[];
 }
 
 export interface OnGoingMatch {
@@ -99,6 +101,7 @@ export enum MatchState {
 export interface Match {
   id: string;
   players: MatchProfile[];
+  spectators: Partial<Profile>[];
   ball: {
     radius: number;
     posY: number;

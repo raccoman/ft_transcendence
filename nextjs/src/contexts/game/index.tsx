@@ -12,7 +12,7 @@ export const PADDLE_HEIGHT = 192;
 export const PADDLE_WIDTH = 20;
 
 const GameContext = createContext<GameContextProps>({
-  queued: false,
+  inQueue: false,
   joinQueue: undefined,
   leaveQueue: undefined,
   match: undefined,
@@ -21,6 +21,8 @@ const GameContext = createContext<GameContextProps>({
   runTick: undefined,
   fps: 0,
   onGoingMatches: [],
+  spectateMatch: undefined,
+  leaveMatch: undefined,
 });
 
 const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true });
@@ -30,21 +32,33 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   const router = useRouter();
   const { profile } = useSession();
 
-  const [queued, setQueued] = useState(false);
+  const [inQueue, setInQueue] = useState(false);
   const [match, setMatch] = useState<Match | undefined>(undefined);
   const [onGoingMatches, setOnGoingMatches] = useState<OnGoingMatch[]>([]);
 
   const [fps, setFps] = useState(0);
 
   const joinQueue = (type: MatchType) => {
-    socket.emit('JOIN-QUEUE', { type }, () => setQueued(true));
+    socket.emit('JOIN-QUEUE', { type }, () => setInQueue(true));
   };
+
   const leaveQueue = () => {
-    socket.emit('LEAVE-QUEUE', {}, () => setQueued(false));
+    socket.emit('LEAVE-QUEUE', {}, () => setInQueue(false));
+  };
+
+  const spectateMatch = (id: string) => {
+    socket.emit('SPECTATE-MATCH', { id });
+  };
+
+  const leaveMatch = () => {
+    socket.emit('LEAVE-MATCH', {});
   };
 
   const onKeyUp = (e: KeyboardEvent) => {
-    if (!match || e.repeat)
+
+    e.preventDefault();
+
+    if (!match || e.repeat || match.spectators.findIndex(x => x.id == profile?.id) >= 0)
       return;
 
     if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
@@ -54,7 +68,10 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!match || e.repeat)
+
+    e.preventDefault();
+
+    if (!match || e.repeat || match.spectators.findIndex(x => x.id == profile?.id) >= 0)
       return;
 
     if (e.key != 'ArrowDown' && e.key != 'ArrowUp')
@@ -110,7 +127,7 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
     });
 
     socket.on('MATCH-FOUND', async (data) => {
-      setQueued(false);
+      setInQueue(false);
       await setMatch(() => data);
       await router.push('/match/' + data.id);
     });
@@ -146,7 +163,20 @@ export const GameContextProvider: FCWithChildren = ({ children }) => {
   }, []);
 
   return (
-    <GameContext.Provider value={{ queued, joinQueue, leaveQueue, match, onKeyDown, onKeyUp, runTick, fps, onGoingMatches }}>
+    <GameContext.Provider
+      value={{
+        inQueue,
+        joinQueue,
+        leaveQueue,
+        match,
+        onKeyDown,
+        onKeyUp,
+        runTick,
+        fps,
+        onGoingMatches,
+        spectateMatch,
+        leaveMatch,
+      }}>
       {children}
     </GameContext.Provider>
   );

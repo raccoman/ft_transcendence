@@ -6,6 +6,7 @@ import { GameBanner, GameCanvas } from 'src/components';
 import { MatchState } from 'types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Eye } from 'phosphor-react';
 
 const Game: NextPage = () => {
 
@@ -16,7 +17,7 @@ const Game: NextPage = () => {
   const previousTimeRef = useRef<number | undefined>();
 
   const { profile } = useSession();
-  const { match, onKeyUp, onKeyDown, runTick, fps } = useGame();
+  const { match, onKeyUp, onKeyDown, runTick, fps, leaveMatch } = useGame();
 
   const render = (ms: number) => {
 
@@ -43,6 +44,8 @@ const Game: NextPage = () => {
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
+
+      leaveMatch();
     };
   }, []);
 
@@ -133,6 +136,14 @@ const Game: NextPage = () => {
 
           <div className='relative border border-primary-400 rounded overflow-hidden'>
             <p className='z-10 absolute right-3 top-2'>{fps} FPS</p>
+
+            {match.spectators.length > 0 && (
+              <div className='z-10 absolute bottom-2 right-3 flex space-x-2 items-center'>
+                <Eye size={24} weight='duotone' className='text-white' />
+                <p className='text-white'>{match.spectators.length}</p>
+              </div>
+            )}
+
             <GameCanvas match={match} frameRate={fps} />
           </div>
 

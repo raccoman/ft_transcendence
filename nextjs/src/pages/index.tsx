@@ -4,20 +4,21 @@ import { useGame, useSession } from 'src/contexts';
 import { getCurrentRank, getNextRank, getPrevRank, getRankProgress, getRankRP } from 'src/utils/ranks';
 import { MatchType } from 'types';
 import { InQueueDialog } from 'src/components/game/dialogs';
+import { toMMSS } from 'src/utils/timestamp';
 
 const Home: NextPage = () => {
 
   const { profile } = useSession();
-  const { queued, joinQueue, leaveQueue, onGoingMatches } = useGame();
+  const { inQueue, joinQueue, leaveQueue, onGoingMatches, spectateMatch } = useGame();
 
   return (
     <>
 
-      <InQueueDialog isOpen={queued} onClose={leaveQueue} />
+      <InQueueDialog isOpen={inQueue} onClose={leaveQueue} />
 
-      <div className='px-5 py-20 space-y-20 flex flex-col items-center'>
+      <div className='p-20 flex flex-col items-center space-y-20'>
 
-        <div className='grid grid-cols-3 gap-10'>
+        <div className='grid grid-cols-3 gap-5'>
 
           <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
 
@@ -140,7 +141,7 @@ const Home: NextPage = () => {
         <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
           {onGoingMatches.map((match, index) => (
 
-            <div key={index} className='flex p-2 bg-primary-600 justify-between space-x-40 items-center'>
+            <div key={index} className='flex p-2 bg-primary-600 justify-between space-x-40 items-center rounded'>
 
               <div className='flex space-x-5'>
 
@@ -149,8 +150,10 @@ const Home: NextPage = () => {
                 </div>
 
 
-                <div className='flex flex-col'>
-                  <p className='font-extralight text-sm'>{match.type == 'DRAFT_1vs1' ? 'Draft 1vs1' : 'Ranked 1vs1'}</p>
+                <div className='flex flex-col justify-center'>
+                  <p
+                    className='font-extralight text-sm'>{match.type == 'DRAFT_1vs1' ? 'Draft 1vs1' : 'Ranked 1vs1'}</p>
+                  <p className='font-extralight text-sm'>{toMMSS(match.elapsed)}</p>
                 </div>
 
               </div>
@@ -161,17 +164,9 @@ const Home: NextPage = () => {
                 <p>{match.players[1].username}</p>
               </div>
 
-              <div className='flex flex-col'>
-
-                <button className='px-5 py-1.5 bg-accent rounded font-medium text-sm'>
-                  Spectate
-                </button>
-
-                <p className='font-extralight text-sm'>
-                  {match.elapsed}
-                </p>
-
-              </div>
+              <button className='px-5 py-1.5 bg-accent rounded font-medium text-sm' onClick={() => spectateMatch(match.id)}>
+                Spectate
+              </button>
 
             </div>
 

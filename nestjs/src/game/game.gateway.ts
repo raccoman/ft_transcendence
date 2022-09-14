@@ -145,4 +145,16 @@ export default class GameGateway implements OnGatewayDisconnect {
     this.gameService.spectate({ socket, profile, id });
   }
 
+  @UseGuards(Jwt2FAGuard)
+  @SubscribeMessage('LEAVE-MATCH')
+  async leave(@Req() request, @ConnectedSocket() socket: Socket) {
+
+    const profile = this.sockets.get(socket.id);
+    if (!profile) {
+      return;
+    }
+
+    this.gameService.disconnect({ socket, id: profile.id });
+  }
+
 }
