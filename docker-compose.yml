@@ -30,7 +30,7 @@ services:
     ports:
       - ${NEXTJS_PORT}:${NEXTJS_PORT}
     env_file:
-      - "./nextjs/.env"
+      - "nextjs/.env.production"
     environment:
       PORT: ${NEXTJS_PORT}
       NEXT_PUBLIC_NESTJS_BASE_URL: ${NESTJS_BASE_URL}
