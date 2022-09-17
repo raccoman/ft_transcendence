@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: '../.env.production' });
 
 const {
   NESTJS_BASE_URL: endpoint,
