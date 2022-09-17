@@ -25,7 +25,7 @@ const GameContext = createContext<GameContextProps>({
   leaveMatch: undefined,
 });
 
-const socket = io(process.env.NEXT_PUBLIC_WS_ENDPOINT!!, { withCredentials: true });
+const socket = io(process.env.NEXT_PUBLIC_HTTP_WS_ENDPOINT!!, { withCredentials: true });
 
 export const GameContextProvider: FCWithChildren = ({ children }) => {
 
