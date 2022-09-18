@@ -43,6 +43,19 @@ services:
     networks:
       - frontend
 
+  nestjs:
+    build: nestjs/
+    container_name: nestjs
+    restart: always
+    ports:
+      - ${NESTJS_PORT}:${NESTJS_PORT}
+    env_file:
+      - "./.env"
+    volumes:
+      - "~/Desktop/ft_transcendence/nestjs/uploads:/app/uploads"
+    networks:
+      - frontend
+
 networks:
   frontend:
   backend:
