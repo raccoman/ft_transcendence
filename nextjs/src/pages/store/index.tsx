@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_BACKGROUNDS } from 'graphql/queries';
+import { GET_BACKGROUNDS } from 'src/graphql/queries';
 import { CircleNotch, SpinnerGap } from 'phosphor-react';
 import { Background } from 'types/graphql';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { useSession } from 'src/contexts';
 import { FC, useRef, useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { PURCHASE_BACKGROUND } from 'graphql/mutations';
+import { PURCHASE_BACKGROUND } from 'src/graphql/mutations';
 
 const CorfirmPurchaseDialog: FC<{
   isOpen: boolean,
@@ -126,7 +126,7 @@ const Store: NextPage = () => {
               const owned = profile.backgrounds.findIndex(x => x.id == background.id) >= 0;
 
               return (
-                <div className='relative w-[300px] h-[500px] rounded border border-primary-400 group'>
+                <div key={index} className='relative w-[300px] h-[500px] rounded border border-primary-400 group'>
 
                   <img src={process.env.NEXT_PUBLIC_NESTJS_BASE_URL + '/assets/background/' + background.id + '.jpeg'}
                        className='rounded w-full h-full object-cover' />

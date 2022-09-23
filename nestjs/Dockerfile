@@ -4,12 +4,8 @@ FROM node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# COPY package.json yarn.lock ./
-# RUN yarn install --frozen-lockfile
-
 # If using npm with a `package-lock.json` comment out above and use below instead
 COPY package.json package-lock.json ./
-COPY prisma ./prisma
 
 RUN npm ci
 
@@ -18,8 +14,6 @@ FROM node:16-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# RUN yarn build
 
 # If using npm comment out above and use below instead
 RUN npm run build
@@ -35,8 +29,10 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
 
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./
+COPY --from=builder --chown=nestjs:nodejs /app/package.json /app/package-lock.json ./
 
 USER nestjs
 
-CMD ["node", "src/main.js"]
+CMD ["npm", "run", "start:migrate:prod"]

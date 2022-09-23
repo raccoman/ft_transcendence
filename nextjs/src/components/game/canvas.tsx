@@ -17,8 +17,7 @@ const Component: FC<{ match: Match, frameRate: number; }> = ({ match, frameRate 
         <Layer>
 
           <Rect x={0} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={bgP1} />
-          <Rect x={CANVAS_WIDTH / 2} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={bgP2}
-                fillPatternScale={{ x: -1, y: 1 }} />
+          <Rect x={CANVAS_WIDTH / 2} y={0} width={CANVAS_WIDTH / 2} height={CANVAS_HEIGHT} fillPatternImage={bgP2} fillPatternScale={{ x: -1, y: 1 }} />
 
           <Rect x={CANVAS_WIDTH / 2 - 3} y={0} width={3} height={576} fill='white' />
           <Circle x={512} y={288} radius={96} stroke='white' strokeWidth={3} />

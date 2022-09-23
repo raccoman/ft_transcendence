@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useQuery } from '@apollo/client';
-import { TOP_100 } from 'graphql/queries';
+import { TOP_100 } from 'src/graphql/queries';
 import { Profile } from 'types/graphql';
 import { CircleNotch } from 'phosphor-react';
 import _ from 'lodash';
@@ -38,7 +38,7 @@ const Leaderboard: NextPage = () => {
               </div>
 
               <div className='border border-accent rounded w-[50px] h-[50px] overflow-hidden'>
-                <img src={profile?.avatar || '/assets/default-avatar.png'}
+                <Image width={50} height={50} src={profile?.avatar || '/assets/default-avatar.png'}
                      className='rounded w-full h-full object-cover' alt='avatar' />
               </div>
 

@@ -3,13 +3,14 @@ import { useSession } from 'src/contexts';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Background, Profile } from 'types/graphql';
+import { Background, Profile, Match } from 'types/graphql';
 import { getCurrentRank } from 'src/utils/ranks';
 import _ from 'lodash';
 import { CircleNotch } from 'phosphor-react';
 import { ProfileStatus } from 'src/components';
 import { useLazyQuery } from '@apollo/client';
-import { FIND_PROFILE } from 'graphql/queries';
+import { FIND_PROFILE } from 'src/graphql/queries';
+import { match } from 'assert';
 
 const Profile: NextPage = () => {
 
@@ -21,6 +22,7 @@ const Profile: NextPage = () => {
   const [isLoading, setLoading] = useState(true);
   const [amount, setAmount] = useState(5);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [matches, setMatches] = useState<Match[]>([]);
 
   useEffect(() => {
 
@@ -35,8 +37,8 @@ const Profile: NextPage = () => {
           return;
         }
 
-        const { data } = await getProfile({ variables: { id: parseInt(id as string) } });
-        setProfile(data.find_profile);
+        const { data: { find_profile } } = await getProfile({ variables: { id: parseInt(id as string) } });
+        setProfile(find_profile);
 
       } finally {
         setLoading(false);
@@ -47,6 +49,21 @@ const Profile: NextPage = () => {
     fetchProfile();
 
   }, [me, id]);
+
+  useEffect(() => {
+
+    if (!profile) {
+      setMatches([]);
+      return;
+    }
+
+    setMatches([
+      ...profile.wins,
+      ...profile.defeats
+    ]);
+
+  }, [profile]);
+
 
   if (isLoading) {
     return (
@@ -260,7 +277,7 @@ const Profile: NextPage = () => {
           <p className='text-xl font-medium'>Match History</p>
 
           <div className='grid grid-cols-1 gap-2 w-full'>
-            {_.orderBy(_.merge(profile.wins, profile.defeats), ['started_at'], ['desc'])
+            {_.orderBy(matches, ['started_at'], ['desc'])
               .slice(0, amount)
               .map((match, index) => (
 
@@ -319,7 +336,7 @@ const Profile: NextPage = () => {
             }
           </div>
 
-          {_.merge(profile.defeats, profile.wins).length > amount && (
+          {matches.length > amount && (
             <button onClick={() => setAmount(amount + 5)}
                     className='w-full flex items-center justify-center bg-primary-500 rounded p-2'>Load more...</button>
           )}

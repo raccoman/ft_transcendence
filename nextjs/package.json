@@ -14,7 +14,6 @@
     "@headlessui/react": "^1.6.6",
     "apollo-upload-client": "^17.0.0",
     "axios": "^0.27.2",
-    "canvas": "^2.9.3",
     "graphql": "^16.5.0",
     "graphql-ws": "^5.9.1",
     "js-cookie": "^3.0.1",
@@ -27,6 +26,7 @@
     "react-digit-input": "^2.1.0",
     "react-dom": "18.2.0",
     "react-konva": "^18.2.1",
+    "sharp": "^0.31.0",
     "socket.io-client": "^4.5.1",
     "use-image": "^1.0.12"
   },

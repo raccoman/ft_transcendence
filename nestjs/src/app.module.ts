@@ -21,6 +21,7 @@ import { AssetsModule } from 'src/assets/assets.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       path: 'v1/graphql',
       sortSchema: true,
+      persistedQueries: false,
       // buildSchemaOptions: { dateScalarMode: 'timestamp' },
       definitions: {
         path: join(process.cwd(), 'types/graphql.ts'),
@@ -31,7 +32,7 @@ import { AssetsModule } from 'src/assets/assets.module';
       },
       subscriptions: {
         'graphql-ws': true,
-      },
+      }, 
       context: (context) => {
 
         if (context?.extra?.request) {

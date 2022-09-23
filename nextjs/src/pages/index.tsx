@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 
       <div className='p-20 flex flex-col items-center space-y-20'>
 
-        <div className='grid grid-cols-3 gap-5'>
+        <div className='grid grid-cols-2 gap-5'>
 
           <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
 
@@ -107,35 +107,6 @@ const Home: NextPage = () => {
 
           </div>
 
-          <div className='border border-primary-400 rounded flex flex-col items-center overflow-hidden shadow-lg'>
-
-            <p className='text-xl font-medium bg-primary-400 w-full p-2 text-center'>
-              Custom 1vs1
-            </p>
-
-            <div className='flex flex-col justify-between w-full h-full space-y-10 p-5'>
-
-              <div className='flex flex-col space-y-10 items-center'>
-
-                <Image src='/assets/ranks/0.svg' width={128} height={128} alt='unranked-match' />
-
-                <p className='font-light text-xs text-center'>
-                  It features all the rules, gameplay changes<br />
-                  as the Ranked match but does not affect<br />
-                  the player&apos;s statistics.
-                </p>
-
-              </div>
-
-              <button className='w-full py-1.5 bg-accent rounded font-medium text-sm'
-                      onClick={() => joinQueue(MatchType.DRAFT_1vs1)}>
-                Join queue
-              </button>
-
-            </div>
-
-          </div>
-
         </div>
 
         <div className='grid grid-cols-1 border border-primary-400 rounded divide-y divide-primary-400'>
@@ -146,7 +117,7 @@ const Home: NextPage = () => {
               <div className='flex space-x-5'>
 
                 <div className='bg-primary-400 p-2.5 rounded flex justify-center items-center'>
-                  <Image src='/assets/game.svg' width={32} height={32} />
+                  <Image src='/assets/game.svg' width={32} height={32} alt='' />
                 </div>
 
 

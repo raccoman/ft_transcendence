@@ -13,7 +13,7 @@ services:
       - "backend"
 
   adminer:
-    image: adminer
+    image: adminer:latest
     container_name: adminer
     restart: always
     ports:
@@ -23,36 +23,53 @@ services:
     networks:
       - backend
 
+  nestjs:
+    build: nestjs/
+    image: nestjs
+    container_name: nestjs
+    restart: always
+    ports:
+      - "8888:8888"
+      - ${NESTJS_PORT}:${NESTJS_PORT}
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_URI: ${POSTGRES_URI}
+      NEXTJS_PORT: ${NEXTJS_PORT}
+      NEXTJS_BASE_URL: ${NEXTJS_BASE_URL}
+      NESTJS_PORT: ${NESTJS_PORT}
+      NESTJS_BASE_URL: ${NESTJS_BASE_URL}
+      INTRA_CLIENT_ID: ${INTRA_CLIENT_ID}
+      INTRA_CLIENT_SECRET: ${INTRA_CLIENT_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      JWT_COOKIE_NAME: ${JWT_COOKIE_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      TWO_FACTOR_AUTH_APP_NAME: ${TWO_FACTOR_AUTH_APP_NAME}
+    volumes:
+      - "~/Desktop/uploads:/app/uploads"
+    depends_on:
+      - postgres
+    networks:
+      - frontend
+      - backend
+
   nextjs:
     build: nextjs/
+    image: nextjs
     container_name: nextjs
     restart: always
     ports:
       - ${NEXTJS_PORT}:${NEXTJS_PORT}
-    env_file:
-      - "nextjs/.env.production"
     environment:
       PORT: ${NEXTJS_PORT}
-      NEXT_PUBLIC_NESTJS_BASE_URL: ${NESTJS_BASE_URL}
-      NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT: ${GRAPHQL_WS_ENDPOINT}
-      NEXT_PUBLIC_GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}
-      NEXT_PUBLIC_HTTP_WS_ENDPOINT: ${HTTP_WS_ENDPOINT}
-      NEXT_PUBLIC_AUTH_CALLBACK_URI: ${AUTH_CALLBACK_URI}
-      NEXT_PUBLIC_INTRA_CLIENT_ID: ${INTRA_CLIENT_ID}
-      NEXT_PUBLIC_GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-    networks:
-      - frontend
-
-  nestjs:
-    build: nestjs/
-    container_name: nestjs
-    restart: always
-    ports:
-      - ${NESTJS_PORT}:${NESTJS_PORT}
-    env_file:
-      - "./.env"
-    volumes:
-      - "~/Desktop/ft_transcendence/nestjs/uploads:/app/uploads"
+      # NEXT_PUBLIC_NESTJS_BASE_URL: ${NESTJS_BASE_URL}
+      # NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT: ${NESTJS_WS_BASE_URL}/v1/graphql
+      # NEXT_PUBLIC_GRAPHQL_ENDPOINT: ${NESTJS_BASE_URL}/v1/graphql
+      # NEXT_PUBLIC_GAME_WS_ENDPOINT: ${NESTJS_GAME_WS_ENDPOINT}
+      # NEXT_PUBLIC_INTRA_CLIENT_ID: ${INTRA_CLIENT_ID}
+      # NEXT_PUBLIC_GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+    depends_on:
+      - nestjs
     networks:
       - frontend
 

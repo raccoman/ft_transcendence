@@ -48,7 +48,7 @@ export class ChannelService {
 
       const channel = await prisma.channel.create({
         data: {
-          name: input.name,
+          name: input.name.trim().substring(0, 16),
           type: input.password ? 'PROTECTED' : 'PUBLIC',
           password: input.password,
           partecipants: {

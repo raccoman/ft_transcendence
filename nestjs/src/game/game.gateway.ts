@@ -18,7 +18,7 @@ import { Profile } from 'types/graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 
-@WebSocketGateway(2023, {
+@WebSocketGateway(8888, {
   cors: {
     origin: [process.env.NEXTJS_BASE_URL],
     credentials: true,

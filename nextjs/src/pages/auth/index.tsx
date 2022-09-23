@@ -37,13 +37,13 @@ const Index: NextPageWithLayout = () => {
 
           <button onClick={ft_signIn}
                   className='border border-primary-400 rounded flex items-center py-2 px-5 space-x-5 bg-[#00babc] text-black font-medium'>
-            <Image src='/assets/oauth/ft.png' width={24} height={24} />
+            <Image src='/assets/oauth/ft.png' width={24} height={24} alt='' />
             <p>Sign in with Intra</p>
           </button>
 
           <button onClick={github_signIn}
                   className='border border-primary-400 rounded flex items-center py-2 px-5 space-x-5 bg-[#171515] font-medium'>
-            <Image src='/assets/oauth/github.svg' width={24} height={24} className='text-white' />
+            <Image src='/assets/oauth/github.svg' width={24} height={24} className='text-white' alt='' />
             <p>Sign in with Github</p>
           </button>
 
